@@ -1,23 +1,27 @@
-import "random" for Random
-import "io" for  Directory
-var random = Random.new(12345)
-System.print(random.float())
+// @ts-nocheck
+import "raylib" for File
 
-class FFI {
-    foreign static count()
-    foreign static plusone(x)
-}
+//var width = 800
+//var height = 450
+//var title = "Sample"
 
-var x = -8
-var count = FFI.count()
+//Raylib.initWindow(width, height, title)
+//Raylib.setTargetFPS(60)
 
-while (x < count) {
-    x = FFI.plusone(x)
-    System.print(x)
-}
+//System.print(Raylib.windowShouldClose())
 
-System.print(count)
+//while (!Raylib.windowShouldClose()) {
+  //Raylib.beginDrawing()
 
-System.print("From Delete")
-System.print(Directory.delete())
-Directory.create()
+  //Raylib.clearBackground()
+
+  //Raylib.drawText("Congrats! You created your first window!", 190, 200, 20)
+
+  //Raylib.endDrawing()
+//}
+
+//Raylib.closeWindow()
+
+
+
+var file = File.create("some/path.txt")

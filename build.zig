@@ -1,5 +1,13 @@
 const std = @import("std");
 
+fn addAssets(b: *std.Build, exe: *std.Build.Step.Compile) void {
+    const assets = [_][]const u8{};
+
+    for (assets) |asset| {
+        exe.root_module.addAnonymousImport(asset, .{ .root_source_file = b.path(asset) });
+    }
+}
+
 pub fn build(b: *std.Build) void {
     const upstream = b.dependency("wren", .{});
     const target = b.standardTargetOptions(.{});
@@ -46,12 +54,29 @@ pub fn build(b: *std.Build) void {
     //exe_mod.linkLibrary(wren_lib);
 
     const exe = b.addExecutable(.{
-        .name = "example",
+        .name = "littlesun",
         .root_source_file = b.path("src/main.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     exe.linkLibrary(wren_lib);
+
+    const raylib_dep = b.dependency("raylib", .{
+        .target = target,
+        .optimize = optimize,
+        .linux_display_backend = .X11,
+    });
+    const raylib_lib = raylib_dep.artifact("raylib");
+    exe.linkLibrary(raylib_lib);
+
+    const install_step = b.addInstallDirectory(.{
+        .source_dir = b.path("res"),
+        .install_dir = std.Build.InstallDir{ .custom = "res" },
+        .install_subdir = "res",
+    });
+    exe.step.dependOn(&install_step.step);
+    addAssets(b, exe);
 
     //const exe = b.addExecutable(.{
     //.name = "example",

@@ -6,7 +6,15 @@ class Raylib {
   foreign static windowShouldClose()
   foreign static beginDrawing()
   foreign static clearBackground()
-  foreign static drawText(text)
-  foreign static endDrawing();
-  foreign static closeWindow();
+  foreign static drawText(text, x, y, z)
+  foreign static endDrawing()
+  foreign static closeWindow()
+}
+
+
+foreign class File {
+  construct create(path) {}
+
+  foreign write(text)
+  foreign close()
 }
