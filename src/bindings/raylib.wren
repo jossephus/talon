@@ -75,11 +75,28 @@ foreign class Texture2D {
 foreign class Rectangle {
   construct new(x, y, width, height) {}
 
+  foreign x
+  foreign x=(value)
+
+  foreign y
+  foreign y=(value)
+
+  foreign width
+  foreign width=(value)
+
+  foreign height
+  foreign height=(value)
+
   foreign drawRectangleRec(color)
 }
 
 foreign class Vector2 {
   construct new(x, y) {}
+
+  foreign x
+  foreign y
+  foreign x=(value)
+  foreign y=(value)
 }
 
 foreign class Camera2D {

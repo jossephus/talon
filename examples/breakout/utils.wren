@@ -1,0 +1,3 @@
+
+var SCREEN_WIDTH = 600
+var SCREEN_HEIGHT = 800

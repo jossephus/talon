@@ -1,4 +1,3 @@
-// @ts-nocheck
 import "raylib" for Color, Raylib, Rectangle, Vector2, Camera2D, KeyCode, Texture2D
 
 var width = 800

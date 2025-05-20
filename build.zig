@@ -70,13 +70,13 @@ pub fn build(b: *std.Build) void {
     const raylib_lib = raylib_dep.artifact("raylib");
     exe.linkLibrary(raylib_lib);
 
-    const install_step = b.addInstallDirectory(.{
-        .source_dir = b.path("res"),
-        .install_dir = std.Build.InstallDir{ .custom = "res" },
-        .install_subdir = "res",
-    });
-    exe.step.dependOn(&install_step.step);
-    addAssets(b, exe);
+    //const install_step = b.addInstallDirectory(.{
+    //.source_dir = b.path("res"),
+    //.install_dir = std.Build.InstallDir{ .custom = "res" },
+    //.install_subdir = "res",
+    //});
+    //exe.step.dependOn(&install_step.step);
+    //addAssets(b, exe);
 
     //const exe = b.addExecutable(.{
     //.name = "example",
@@ -98,4 +98,12 @@ pub fn build(b: *std.Build) void {
     }
     const run_step = b.step("run", "Run the app");
     run_step.dependOn(&run_cmd.step);
+
+    const run_abc_step = b.step("example", "Run the executable with abc.txt");
+
+    const run_abc = b.addRunArtifact(exe);
+    run_abc.setCwd(b.path("examples/breakout"));
+    run_abc.addArg("./main.wren");
+
+    run_abc_step.dependOn(&run_abc.step);
 }
