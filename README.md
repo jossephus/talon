@@ -4,7 +4,7 @@
 
 ## Talon
 
-**Talon** is a (wannabe) 2D Game framwork that uses [Raylib](https://www.raylib.com/) as its game engine and [Wren](https://wren.io) as its scripting language. I recently started playing with Raylib to build a couple of toy games and I was really impressed with it. Wren is also one of my favorite lightweight languages that i use occasionally. This project is my attempt to deep dive into Raylib apis and to make use of wren as an embedded scripting language.
+**Talon** is a (wannabe) 2D Game framwork that uses [Raylib](https://www.raylib.com/) as its rendering engine and [Wren](https://wren.io) as its scripting language. I recently started playing with Raylib to build a couple of toy games and I was really impressed with it. Wren is also one of my favorite lightweight languages that i use occasionally. This project is my attempt to deep dive into Raylib apis and to make use of wren as an embedded scripting language.
 
 ## Status
 
