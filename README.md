@@ -8,21 +8,11 @@ This is a (wannabe) 2D Game framwork that uses Raylib as its Game engine and wre
 
 ## Status
 
-My plan for this project is to make it stable so that it will be usable for me to replace love2d. At this time, it only implements basic Raylib functionalities, but in the future We will add Audio, Physics, Full Math, ... supports.
-
-## Getting Started
-
-The only way to try out Talon at this time is to clone the repo and make sure you have zig 0.14.0 installed.
-
-```sh
-git clone https://github.com/jossephus/talon
-cd talon
-zig build run -- src/main.wren
-```
+My plan for this project is to make it stable so that it will be usable for me to replace [love2d](love2d). At this time, it only implements basic Raylib functionalities, but in the future We will add Audio, Physics, Full Math, ... supports.
 
 ## Demo
 
-Wren is a very simple language that u can master in less than 30 mins by just skimming the documentation on its [documentation](wren.io). This is how you create a very basic window using Talon.
+Wren is a very simple language that u can master in less than 30 mins by just skimming the documentation on its [website](wren.io). This is how you create a very basic window using Talon.
 
 ```wren
 import "raylib" for Color, Raylib, Rectangle, Vector2, Camera2D, KeyCode, Texture2D
@@ -69,4 +59,20 @@ while (!Raylib.windowShouldClose()) {
 Raylib.clearBackground(Color.Gray)
 Raylib.unloadRenderTexture(target)
 Raylib.closeWindow()
+```
+
+## Getting Started
+
+The only way to try out Talon at this time is to clone the repo and make sure you have zig 0.14.0 installed.
+
+```sh
+git clone https://github.com/jossephus/talon
+cd talon
+zig build run -- src/main.wren
+```
+
+You can also run the breakout example by running. (It will almost work :-))
+
+```
+zig build breakout
 ```
