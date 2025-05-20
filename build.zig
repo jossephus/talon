@@ -54,7 +54,7 @@ pub fn build(b: *std.Build) void {
     //exe_mod.linkLibrary(wren_lib);
 
     const exe = b.addExecutable(.{
-        .name = "littlesun",
+        .name = "talon",
         .root_source_file = b.path("src/main.zig"),
         .target = target,
         .optimize = optimize,
@@ -99,7 +99,7 @@ pub fn build(b: *std.Build) void {
     const run_step = b.step("run", "Run the app");
     run_step.dependOn(&run_cmd.step);
 
-    const run_abc_step = b.step("example", "Run the executable with abc.txt");
+    const run_abc_step = b.step("breakout", "Run the executable with abc.txt");
 
     const run_abc = b.addRunArtifact(exe);
     run_abc.setCwd(b.path("examples/breakout"));
