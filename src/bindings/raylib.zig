@@ -20,6 +20,10 @@ pub fn wren_raylib_init_window(vm: ?*wren.WrenVM) callconv(.C) void {
     r.InitWindow(width, height, title);
 }
 
+pub fn wren_raylib_close_window(_: ?*wren.WrenVM) callconv(.C) void {
+    r.CloseWindow();
+}
+
 pub fn wren_raylib_set_target_fps(vm: ?*wren.WrenVM) callconv(.C) void {
     const fps: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
     std.debug.print("{d}", .{fps});
@@ -55,10 +59,6 @@ pub fn wren_raylib_draw_text(vm: ?*wren.WrenVM) callconv(.C) void {
 
 pub fn wren_raylib_end_drawing(_: ?*wren.WrenVM) callconv(.C) void {
     r.EndDrawing();
-}
-
-pub fn wren_raylib_close_window(_: ?*wren.WrenVM) callconv(.C) void {
-    r.CloseWindow();
 }
 
 pub fn wren_load_render_texture(vm: ?*wren.WrenVM) callconv(.C) void {

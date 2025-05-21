@@ -106,4 +106,20 @@ pub fn build(b: *std.Build) void {
     run_abc.addArg("./main.wren");
 
     run_abc_step.dependOn(&run_abc.step);
+
+    const generator = b.addExecutable(.{
+        .name = "generator",
+        .root_source_file = b.path("src/bindings/generate/generate.zig"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+
+    const generator_step = b.step("generator", "Generate raylib bindings");
+
+    const generator_run = b.addRunArtifact(generator);
+    //generator_run.setCwd(b.path("examples/breakout"));
+    //run_abc.addArg("./main.wren");
+
+    generator_step.dependOn(&generator_run.step);
 }
