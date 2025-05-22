@@ -72,7 +72,7 @@ The only way to try out Talon at this time is to clone the repo and build it you
 ```sh
 git clone https://github.com/jossephus/talon
 cd talon
-zig build run -- src/main.wren
+zig build run -- ./examples/src/main.wren
 ```
 
 You can also run the breakout example by running. (It will almost work :-))
