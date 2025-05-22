@@ -33,3 +33,13 @@ pub fn pow(vm: ?*wren.WrenVM) callconv(.C) void {
     const b = wren.wrenGetSlotDouble(vm, 2);
     wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(std.math.pow(f64, a, b))));
 }
+
+pub fn log(vm: ?*wren.WrenVM) callconv(.C) void {
+    const a = wren.wrenGetSlotDouble(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@log(a))));
+}
+
+pub fn exp(vm: ?*wren.WrenVM) callconv(.C) void {
+    const a = wren.wrenGetSlotDouble(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@exp(a))));
+}

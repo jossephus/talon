@@ -34,20 +34,12 @@ while (!Raylib.windowShouldClose()) {
 
   Raylib.drawTexturePro(
             target.texture,
-            Rectangle.new(
-                0.0,
-                0.0,
-                target.texture.width,
-                target.texture.height),
-            Rectangle.new(
-                0.0,
-                0.0,
-                target.texture.width,
-                target.texture.height),
+            Rectangle.new(0.0,0.0,target.texture.width, target.texture.height),
+            Rectangle.new( 0.0, 0.0, target.texture.width, target.texture.height),
             Vector2.new(0.0, 0.0),
             0.0,
             Color.new(255, 255, 255, 255 )
-        )
+  )
 
 
 
@@ -62,3 +54,4 @@ System.print(Color.Gray)
 
 Raylib.clearBackground(Color.Gray)
 Raylib.unloadRenderTexture(target)
+

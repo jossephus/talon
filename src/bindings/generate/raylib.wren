@@ -263,6 +263,12 @@ class Raylib {
  foreign static checkCollisionPointPoly(a,b,c)
  foreign static checkCollisionLines(a,b,c,d,e)
  foreign static getCollisionRec(a,b)
+
+ foreign static loadRenderTexture(width, height)
+ foreign static drawText(text, x, y, z, color)
+ foreign static drawTexturePro(texture, source, dest, origin, rotation, tint)
+ foreign static endTextureMode(target)
+ foreign static unloadRenderTexture(target)
 } 
 
 foreign class Color {
@@ -345,6 +351,15 @@ foreign class Camera2D {
 
   foreign beginMode2D()
   foreign endMode2D()
+
+  foreign target()
+  foreign target=(value)
+
+  foreign rotation
+  foreign rotation=(value)
+
+  foreign zoom 
+  foreign zoom=(value)
 }
 
 

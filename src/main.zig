@@ -12,12 +12,12 @@ pub const r = @cImport({
     @cInclude("rlgl.h");
 });
 
-const Bindings = @import("bindings/index.zig");
+const Bindings = @import("bindings/generate/index.zig");
 
 var debug_allocator: std.heap.DebugAllocator(.{}) = .init;
 const allocator = debug_allocator.allocator();
 
-const raylib = @embedFile("bindings/raylib.wren");
+const raylib = @embedFile("bindings/generate/raylib.wren");
 const math = @embedFile("bindings/math.wren");
 
 fn writeFn(vm: ?*wren.WrenVM, text: [*c]const u8) callconv(.C) void {
@@ -230,6 +230,7 @@ fn bindForeignMethod(vm: ?*wren.WrenVM, module: [*c]const u8, className: [*c]con
         return method;
     }
 
+    std.debug.print("Module {s}\n", .{mod});
     std.log.err("Could not find binding for .{s}", .{name});
 
     return null;
@@ -255,7 +256,7 @@ pub fn main() !void {
 
     var buf_reader = std.io.bufferedReader(file.reader());
     var in_stream = buf_reader.reader();
-    var script: [4098]u8 = undefined;
+    var script: [std.fs.max_path_bytes]u8 = undefined;
 
     const read = try in_stream.readAll(&script);
     script[read] = 0;

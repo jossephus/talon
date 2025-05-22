@@ -3,7 +3,9 @@ const headers = @import("rcore.zig").headers;
 
 const WrenArgType = union(enum) {
     Double,
+    Float,
     Int,
+    UInt,
     String,
     Bool,
     Void,
@@ -113,9 +115,9 @@ fn get_arg_type(a: []const u8) !WrenArgType {
         value: WrenArgType,
     }{
         .{ .key = "int", .value = WrenArgType.Int },
-        .{ .key = "unsigned int", .value = WrenArgType.Int },
+        .{ .key = "unsigned int", .value = WrenArgType.UInt },
         .{ .key = "long", .value = WrenArgType.Int },
-        .{ .key = "float", .value = WrenArgType.Double },
+        .{ .key = "float", .value = WrenArgType.Float },
         .{ .key = "double", .value = WrenArgType.Double },
         .{ .key = "char", .value = WrenArgType.String },
         .{ .key = "unsigned char", .value = WrenArgType.String },
@@ -206,7 +208,7 @@ pub fn main() !void {
 
             b = undefined;
 
-            const binding = try std.fmt.bufPrint(&b, ".{{ \"raylib.Raylib.{s}{s}\", wren_raylib_{s}}},\n", .{ try toLowerCamelCase(allocator, sign.fn_name), try format_binding_call(allocator, sign.args.len), sign.fn_name });
+            const binding = try std.fmt.bufPrint(&b, ".{{ \"raylib.Raylib.{s}{s}\", wren_raylib_{s}}},\n", .{ try toLowerCamelCase(allocator, sign.raylib_name), try format_binding_call(allocator, sign.args.len), sign.fn_name });
 
             try binding_source.appendSlice(binding);
 
@@ -231,6 +233,20 @@ pub fn main() !void {
                         // const width: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
                         try zig_program.appendSlice(try std.fmt.bufPrint(&b,
                             \\    const @"{d}" = wren.wrenGetSlotDouble(vm, {d});
+                            \\
+                        , .{ i, i + 1 }));
+                    },
+                    .Float => {
+                        // const width: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+                        try zig_program.appendSlice(try std.fmt.bufPrint(&b,
+                            \\    const @"{d}" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, {d})));
+                            \\
+                        , .{ i, i + 1 }));
+                    },
+                    .UInt => {
+                        // const width: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+                        try zig_program.appendSlice(try std.fmt.bufPrint(&b,
+                            \\    const @"{d}": c_uint = @intFromFloat(wren.wrenGetSlotDouble(vm, {d}));
                             \\
                         , .{ i, i + 1 }));
                     },
@@ -293,9 +309,9 @@ pub fn main() !void {
     );
 
     const stdout = std.io.getStdOut().writer();
-    //try stdout.print("{s}\n", .{try zig_program.toOwnedSlice()});
-    //try stdout.print("{s}\n", .{try binding_source.toOwnedSlice()});
-    try stdout.print("{s}\n", .{try wren_source.toOwnedSlice()});
+    try stdout.print("{s}\n", .{try zig_program.toOwnedSlice()});
+    try stdout.print("{s}\n", .{try binding_source.toOwnedSlice()});
+    //try stdout.print("{s}\n", .{try wren_source.toOwnedSlice()});
 }
 
 fn format_call(allocator: std.mem.Allocator, sign: RaylibHeaderSignature) ![]const u8 {
@@ -314,10 +330,13 @@ fn format_call(allocator: std.mem.Allocator, sign: RaylibHeaderSignature) ![]con
         .Bool => try std.fmt.allocPrint(allocator,
             \\    wren.wrenSetSlotBool(vm, 0, r.{s}({s}));
         , .{ sign.raylib_name, arg_buf.items }),
-        .Int => try std.fmt.allocPrint(allocator,
+        .Int, .UInt => try std.fmt.allocPrint(allocator,
             \\    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.{s}({s}))));
         , .{ sign.raylib_name, arg_buf.items }),
         .Double => try std.fmt.allocPrint(allocator,
+            \\    wren.wrenSetSlotDouble(vm, 0, r.{s}({s}));
+        , .{ sign.raylib_name, arg_buf.items }),
+        .Float => try std.fmt.allocPrint(allocator,
             \\    wren.wrenSetSlotDouble(vm, 0, r.{s}({s}));
         , .{ sign.raylib_name, arg_buf.items }),
         .String => try std.fmt.allocPrint(allocator,
