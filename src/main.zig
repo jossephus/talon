@@ -12,12 +12,12 @@ pub const r = @cImport({
     @cInclude("rlgl.h");
 });
 
-const Bindings = @import("bindings/generate/index.zig");
+const Bindings = @import("bindings/index.zig");
 
 var debug_allocator: std.heap.DebugAllocator(.{}) = .init;
 const allocator = debug_allocator.allocator();
 
-const raylib = @embedFile("bindings/generate/raylib.wren");
+const raylib = @embedFile("bindings/raylib.wren");
 const math = @embedFile("bindings/math.wren");
 
 fn writeFn(vm: ?*wren.WrenVM, text: [*c]const u8) callconv(.C) void {
