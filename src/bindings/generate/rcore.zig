@@ -330,4 +330,475 @@ pub const headers =
     \\ bool CheckCollisionLines(Vector2 startPos1, Vector2 endPos1, Vector2 startPos2, Vector2 endPos2, Vector2 *collisionPoint); // Check the collision between two lines defined by two points each, returns collision point by reference
     \\ Rectangle GetCollisionRec(Rectangle rec1, Rectangle rec2);                                         // Get collision rectangle for two rectangles collision
     \\ 
+    \\       void SetShapesTexture(Texture2D texture, Rectangle source);       // Set texture and rectangle to be used on shapes drawing
+    \\    Texture2D GetShapesTexture(void);                                 // Get texture that is used for shapes drawing
+    \\    Rectangle GetShapesTextureRectangle(void);                        // Get texture source rectangle that is used for shapes drawing
+    \\        Image LoadImage(const char *fileName);                                                             // Load image from file into CPU memory (RAM)
+    \\    Image LoadImageRaw(const char *fileName, int width, int height, int format, int headerSize);       // Load image from RAW file data
+    \\    Image LoadImageAnim(const char *fileName, int *frames);                                            // Load image sequence from file (frames appended to image.data)
+    \\    Image LoadImageAnimFromMemory(const char *fileType, const unsigned char *fileData, int dataSize, int *frames); // Load image sequence from memory buffer
+    \\    Image LoadImageFromMemory(const char *fileType, const unsigned char *fileData, int dataSize);      // Load image from memory buffer, fileType refers to extension: i.e. '.png'
+    \\    Image LoadImageFromTexture(Texture2D texture);                                                     // Load image from GPU texture data
+    \\    Image LoadImageFromScreen(void);                                                                   // Load image from screen buffer and (screenshot)
+    \\    bool IsImageValid(Image image);                                                                    // Check if an image is valid (data and parameters)
+    \\    void UnloadImage(Image image);                                                                     // Unload image from CPU memory (RAM)
+    \\    bool ExportImage(Image image, const char *fileName);                                               // Export image data to file, returns true on success
+    \\    unsigned char *ExportImageToMemory(Image image, const char *fileType, int *fileSize);              // Export image to memory buffer
+    \\    bool ExportImageAsCode(Image image, const char *fileName);                                         // Export image as code file defining an array of bytes, returns true on success
+    \\    Image GenImageColor(int width, int height, Color color);                                           // Generate image: plain color
+    \\   Image GenImageGradientLinear(int width, int height, int direction, Color start, Color end);        // Generate image: linear gradient, direction in degrees [0..360], 0=Vertical gradient
+    \\    Image GenImageGradientRadial(int width, int height, float density, Color inner, Color outer);      // Generate image: radial gradient
+    \\    Image GenImageGradientSquare(int width, int height, float density, Color inner, Color outer);      // Generate image: square gradient
+    \\    Image GenImageChecked(int width, int height, int checksX, int checksY, Color col1, Color col2);    // Generate image: checked
+    \\    Image GenImageWhiteNoise(int width, int height, float factor);                                     // Generate image: white noise
+    \\    Image GenImagePerlinNoise(int width, int height, int offsetX, int offsetY, float scale);           // Generate image: perlin noise
+    \\    Image GenImageCellular(int width, int height, int tileSize);                                       // Generate image: cellular algorithm, bigger tileSize means bigger cells
+    \\    Image GenImageText(int width, int height, const char *text);                                       // Generate image: grayscale image from text data
+    \\
+    \\    // Image manipulation functions
+    \\    Image ImageCopy(Image image);                                                                      // Create an image duplicate (useful for transformations)
+    \\    Image ImageFromImage(Image image, Rectangle rec);                                                  // Create an image from another image piece
+    \\    Image ImageFromChannel(Image image, int selectedChannel);                                          // Create an image from a selected channel of another image (GRAYSCALE)
+    \\    Image ImageText(const char *text, int fontSize, Color color);                                      // Create an image from text (default font)
+    \\    Image ImageTextEx(Font font, const char *text, float fontSize, float spacing, Color tint);         // Create an image from text (custom sprite font)
+    \\    void ImageFormat(Image *image, int newFormat);                                                     // Convert image data to desired format
+    \\    void ImageToPOT(Image *image, Color fill);                                                         // Convert image to POT (power-of-two)
+    \\    void ImageCrop(Image *image, Rectangle crop);                                                      // Crop an image to a defined rectangle
+    \\    void ImageAlphaCrop(Image *image, float threshold);                                                // Crop image depending on alpha value
+    \\    void ImageAlphaClear(Image *image, Color color, float threshold);                                  // Clear alpha channel to desired color
+    \\    void ImageAlphaMask(Image *image, Image alphaMask);                                                // Apply alpha mask to image
+    \\    void ImageAlphaPremultiply(Image *image);                                                          // Premultiply alpha channel
+    \\    void ImageBlurGaussian(Image *image, int blurSize);                                                // Apply Gaussian blur using a box blur approximation
+    \\    void ImageKernelConvolution(Image *image, const float *kernel, int kernelSize);                    // Apply custom square convolution kernel to image
+    \\    void ImageResize(Image *image, int newWidth, int newHeight);                                       // Resize image (Bicubic scaling algorithm)
+    \\    void ImageResizeNN(Image *image, int newWidth,int newHeight);                                      // Resize image (Nearest-Neighbor scaling algorithm)
+    \\    void ImageResizeCanvas(Image *image, int newWidth, int newHeight, int offsetX, int offsetY, Color fill); // Resize canvas and fill with color
+    \\    void ImageMipmaps(Image *image);                                                                   // Compute all mipmap levels for a provided image
+    \\    void ImageDither(Image *image, int rBpp, int gBpp, int bBpp, int aBpp);                            // Dither image data to 16bpp or lower (Floyd-Steinberg dithering)
+    \\    void ImageFlipVertical(Image *image);                                                              // Flip image vertically
+    \\    void ImageFlipHorizontal(Image *image);                                                            // Flip image horizontally
+    \\    void ImageRotate(Image *image, int degrees);                                                       // Rotate image by input angle in degrees (-359 to 359)
+    \\    void ImageRotateCW(Image *image);                                                                  // Rotate image clockwise 90deg
+    \\    void ImageRotateCCW(Image *image);                                                                 // Rotate image counter-clockwise 90deg
+    \\    void ImageColorTint(Image *image, Color color);                                                    // Modify image color: tint
+    \\    void ImageColorInvert(Image *image);                                                               // Modify image color: invert
+    \\    void ImageColorGrayscale(Image *image);                                                            // Modify image color: grayscale
+    \\    void ImageColorContrast(Image *image, float contrast);                                             // Modify image color: contrast (-100 to 100)
+    \\    void ImageColorBrightness(Image *image, int brightness);                                           // Modify image color: brightness (-255 to 255)
+    \\    void ImageColorReplace(Image *image, Color color, Color replace);                                  // Modify image color: replace color
+    \\    Color *LoadImageColors(Image image);                                                               // Load color data from image as a Color array (RGBA - 32bit)
+    \\    Color *LoadImagePalette(Image image, int maxPaletteSize, int *colorCount);                         // Load colors palette from image as a Color array (RGBA - 32bit)
+    \\    void UnloadImageColors(Color *colors);                                                             // Unload color data loaded with LoadImageColors()
+    \\    void UnloadImagePalette(Color *colors);                                                            // Unload colors palette loaded with LoadImagePalette()
+    \\    Rectangle GetImageAlphaBorder(Image image, float threshold);                                       // Get image alpha border rectangle
+    \\    Color GetImageColor(Image image, int x, int y);                                                    // Get image pixel color at (x, y) position
+    \\
+    \\    // Image drawing functions
+    \\    // NOTE: Image software-rendering functions (CPU)
+    \\    void ImageClearBackground(Image *dst, Color color);                                                // Clear image background with given color
+    \\    void ImageDrawPixel(Image *dst, int posX, int posY, Color color);                                  // Draw pixel within an image
+    \\    void ImageDrawPixelV(Image *dst, Vector2 position, Color color);                                   // Draw pixel within an image (Vector version)
+    \\    void ImageDrawLine(Image *dst, int startPosX, int startPosY, int endPosX, int endPosY, Color color); // Draw line within an image
+    \\    void ImageDrawLineV(Image *dst, Vector2 start, Vector2 end, Color color);                          // Draw line within an image (Vector version)
+    \\    void ImageDrawLineEx(Image *dst, Vector2 start, Vector2 end, int thick, Color color);              // Draw a line defining thickness within an image
+    \\    void ImageDrawCircle(Image *dst, int centerX, int centerY, int radius, Color color);               // Draw a filled circle within an image
+    \\    void ImageDrawCircleV(Image *dst, Vector2 center, int radius, Color color);                        // Draw a filled circle within an image (Vector version)
+    \\    void ImageDrawCircleLines(Image *dst, int centerX, int centerY, int radius, Color color);          // Draw circle outline within an image
+    \\    void ImageDrawCircleLinesV(Image *dst, Vector2 center, int radius, Color color);                   // Draw circle outline within an image (Vector version)
+    \\    void ImageDrawRectangle(Image *dst, int posX, int posY, int width, int height, Color color);       // Draw rectangle within an image
+    \\    void ImageDrawRectangleV(Image *dst, Vector2 position, Vector2 size, Color color);                 // Draw rectangle within an image (Vector version)
+    \\    void ImageDrawRectangleRec(Image *dst, Rectangle rec, Color color);                                // Draw rectangle within an image
+    \\    void ImageDrawRectangleLines(Image *dst, Rectangle rec, int thick, Color color);                   // Draw rectangle lines within an image
+    \\    void ImageDrawTriangle(Image *dst, Vector2 v1, Vector2 v2, Vector2 v3, Color color);               // Draw triangle within an image
+    \\    void ImageDrawTriangleEx(Image *dst, Vector2 v1, Vector2 v2, Vector2 v3, Color c1, Color c2, Color c3); // Draw triangle with interpolated colors within an image
+    \\    void ImageDrawTriangleLines(Image *dst, Vector2 v1, Vector2 v2, Vector2 v3, Color color);          // Draw triangle outline within an image
+    \\    void ImageDrawTriangleFan(Image *dst, Vector2 *points, int pointCount, Color color);               // Draw a triangle fan defined by points within an image (first vertex is the center)
+    \\    void ImageDrawTriangleStrip(Image *dst, Vector2 *points, int pointCount, Color color);             // Draw a triangle strip defined by points within an image
+    \\    void ImageDraw(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, Color tint);             // Draw a source image within a destination image (tint applied to source)
+    \\    void ImageDrawText(Image *dst, const char *text, int posX, int posY, int fontSize, Color color);   // Draw text (using default font) within an image (destination)
+    \\    void ImageDrawTextEx(Image *dst, Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text (custom sprite font) within an image (destination)
+    \\
+    \\    // Texture loading functions
+    \\    // NOTE: These functions require GPU access
+    \\    Texture2D LoadTexture(const char *fileName);                                                       // Load texture from file into GPU memory (VRAM)
+    \\    Texture2D LoadTextureFromImage(Image image);                                                       // Load texture from image data
+    \\    TextureCubemap LoadTextureCubemap(Image image, int layout);                                        // Load cubemap from image, multiple image cubemap layouts supported
+    \\    RenderTexture2D LoadRenderTexture(int width, int height);                                          // Load texture for rendering (framebuffer)
+    \\    bool IsTextureValid(Texture2D texture);                                                            // Check if a texture is valid (loaded in GPU)
+    \\    void UnloadTexture(Texture2D texture);                                                             // Unload texture from GPU memory (VRAM)
+    \\    bool IsRenderTextureValid(RenderTexture2D target);                                                 // Check if a render texture is valid (loaded in GPU)
+    \\    void UnloadRenderTexture(RenderTexture2D target);                                                  // Unload render texture from GPU memory (VRAM)
+    \\    void UpdateTexture(Texture2D texture, const void *pixels);                                         // Update GPU texture with new data
+    \\    void UpdateTextureRec(Texture2D texture, Rectangle rec, const void *pixels);                       // Update GPU texture rectangle with new data
+    \\
+    \\    // Texture configuration functions
+    \\    void GenTextureMipmaps(Texture2D *texture);                                                        // Generate GPU mipmaps for a texture
+    \\    void SetTextureFilter(Texture2D texture, int filter);                                              // Set texture scaling filter mode
+    \\    void SetTextureWrap(Texture2D texture, int wrap);                                                  // Set texture wrapping mode
+    \\
+    \\    // Texture drawing functions
+    \\    void DrawTexture(Texture2D texture, int posX, int posY, Color tint);                               // Draw a Texture2D
+    \\    void DrawTextureV(Texture2D texture, Vector2 position, Color tint);                                // Draw a Texture2D with position defined as Vector2
+    \\    void DrawTextureEx(Texture2D texture, Vector2 position, float rotation, float scale, Color tint);  // Draw a Texture2D with extended parameters
+    \\    void DrawTextureRec(Texture2D texture, Rectangle source, Vector2 position, Color tint);            // Draw a part of a texture defined by a rectangle
+    \\    void DrawTexturePro(Texture2D texture, Rectangle source, Rectangle dest, Vector2 origin, float rotation, Color tint); // Draw a part of a texture defined by a rectangle with 'pro' parameters
+    \\    void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dest, Vector2 origin, float rotation, Color tint); // Draws a texture (or part of it) that stretches or shrinks nicely
+    \\
+    \\    // Color/pixel related functions
+    \\    bool ColorIsEqual(Color col1, Color col2);                            // Check if two colors are equal
+    \\    Color Fade(Color color, float alpha);                                 // Get color with alpha applied, alpha goes from 0.0f to 1.0f
+    \\    int ColorToInt(Color color);                                          // Get hexadecimal value for a Color (0xRRGGBBAA)
+    \\    Vector4 ColorNormalize(Color color);                                  // Get Color normalized as float [0..1]
+    \\    Color ColorFromNormalized(Vector4 normalized);                        // Get Color from normalized values [0..1]
+    \\    Vector3 ColorToHSV(Color color);                                      // Get HSV values for a Color, hue [0..360], saturation/value [0..1]
+    \\    Color ColorFromHSV(float hue, float saturation, float value);         // Get a Color from HSV values, hue [0..360], saturation/value [0..1]
+    \\    Color ColorTint(Color color, Color tint);                             // Get color multiplied with another color
+    \\    Color ColorBrightness(Color color, float factor);                     // Get color with brightness correction, brightness factor goes from -1.0f to 1.0f
+    \\    Color ColorContrast(Color color, float contrast);                     // Get color with contrast correction, contrast values between -1.0f and 1.0f
+    \\    Color ColorAlpha(Color color, float alpha);                           // Get color with alpha applied, alpha goes from 0.0f to 1.0f
+    \\    Color ColorAlphaBlend(Color dst, Color src, Color tint);              // Get src alpha-blended into dst color with tint
+    \\    Color ColorLerp(Color color1, Color color2, float factor);            // Get color lerp interpolation between two colors, factor [0.0f..1.0f]
+    \\    Color GetColor(unsigned int hexValue);                                // Get Color structure from hexadecimal value
+    \\    Color GetPixelColor(void *srcPtr, int format);                        // Get Color from a source pixel pointer of certain format
+    \\    void SetPixelColor(void *dstPtr, Color color, int format);            // Set color formatted into destination pixel pointer
+    \\    int GetPixelDataSize(int width, int height, int format);              // Get pixel data size in bytes for certain format
+    \\    Image GenImageColor(int width, int height, Color color);                                           // Generate image: plain color
+    \\   Image GenImageGradientLinear(int width, int height, int direction, Color start, Color end);        // Generate image: linear gradient, direction in degrees [0..360], 0=Vertical gradient
+    \\    Image GenImageGradientRadial(int width, int height, float density, Color inner, Color outer);      // Generate image: radial gradient
+    \\    Image GenImageGradientSquare(int width, int height, float density, Color inner, Color outer);      // Generate image: square gradient
+    \\    Image GenImageChecked(int width, int height, int checksX, int checksY, Color col1, Color col2);    // Generate image: checked
+    \\    Image GenImageWhiteNoise(int width, int height, float factor);                                     // Generate image: white noise
+    \\    Image GenImagePerlinNoise(int width, int height, int offsetX, int offsetY, float scale);           // Generate image: perlin noise
+    \\    Image GenImageCellular(int width, int height, int tileSize);                                       // Generate image: cellular algorithm, bigger tileSize means bigger cells
+    \\    Image GenImageText(int width, int height, const char *text);                                       // Generate image: grayscale image from text data
+    \\
+    \\    // Image manipulation functions
+    \\    Image ImageCopy(Image image);                                                                      // Create an image duplicate (useful for transformations)
+    \\    Image ImageFromImage(Image image, Rectangle rec);                                                  // Create an image from another image piece
+    \\    Image ImageFromChannel(Image image, int selectedChannel);                                          // Create an image from a selected channel of another image (GRAYSCALE)
+    \\    Image ImageText(const char *text, int fontSize, Color color);                                      // Create an image from text (default font)
+    \\    Image ImageTextEx(Font font, const char *text, float fontSize, float spacing, Color tint);         // Create an image from text (custom sprite font)
+    \\    void ImageFormat(Image *image, int newFormat);                                                     // Convert image data to desired format
+    \\    void ImageToPOT(Image *image, Color fill);                                                         // Convert image to POT (power-of-two)
+    \\    void ImageCrop(Image *image, Rectangle crop);                                                      // Crop an image to a defined rectangle
+    \\    void ImageAlphaCrop(Image *image, float threshold);                                                // Crop image depending on alpha value
+    \\    void ImageAlphaClear(Image *image, Color color, float threshold);                                  // Clear alpha channel to desired color
+    \\    void ImageAlphaMask(Image *image, Image alphaMask);                                                // Apply alpha mask to image
+    \\    void ImageAlphaPremultiply(Image *image);                                                          // Premultiply alpha channel
+    \\    void ImageBlurGaussian(Image *image, int blurSize);                                                // Apply Gaussian blur using a box blur approximation
+    \\    void ImageKernelConvolution(Image *image, const float *kernel, int kernelSize);                    // Apply custom square convolution kernel to image
+    \\    void ImageResize(Image *image, int newWidth, int newHeight);                                       // Resize image (Bicubic scaling algorithm)
+    \\    void ImageResizeNN(Image *image, int newWidth,int newHeight);                                      // Resize image (Nearest-Neighbor scaling algorithm)
+    \\    void ImageResizeCanvas(Image *image, int newWidth, int newHeight, int offsetX, int offsetY, Color fill); // Resize canvas and fill with color
+    \\    void ImageMipmaps(Image *image);                                                                   // Compute all mipmap levels for a provided image
+    \\    void ImageDither(Image *image, int rBpp, int gBpp, int bBpp, int aBpp);                            // Dither image data to 16bpp or lower (Floyd-Steinberg dithering)
+    \\    void ImageFlipVertical(Image *image);                                                              // Flip image vertically
+    \\    void ImageFlipHorizontal(Image *image);                                                            // Flip image horizontally
+    \\    void ImageRotate(Image *image, int degrees);                                                       // Rotate image by input angle in degrees (-359 to 359)
+    \\    void ImageRotateCW(Image *image);                                                                  // Rotate image clockwise 90deg
+    \\    void ImageRotateCCW(Image *image);                                                                 // Rotate image counter-clockwise 90deg
+    \\    void ImageColorTint(Image *image, Color color);                                                    // Modify image color: tint
+    \\    void ImageColorInvert(Image *image);                                                               // Modify image color: invert
+    \\    void ImageColorGrayscale(Image *image);                                                            // Modify image color: grayscale
+    \\    void ImageColorContrast(Image *image, float contrast);                                             // Modify image color: contrast (-100 to 100)
+    \\    void ImageColorBrightness(Image *image, int brightness);                                           // Modify image color: brightness (-255 to 255)
+    \\    void ImageColorReplace(Image *image, Color color, Color replace);                                  // Modify image color: replace color
+    \\    Color *LoadImageColors(Image image);                                                               // Load color data from image as a Color array (RGBA - 32bit)
+    \\    Color *LoadImagePalette(Image image, int maxPaletteSize, int *colorCount);                         // Load colors palette from image as a Color array (RGBA - 32bit)
+    \\    void UnloadImageColors(Color *colors);                                                             // Unload color data loaded with LoadImageColors()
+    \\    void UnloadImagePalette(Color *colors);                                                            // Unload colors palette loaded with LoadImagePalette()
+    \\    Rectangle GetImageAlphaBorder(Image image, float threshold);                                       // Get image alpha border rectangle
+    \\    Color GetImageColor(Image image, int x, int y);                                                    // Get image pixel color at (x, y) position
+    \\
+    \\    // Image drawing functions
+    \\    // NOTE: Image software-rendering functions (CPU)
+    \\    void ImageClearBackground(Image *dst, Color color);                                                // Clear image background with given color
+    \\    void ImageDrawPixel(Image *dst, int posX, int posY, Color color);                                  // Draw pixel within an image
+    \\    void ImageDrawPixelV(Image *dst, Vector2 position, Color color);                                   // Draw pixel within an image (Vector version)
+    \\    void ImageDrawLine(Image *dst, int startPosX, int startPosY, int endPosX, int endPosY, Color color); // Draw line within an image
+    \\    void ImageDrawLineV(Image *dst, Vector2 start, Vector2 end, Color color);                          // Draw line within an image (Vector version)
+    \\    void ImageDrawLineEx(Image *dst, Vector2 start, Vector2 end, int thick, Color color);              // Draw a line defining thickness within an image
+    \\    void ImageDrawCircle(Image *dst, int centerX, int centerY, int radius, Color color);               // Draw a filled circle within an image
+    \\    void ImageDrawCircleV(Image *dst, Vector2 center, int radius, Color color);                        // Draw a filled circle within an image (Vector version)
+    \\    void ImageDrawCircleLines(Image *dst, int centerX, int centerY, int radius, Color color);          // Draw circle outline within an image
+    \\    void ImageDrawCircleLinesV(Image *dst, Vector2 center, int radius, Color color);                   // Draw circle outline within an image (Vector version)
+    \\    void ImageDrawRectangle(Image *dst, int posX, int posY, int width, int height, Color color);       // Draw rectangle within an image
+    \\    void ImageDrawRectangleV(Image *dst, Vector2 position, Vector2 size, Color color);                 // Draw rectangle within an image (Vector version)
+    \\    void ImageDrawRectangleRec(Image *dst, Rectangle rec, Color color);                                // Draw rectangle within an image
+    \\    void ImageDrawRectangleLines(Image *dst, Rectangle rec, int thick, Color color);                   // Draw rectangle lines within an image
+    \\    void ImageDrawTriangle(Image *dst, Vector2 v1, Vector2 v2, Vector2 v3, Color color);               // Draw triangle within an image
+    \\    void ImageDrawTriangleEx(Image *dst, Vector2 v1, Vector2 v2, Vector2 v3, Color c1, Color c2, Color c3); // Draw triangle with interpolated colors within an image
+    \\    void ImageDrawTriangleLines(Image *dst, Vector2 v1, Vector2 v2, Vector2 v3, Color color);          // Draw triangle outline within an image
+    \\    void ImageDrawTriangleFan(Image *dst, Vector2 *points, int pointCount, Color color);               // Draw a triangle fan defined by points within an image (first vertex is the center)
+    \\    void ImageDrawTriangleStrip(Image *dst, Vector2 *points, int pointCount, Color color);             // Draw a triangle strip defined by points within an image
+    \\    void ImageDraw(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, Color tint);             // Draw a source image within a destination image (tint applied to source)
+    \\    void ImageDrawText(Image *dst, const char *text, int posX, int posY, int fontSize, Color color);   // Draw text (using default font) within an image (destination)
+    \\    void ImageDrawTextEx(Image *dst, Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text (custom sprite font) within an image (destination)
+    \\
+    \\    // Texture loading functions
+    \\    // NOTE: These functions require GPU access
+    \\    Texture2D LoadTexture(const char *fileName);                                                       // Load texture from file into GPU memory (VRAM)
+    \\    Texture2D LoadTextureFromImage(Image image);                                                       // Load texture from image data
+    \\    TextureCubemap LoadTextureCubemap(Image image, int layout);                                        // Load cubemap from image, multiple image cubemap layouts supported
+    \\    RenderTexture2D LoadRenderTexture(int width, int height);                                          // Load texture for rendering (framebuffer)
+    \\    bool IsTextureValid(Texture2D texture);                                                            // Check if a texture is valid (loaded in GPU)
+    \\    void UnloadTexture(Texture2D texture);                                                             // Unload texture from GPU memory (VRAM)
+    \\    bool IsRenderTextureValid(RenderTexture2D target);                                                 // Check if a render texture is valid (loaded in GPU)
+    \\    void UnloadRenderTexture(RenderTexture2D target);                                                  // Unload render texture from GPU memory (VRAM)
+    \\    void UpdateTexture(Texture2D texture, const void *pixels);                                         // Update GPU texture with new data
+    \\    void UpdateTextureRec(Texture2D texture, Rectangle rec, const void *pixels);                       // Update GPU texture rectangle with new data
+    \\
+    \\    // Texture configuration functions
+    \\    void GenTextureMipmaps(Texture2D *texture);                                                        // Generate GPU mipmaps for a texture
+    \\    void SetTextureFilter(Texture2D texture, int filter);                                              // Set texture scaling filter mode
+    \\    void SetTextureWrap(Texture2D texture, int wrap);                                                  // Set texture wrapping mode
+    \\
+    \\    // Texture drawing functions
+    \\    void DrawTexture(Texture2D texture, int posX, int posY, Color tint);                               // Draw a Texture2D
+    \\    void DrawTextureV(Texture2D texture, Vector2 position, Color tint);                                // Draw a Texture2D with position defined as Vector2
+    \\    void DrawTextureEx(Texture2D texture, Vector2 position, float rotation, float scale, Color tint);  // Draw a Texture2D with extended parameters
+    \\    void DrawTextureRec(Texture2D texture, Rectangle source, Vector2 position, Color tint);            // Draw a part of a texture defined by a rectangle
+    \\    void DrawTexturePro(Texture2D texture, Rectangle source, Rectangle dest, Vector2 origin, float rotation, Color tint); // Draw a part of a texture defined by a rectangle with 'pro' parameters
+    \\    void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dest, Vector2 origin, float rotation, Color tint); // Draws a texture (or part of it) that stretches or shrinks nicely
+    \\
+    \\    // Color/pixel related functions
+    \\    bool ColorIsEqual(Color col1, Color col2);                            // Check if two colors are equal
+    \\    Color Fade(Color color, float alpha);                                 // Get color with alpha applied, alpha goes from 0.0f to 1.0f
+    \\    int ColorToInt(Color color);                                          // Get hexadecimal value for a Color (0xRRGGBBAA)
+    \\    Vector4 ColorNormalize(Color color);                                  // Get Color normalized as float [0..1]
+    \\    Color ColorFromNormalized(Vector4 normalized);                        // Get Color from normalized values [0..1]
+    \\    Vector3 ColorToHSV(Color color);                                      // Get HSV values for a Color, hue [0..360], saturation/value [0..1]
+    \\    Color ColorFromHSV(float hue, float saturation, float value);         // Get a Color from HSV values, hue [0..360], saturation/value [0..1]
+    \\    Color ColorTint(Color color, Color tint);                             // Get color multiplied with another color
+    \\    Color ColorBrightness(Color color, float factor);                     // Get color with brightness correction, brightness factor goes from -1.0f to 1.0f
+    \\    Color ColorContrast(Color color, float contrast);                     // Get color with contrast correction, contrast values between -1.0f and 1.0f
+    \\    Color ColorAlpha(Color color, float alpha);                           // Get color with alpha applied, alpha goes from 0.0f to 1.0f
+    \\    Color ColorAlphaBlend(Color dst, Color src, Color tint);              // Get src alpha-blended into dst color with tint
+    \\    Color ColorLerp(Color color1, Color color2, float factor);            // Get color lerp interpolation between two colors, factor [0.0f..1.0f]
+    \\    Color GetColor(unsigned int hexValue);                                // Get Color structure from hexadecimal value
+    \\    Color GetPixelColor(void *srcPtr, int format);                        // Get Color from a source pixel pointer of certain format
+    \\    void SetPixelColor(void *dstPtr, Color color, int format);            // Set color formatted into destination pixel pointer
+    \\    int GetPixelDataSize(int width, int height, int format);              // Get pixel data size in bytes for certain format
+    \\    Font GetFontDefault(void);                                                            // Get the default Font
+    \\    Font LoadFont(const char *fileName);                                                  // Load font from file into GPU memory (VRAM)
+    \\    Font LoadFontEx(const char *fileName, int fontSize, int *codepoints, int codepointCount); // Load font from file with extended parameters, use NULL for codepoints and 0 for codepointCount to load the default character set, font size is provided in pixels height
+    \\    Font LoadFontFromImage(Image image, Color key, int firstChar);                        // Load font from Image (XNA style)
+    \\    Font LoadFontFromMemory(const char *fileType, const unsigned char *fileData, int dataSize, int fontSize, int *codepoints, int codepointCount); // Load font from memory buffer, fileType refers to extension: i.e. '.ttf'
+    \\    bool IsFontValid(Font font);                                                          // Check if a font is valid (font data loaded, WARNING: GPU texture not checked)
+    \\    GlyphInfo *LoadFontData(const unsigned char *fileData, int dataSize, int fontSize, int *codepoints, int codepointCount, int type); // Load font data for further use
+    \\    Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyphCount, int fontSize, int padding, int packMethod); // Generate image font atlas using chars info
+    \\    void UnloadFontData(GlyphInfo *glyphs, int glyphCount);                               // Unload font chars info data (RAM)
+    \\    void UnloadFont(Font font);                                                           // Unload font from GPU memory (VRAM)
+    \\    bool ExportFontAsCode(Font font, const char *fileName);                               // Export font as code file, returns true on success
+    \\
+    \\    // Text drawing functions
+    \\    void DrawFPS(int posX, int posY);                                                     // Draw current FPS
+    \\    void DrawText(const char *text, int posX, int posY, int fontSize, Color color);       // Draw text (using default font)
+    \\    void DrawTextEx(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text using font and additional parameters
+    \\    void DrawTextPro(Font font, const char *text, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint); // Draw text using Font and pro parameters (rotation)
+    \\    void DrawTextCodepoint(Font font, int codepoint, Vector2 position, float fontSize, Color tint); // Draw one character (codepoint)
+    \\    void DrawTextCodepoints(Font font, const int *codepoints, int codepointCount, Vector2 position, float fontSize, float spacing, Color tint); // Draw multiple character (codepoint)
+    \\
+    \\    // Text font info functions
+    \\    void SetTextLineSpacing(int spacing);                                                 // Set vertical line spacing when drawing with line-breaks
+    \\    int MeasureText(const char *text, int fontSize);                                      // Measure string width for default font
+    \\    Vector2 MeasureTextEx(Font font, const char *text, float fontSize, float spacing);    // Measure string size for Font
+    \\    int GetGlyphIndex(Font font, int codepoint);                                          // Get glyph index position in font for a codepoint (unicode character), fallback to '?' if not found
+    \\    GlyphInfo GetGlyphInfo(Font font, int codepoint);                                     // Get glyph font info data for a codepoint (unicode character), fallback to '?' if not found
+    \\    Rectangle GetGlyphAtlasRec(Font font, int codepoint);                                 // Get glyph rectangle in font atlas for a codepoint (unicode character), fallback to '?' if not found
+    \\
+    \\    // Text codepoints management functions (unicode characters)
+    \\    char *LoadUTF8(const int *codepoints, int length);                // Load UTF-8 text encoded from codepoints array
+    \\    void UnloadUTF8(char *text);                                      // Unload UTF-8 text encoded from codepoints array
+    \\    int *LoadCodepoints(const char *text, int *count);                // Load all codepoints from a UTF-8 text string, codepoints count returned by parameter
+    \\    void UnloadCodepoints(int *codepoints);                           // Unload codepoints data from memory
+    \\    int GetCodepointCount(const char *text);                          // Get total number of codepoints in a UTF-8 encoded string
+    \\    int GetCodepoint(const char *text, int *codepointSize);           // Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
+    \\    int GetCodepointNext(const char *text, int *codepointSize);       // Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
+    \\    int GetCodepointPrevious(const char *text, int *codepointSize);   // Get previous codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
+    \\    const char *CodepointToUTF8(int codepoint, int *utf8Size);        // Encode one codepoint into UTF-8 byte array (array length returned as parameter)
+    \\
+    \\    // Text strings management functions (no UTF-8 strings, only byte chars)
+    \\    // NOTE: Some strings allocate memory internally for returned strings, just be careful!
+    \\    int TextCopy(char *dst, const char *src);                                             // Copy one string to another, returns bytes copied
+    \\    bool TextIsEqual(const char *text1, const char *text2);                               // Check if two text string are equal
+    \\    unsigned int TextLength(const char *text);                                            // Get text length, checks for '\0' ending
+    \\    const char *TextFormat(const char *text, ...);                                        // Text formatting with variables (sprintf() style)
+    \\    const char *TextSubtext(const char *text, int position, int length);                  // Get a piece of a text string
+    \\    char *TextReplace(const char *text, const char *replace, const char *by);             // Replace text string (WARNING: memory must be freed!)
+    \\    char *TextInsert(const char *text, const char *insert, int position);                 // Insert text in a position (WARNING: memory must be freed!)
+    \\    const char *TextJoin(const char **textList, int count, const char *delimiter);        // Join text strings with delimiter
+    \\    const char **TextSplit(const char *text, char delimiter, int *count);                 // Split text into multiple strings
+    \\    void TextAppend(char *text, const char *append, int *position);                       // Append text at specific position and move cursor!
+    \\    int TextFindIndex(const char *text, const char *find);                                // Find first text occurrence within a string
+    \\    const char *TextToUpper(const char *text);                      // Get upper case version of provided string
+    \\    const char *TextToLower(const char *text);                      // Get lower case version of provided string
+    \\    const char *TextToPascal(const char *text);                     // Get Pascal case notation version of provided string
+    \\    const char *TextToSnake(const char *text);                      // Get Snake case notation version of provided string
+    \\    const char *TextToCamel(const char *text);                      // Get Camel case notation version of provided string
+    \\
+    \\    int TextToInteger(const char *text);                            // Get integer value from text (negative values not supported)
+    \\   float TextToFloat(const char *text);                            // Get float value from text (negative values not supported)
+    \\    void DrawLine3D(Vector3 startPos, Vector3 endPos, Color color);                                    // Draw a line in 3D world space
+    \\    void DrawPoint3D(Vector3 position, Color color);                                                   // Draw a point in 3D space, actually a small line
+    \\    void DrawCircle3D(Vector3 center, float radius, Vector3 rotationAxis, float rotationAngle, Color color); // Draw a circle in 3D world space
+    \\    void DrawTriangle3D(Vector3 v1, Vector3 v2, Vector3 v3, Color color);                              // Draw a color-filled triangle (vertex in counter-clockwise order!)
+    \\    void DrawTriangleStrip3D(const Vector3 *points, int pointCount, Color color);                      // Draw a triangle strip defined by points
+    \\    void DrawCube(Vector3 position, float width, float height, float length, Color color);             // Draw cube
+    \\    void DrawCubeV(Vector3 position, Vector3 size, Color color);                                       // Draw cube (Vector version)
+    \\    void DrawCubeWires(Vector3 position, float width, float height, float length, Color color);        // Draw cube wires
+    \\    void DrawCubeWiresV(Vector3 position, Vector3 size, Color color);                                  // Draw cube wires (Vector version)
+    \\    void DrawSphere(Vector3 centerPos, float radius, Color color);                                     // Draw sphere
+    \\    void DrawSphereEx(Vector3 centerPos, float radius, int rings, int slices, Color color);            // Draw sphere with extended parameters
+    \\    void DrawSphereWires(Vector3 centerPos, float radius, int rings, int slices, Color color);         // Draw sphere wires
+    \\    void DrawCylinder(Vector3 position, float radiusTop, float radiusBottom, float height, int slices, Color color); // Draw a cylinder/cone
+    \\    void DrawCylinderEx(Vector3 startPos, Vector3 endPos, float startRadius, float endRadius, int sides, Color color); // Draw a cylinder with base at startPos and top at endPos
+    \\    void DrawCylinderWires(Vector3 position, float radiusTop, float radiusBottom, float height, int slices, Color color); // Draw a cylinder/cone wires
+    \\    void DrawCylinderWiresEx(Vector3 startPos, Vector3 endPos, float startRadius, float endRadius, int sides, Color color); // Draw a cylinder wires with base at startPos and top at endPos
+    \\    void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int slices, int rings, Color color); // Draw a capsule with the center of its sphere caps at startPos and endPos
+    \\    void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int slices, int rings, Color color); // Draw capsule wireframe with the center of its sphere caps at startPos and endPos
+    \\    void DrawPlane(Vector3 centerPos, Vector2 size, Color color);                                      // Draw a plane XZ
+    \\    void DrawRay(Ray ray, Color color);                                                                // Draw a ray line
+    \\    void DrawGrid(int slices, float spacing);                                                          // Draw a grid (centered at (0, 0, 0))
+    \\
+    \\    //------------------------------------------------------------------------------------
+    \\    // Model 3d Loading and Drawing Functions (Module: models)
+    \\    //------------------------------------------------------------------------------------
+    \\
+    \\    // Model management functions
+    \\    Model LoadModel(const char *fileName);                                                // Load model from files (meshes and materials)
+    \\    Model LoadModelFromMesh(Mesh mesh);                                                   // Load model from generated mesh (default material)
+    \\    bool IsModelValid(Model model);                                                       // Check if a model is valid (loaded in GPU, VAO/VBOs)
+    \\    void UnloadModel(Model model);                                                        // Unload model (including meshes) from memory (RAM and/or VRAM)
+    \\    BoundingBox GetModelBoundingBox(Model model);                                         // Compute model bounding box limits (considers all meshes)
+    \\
+    \\    // Model drawing functions
+    \\    void DrawModel(Model model, Vector3 position, float scale, Color tint);               // Draw a model (with texture if set)
+    \\    void DrawModelEx(Model model, Vector3 position, Vector3 rotationAxis, float rotationAngle, Vector3 scale, Color tint); // Draw a model with extended parameters
+    \\    void DrawModelWires(Model model, Vector3 position, float scale, Color tint);          // Draw a model wires (with texture if set)
+    \\    void DrawModelWiresEx(Model model, Vector3 position, Vector3 rotationAxis, float rotationAngle, Vector3 scale, Color tint); // Draw a model wires (with texture if set) with extended parameters
+    \\    void DrawModelPoints(Model model, Vector3 position, float scale, Color tint); // Draw a model as points
+    \\    void DrawModelPointsEx(Model model, Vector3 position, Vector3 rotationAxis, float rotationAngle, Vector3 scale, Color tint); // Draw a model as points with extended parameters
+    \\    void DrawBoundingBox(BoundingBox box, Color color);                                   // Draw bounding box (wires)
+    \\    void DrawBillboard(Camera camera, Texture2D texture, Vector3 position, float scale, Color tint);   // Draw a billboard texture
+    \\    void DrawBillboardRec(Camera camera, Texture2D texture, Rectangle source, Vector3 position, Vector2 size, Color tint); // Draw a billboard texture defined by source
+    \\    void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle source, Vector3 position, Vector3 up, Vector2 size, Vector2 origin, float rotation, Color tint); // Draw a billboard texture defined by source and rotation
+    \\
+    \\    // Mesh management functions
+    \\    void UploadMesh(Mesh *mesh, bool dynamic);                                            // Upload mesh vertex data in GPU and provide VAO/VBO ids
+    \\    void UpdateMeshBuffer(Mesh mesh, int index, const void *data, int dataSize, int offset); // Update mesh vertex data in GPU for a specific buffer index
+    \\    void UnloadMesh(Mesh mesh);                                                           // Unload mesh data from CPU and GPU
+    \\    void DrawMesh(Mesh mesh, Material material, Matrix transform);                        // Draw a 3d mesh with material and transform
+    \\    void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, int instances); // Draw multiple mesh instances with material and different transforms
+    \\    BoundingBox GetMeshBoundingBox(Mesh mesh);                                            // Compute mesh bounding box limits
+    \\    void GenMeshTangents(Mesh *mesh);                                                     // Compute mesh tangents
+    \\    bool ExportMesh(Mesh mesh, const char *fileName);                                     // Export mesh data to file, returns true on success
+    \\    bool ExportMeshAsCode(Mesh mesh, const char *fileName);                               // Export mesh as code file (.h) defining multiple arrays of vertex attributes
+    \\
+    \\    // Mesh generation functions
+    \\    Mesh GenMeshPoly(int sides, float radius);                                            // Generate polygonal mesh
+    \\    Mesh GenMeshPlane(float width, float length, int resX, int resZ);                     // Generate plane mesh (with subdivisions)
+    \\    Mesh GenMeshCube(float width, float height, float length);                            // Generate cuboid mesh
+    \\    Mesh GenMeshSphere(float radius, int rings, int slices);                              // Generate sphere mesh (standard sphere)
+    \\    Mesh GenMeshHemiSphere(float radius, int rings, int slices);                          // Generate half-sphere mesh (no bottom cap)
+    \\    Mesh GenMeshCylinder(float radius, float height, int slices);                         // Generate cylinder mesh
+    \\    Mesh GenMeshCone(float radius, float height, int slices);                             // Generate cone/pyramid mesh
+    \\    Mesh GenMeshTorus(float radius, float size, int radSeg, int sides);                   // Generate torus mesh
+    \\    Mesh GenMeshKnot(float radius, float size, int radSeg, int sides);                    // Generate trefoil knot mesh
+    \\    Mesh GenMeshHeightmap(Image heightmap, Vector3 size);                                 // Generate heightmap mesh from image data
+    \\    Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize);                               // Generate cubes-based map mesh from image data
+    \\
+    \\    // Material loading/unloading functions
+    \\    Material *LoadMaterials(const char *fileName, int *materialCount);                    // Load materials from model file
+    \\    Material LoadMaterialDefault(void);                                                   // Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps)
+    \\    bool IsMaterialValid(Material material);                                              // Check if a material is valid (shader assigned, map textures loaded in GPU)
+    \\    void UnloadMaterial(Material material);                                               // Unload material from GPU memory (VRAM)
+    \\    void SetMaterialTexture(Material *material, int mapType, Texture2D texture);          // Set texture for a material map type (MATERIAL_MAP_DIFFUSE, MATERIAL_MAP_SPECULAR...)
+    \\    void SetModelMeshMaterial(Model *model, int meshId, int materialId);                  // Set material for a mesh
+    \\
+    \\    // Model animations loading/unloading functions
+    \\    ModelAnimation *LoadModelAnimations(const char *fileName, int *animCount);            // Load model animations from file
+    \\    void UpdateModelAnimation(Model model, ModelAnimation anim, int frame);               // Update model animation pose (CPU)
+    \\    void UpdateModelAnimationBones(Model model, ModelAnimation anim, int frame);          // Update model animation mesh bone matrices (GPU skinning)
+    \\    void UnloadModelAnimation(ModelAnimation anim);                                       // Unload animation data
+    \\    bool IsModelAnimationValid(Model model, ModelAnimation anim);                         // Check model animation skeleton match
+    \\
+    \\    // Collision detection functions
+    \\    bool CheckCollisionSpheres(Vector3 center1, float radius1, Vector3 center2, float radius2);   // Check collision between two spheres
+    \\    bool CheckCollisionBoxes(BoundingBox box1, BoundingBox box2);                                 // Check collision between two bounding boxes
+    \\    bool CheckCollisionBoxSphere(BoundingBox box, Vector3 center, float radius);                  // Check collision between box and sphere
+    \\    RayCollision GetRayCollisionSphere(Ray ray, Vector3 center, float radius);                    // Get collision info between ray and sphere
+    \\    RayCollision GetRayCollisionBox(Ray ray, BoundingBox box);                                    // Get collision info between ray and box
+    \\    RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, Matrix transform);                       // Get collision info between ray and mesh
+    \\    RayCollision GetRayCollisionTriangle(Ray ray, Vector3 p1, Vector3 p2, Vector3 p3);            // Get collision info between ray and triangle
+    \\    RayCollision GetRayCollisionQuad(Ray ray, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4);    // Get collision info between ray and quad
+    \\    void InitAudioDevice(void);                                     // Initialize audio device and context
+    \\    void CloseAudioDevice(void);                                    // Close the audio device and context
+    \\    bool IsAudioDeviceReady(void);                                  // Check if audio device has been initialized successfully
+    \\    void SetMasterVolume(float volume);                             // Set master volume (listener)
+    \\    float GetMasterVolume(void);                                    // Get master volume (listener)
+    \\
+    \\    // Wave/Sound loading/unloading functions
+    \\    Wave LoadWave(const char *fileName);                            // Load wave data from file
+    \\    Wave LoadWaveFromMemory(const char *fileType, const unsigned char *fileData, int dataSize); // Load wave from memory buffer, fileType refers to extension: i.e. '.wav'
+    \\    bool IsWaveValid(Wave wave);                                    // Checks if wave data is valid (data loaded and parameters)
+    \\    Sound LoadSound(const char *fileName);                          // Load sound from file
+    \\    Sound LoadSoundFromWave(Wave wave);                             // Load sound from wave data
+    \\    Sound LoadSoundAlias(Sound source);                             // Create a new sound that shares the same sample data as the source sound, does not own the sound data
+    \\    bool IsSoundValid(Sound sound);                                 // Checks if a sound is valid (data loaded and buffers initialized)
+    \\    void UpdateSound(Sound sound, const void *data, int sampleCount); // Update sound buffer with new data
+    \\    void UnloadWave(Wave wave);                                     // Unload wave data
+    \\    void UnloadSound(Sound sound);                                  // Unload sound
+    \\    void UnloadSoundAlias(Sound alias);                             // Unload a sound alias (does not deallocate sample data)
+    \\    bool ExportWave(Wave wave, const char *fileName);               // Export wave data to file, returns true on success
+    \\    bool ExportWaveAsCode(Wave wave, const char *fileName);         // Export wave sample data to code (.h), returns true on success
+    \\
+    \\    // Wave/Sound management functions
+    \\    void PlaySound(Sound sound);                                    // Play a sound
+    \\    void StopSound(Sound sound);                                    // Stop playing a sound
+    \\    void PauseSound(Sound sound);                                   // Pause a sound
+    \\    void ResumeSound(Sound sound);                                  // Resume a paused sound
+    \\    bool IsSoundPlaying(Sound sound);                               // Check if a sound is currently playing
+    \\    void SetSoundVolume(Sound sound, float volume);                 // Set volume for a sound (1.0 is max level)
+    \\    void SetSoundPitch(Sound sound, float pitch);                   // Set pitch for a sound (1.0 is base level)
+    \\    void SetSoundPan(Sound sound, float pan);                       // Set pan for a sound (0.5 is center)
+    \\    Wave WaveCopy(Wave wave);                                       // Copy a wave to a new wave
+    \\    void WaveCrop(Wave *wave, int initFrame, int finalFrame);       // Crop a wave to defined frames range
+    \\    void WaveFormat(Wave *wave, int sampleRate, int sampleSize, int channels); // Convert wave data to desired format
+    \\    float *LoadWaveSamples(Wave wave);                              // Load samples data from wave as a 32bit float data array
+    \\    void UnloadWaveSamples(float *samples);                         // Unload samples data loaded with LoadWaveSamples()
+    \\
+    \\    // Music management functions
+    \\    Music LoadMusicStream(const char *fileName);                    // Load music stream from file
+    \\    Music LoadMusicStreamFromMemory(const char *fileType, const unsigned char *data, int dataSize); // Load music stream from data
+    \\    bool IsMusicValid(Music music);                                 // Checks if a music stream is valid (context and buffers initialized)
+    \\    void UnloadMusicStream(Music music);                            // Unload music stream
+    \\    void PlayMusicStream(Music music);                              // Start music playing
+    \\    bool IsMusicStreamPlaying(Music music);                         // Check if music is playing
+    \\    void UpdateMusicStream(Music music);                            // Updates buffers for music streaming
+    \\    void StopMusicStream(Music music);                              // Stop music playing
+    \\    void PauseMusicStream(Music music);                             // Pause music playing
+    \\    void ResumeMusicStream(Music music);                            // Resume playing paused music
+    \\    void SeekMusicStream(Music music, float position);              // Seek music to a position (in seconds)
+    \\    void SetMusicVolume(Music music, float volume);                 // Set volume for music (1.0 is max level)
+    \\    void SetMusicPitch(Music music, float pitch);                   // Set pitch for a music (1.0 is base level)
+    \\    void SetMusicPan(Music music, float pan);                       // Set pan for a music (0.5 is center)
+    \\    float GetMusicTimeLength(Music music);                          // Get music time length (in seconds)
+    \\    float GetMusicTimePlayed(Music music);                          // Get current music time played (in seconds)
+    \\
+    \\    // AudioStream management functions
+    \\    AudioStream LoadAudioStream(unsigned int sampleRate, unsigned int sampleSize, unsigned int channels); // Load audio stream (to stream raw audio pcm data)
+    \\    bool IsAudioStreamValid(AudioStream stream);                    // Checks if an audio stream is valid (buffers initialized)
+    \\    void UnloadAudioStream(AudioStream stream);                     // Unload audio stream and free memory
+    \\    void UpdateAudioStream(AudioStream stream, const void *data, int frameCount); // Update audio stream buffers with data
+    \\    bool IsAudioStreamProcessed(AudioStream stream);                // Check if any audio stream buffers requires refill
+    \\    void PlayAudioStream(AudioStream stream);                       // Play audio stream
+    \\    void PauseAudioStream(AudioStream stream);                      // Pause audio stream
+    \\    void ResumeAudioStream(AudioStream stream);                     // Resume audio stream
+    \\    bool IsAudioStreamPlaying(AudioStream stream);                  // Check if audio stream is playing
+    \\    void StopAudioStream(AudioStream stream);                       // Stop audio stream
+    \\    void SetAudioStreamVolume(AudioStream stream, float volume);    // Set volume for audio stream (1.0 is max level)
+    \\    void SetAudioStreamPitch(AudioStream stream, float pitch);      // Set pitch for audio stream (1.0 is base level)
+    \\    void SetAudioStreamPan(AudioStream stream, float pan);          // Set pan for audio stream (0.5 is centered)
+    \\    void SetAudioStreamBufferSizeDefault(int size);                 // Default size for new audio streams
 ;

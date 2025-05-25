@@ -39,7 +39,57 @@ pub fn log(vm: ?*wren.WrenVM) callconv(.C) void {
     wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@log(a))));
 }
 
+pub fn log2(vm: ?*wren.WrenVM) callconv(.C) void {
+    const a = wren.wrenGetSlotDouble(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@log2(a))));
+}
+
+pub fn log10(vm: ?*wren.WrenVM) callconv(.C) void {
+    const a = wren.wrenGetSlotDouble(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@log10(a))));
+}
+
+pub fn abs(vm: ?*wren.WrenVM) callconv(.C) void {
+    const a = wren.wrenGetSlotDouble(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@abs(a))));
+}
+
 pub fn exp(vm: ?*wren.WrenVM) callconv(.C) void {
     const a = wren.wrenGetSlotDouble(vm, 1);
     wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@exp(a))));
+}
+
+pub fn exp2(vm: ?*wren.WrenVM) callconv(.C) void {
+    const a = wren.wrenGetSlotDouble(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@exp2(a))));
+}
+
+pub fn tan(vm: ?*wren.WrenVM) callconv(.C) void {
+    const a = wren.wrenGetSlotDouble(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@tan(a))));
+}
+
+pub fn sqrt(vm: ?*wren.WrenVM) callconv(.C) void {
+    const a = wren.wrenGetSlotDouble(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@sqrt(a))));
+}
+
+pub fn floor(vm: ?*wren.WrenVM) callconv(.C) void {
+    const a = wren.wrenGetSlotDouble(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@floor(a))));
+}
+
+pub fn ceil(vm: ?*wren.WrenVM) callconv(.C) void {
+    const a = wren.wrenGetSlotDouble(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@ceil(a))));
+}
+
+pub fn trunc(vm: ?*wren.WrenVM) callconv(.C) void {
+    const a = wren.wrenGetSlotDouble(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@trunc(a))));
+}
+
+pub fn round(vm: ?*wren.WrenVM) callconv(.C) void {
+    const a = wren.wrenGetSlotDouble(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@round(a))));
 }

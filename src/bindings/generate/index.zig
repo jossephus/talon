@@ -2294,17 +2294,3494 @@ pub fn wren_raylib_get_collision_rec(vm: ?*wren.WrenVM) callconv(.C) void {
     ptr.* = r.GetCollisionRec(@"0", @"1");
 }
 
+pub fn wren_raylib_set_shapes_texture(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Texture2D = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Rectangle = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Rectangle = ptr_1.?.*;
+    r.SetShapesTexture(@"0", @"1");
+}
+
+pub fn wren_raylib_get_shapes_texture(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Texture2D));
+
+    const ptr: *r.Texture2D = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetShapesTexture();
+}
+
+pub fn wren_raylib_get_shapes_texture_rectangle(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Rectangle));
+
+    const ptr: *r.Rectangle = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetShapesTextureRectangle();
+}
+
+pub fn wren_raylib_load_image(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadImage(@"0");
+}
+
+pub fn wren_raylib_load_image_raw(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadImageRaw(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_load_image_anim(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadImageAnim(@"0", @"1");
+}
+
+pub fn wren_raylib_load_image_anim_from_memory(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("We do not support r.LoadImageAnimFromMemory yet");
+    //const @"0" = wren.wrenGetSlotString(vm, 1);
+    //const @"1" = wren.wrenGetSlotString(vm, 2);
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    //const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    //const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    //ptr.* = r.LoadImageAnimFromMemory(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_load_image_from_memory(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadImageFromMemory(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_load_image_from_texture(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Texture2D = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadImageFromTexture(@"0");
+}
+
+pub fn wren_raylib_load_image_from_screen(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadImageFromScreen();
+}
+
+pub fn wren_raylib_is_image_valid(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsImageValid(@"0"));
+}
+
+pub fn wren_raylib_unload_image(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    r.UnloadImage(@"0");
+}
+
+pub fn wren_raylib_export_image(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    wren.wrenSetSlotBool(vm, 0, r.ExportImage(@"0", @"1"));
+}
+
+pub fn wren_raylib_export_image_to_memory(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("we do not have support for r.ExportImageFromMemory Yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Image = ptr_0.?.*;
+    //const @"1" = wren.wrenGetSlotString(vm, 2);
+
+    // TODO: This should be a list.
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //wren.wrenSetSlotString(vm, 0, r.ExportImageToMemory(@"0", @"1", @"2"));
+}
+
+pub fn wren_raylib_export_image_as_code(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    wren.wrenSetSlotBool(vm, 0, r.ExportImageAsCode(@"0", @"1"));
+}
+
+pub fn wren_raylib_gen_image_color(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Color = ptr_2.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenImageColor(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_gen_image_gradient_linear(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenImageGradientLinear(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_gen_image_gradient_radial(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenImageGradientRadial(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_gen_image_gradient_square(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenImageGradientSquare(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_gen_image_checked(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenImageChecked(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_gen_image_white_noise(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenImageWhiteNoise(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_gen_image_perlin_noise(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const @"4" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 5)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenImagePerlinNoise(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_gen_image_cellular(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenImageCellular(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_gen_image_text(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2" = wren.wrenGetSlotString(vm, 3);
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenImageText(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_image_copy(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ImageCopy(@"0");
+}
+
+pub fn wren_raylib_image_from_image(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Rectangle = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Rectangle = ptr_1.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ImageFromImage(@"0", @"1");
+}
+
+pub fn wren_raylib_image_from_channel(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ImageFromChannel(@"0", @"1");
+}
+
+pub fn wren_raylib_image_text(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Color = ptr_2.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ImageText(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_image_text_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Font = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Font = ptr_0.?.*;
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ImageTextEx(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_image_format(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    r.ImageFormat(@"0", @"1");
+}
+
+pub fn wren_raylib_image_to_p_o_t(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    r.ImageToPOT(@"0", @"1");
+}
+
+pub fn wren_raylib_image_crop(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Rectangle = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Rectangle = ptr_1.?.*;
+    r.ImageCrop(@"0", @"1");
+}
+
+pub fn wren_raylib_image_alpha_crop(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.ImageAlphaCrop(@"0", @"1");
+}
+
+pub fn wren_raylib_image_alpha_clear(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    r.ImageAlphaClear(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_image_alpha_mask(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Image = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Image = ptr_1.?.*;
+    r.ImageAlphaMask(@"0", @"1");
+}
+
+pub fn wren_raylib_image_alpha_premultiply(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    r.ImageAlphaPremultiply(@"0");
+}
+
+pub fn wren_raylib_image_blur_gaussian(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    r.ImageBlurGaussian(@"0", @"1");
+}
+
+pub fn wren_raylib_image_kernel_convolution(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Image = ptr_0.?.*;
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.const float = @alignCast(@ptrCast(foreign_1));
+    //const @"1": r.const float = ptr_1.?.*;
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //r.ImageKernelConvolution(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_image_resize(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    r.ImageResize(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_image_resize_n_n(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    r.ImageResizeNN(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_image_resize_canvas(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.ImageResizeCanvas(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_image_mipmaps(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    r.ImageMipmaps(@"0");
+}
+
+pub fn wren_raylib_image_dither(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    r.ImageDither(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_image_flip_vertical(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    r.ImageFlipVertical(@"0");
+}
+
+pub fn wren_raylib_image_flip_horizontal(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    r.ImageFlipHorizontal(@"0");
+}
+
+pub fn wren_raylib_image_rotate(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    r.ImageRotate(@"0", @"1");
+}
+
+pub fn wren_raylib_image_rotate_c_w(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    r.ImageRotateCW(@"0");
+}
+
+pub fn wren_raylib_image_rotate_c_c_w(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    r.ImageRotateCCW(@"0");
+}
+
+pub fn wren_raylib_image_color_tint(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    r.ImageColorTint(@"0", @"1");
+}
+
+pub fn wren_raylib_image_color_invert(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    r.ImageColorInvert(@"0");
+}
+
+pub fn wren_raylib_image_color_grayscale(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    r.ImageColorGrayscale(@"0");
+}
+
+pub fn wren_raylib_image_color_contrast(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.ImageColorContrast(@"0", @"1");
+}
+
+pub fn wren_raylib_image_color_brightness(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    r.ImageColorBrightness(@"0", @"1");
+}
+
+pub fn wren_raylib_image_color_replace(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Color = ptr_2.?.*;
+    r.ImageColorReplace(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_load_image_colors(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    var ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr = r.LoadImageColors(@"0");
+}
+
+pub fn wren_raylib_load_image_palette(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    var ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr = r.LoadImagePalette(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_unload_image_colors(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Color = ptr_0.?;
+    r.UnloadImageColors(@"0");
+}
+
+pub fn wren_raylib_unload_image_palette(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Color = ptr_0.?;
+    r.UnloadImagePalette(@"0");
+}
+
+pub fn wren_raylib_get_image_alpha_border(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Rectangle));
+
+    const ptr: *r.Rectangle = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetImageAlphaBorder(@"0", @"1");
+}
+
+pub fn wren_raylib_get_image_color(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    const ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetImageColor(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_image_clear_background(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    r.ImageClearBackground(@"0", @"1");
+}
+
+pub fn wren_raylib_image_draw_pixel(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    r.ImageDrawPixel(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_image_draw_pixel_v(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector2 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Color = ptr_2.?.*;
+    r.ImageDrawPixelV(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_image_draw_line(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.ImageDrawLine(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_image_draw_line_v(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector2 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector2 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector2 = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    r.ImageDrawLineV(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_image_draw_line_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector2 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector2 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector2 = ptr_2.?.*;
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.ImageDrawLineEx(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_image_draw_circle(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.ImageDrawCircle(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_image_draw_circle_v(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector2 = ptr_1.?.*;
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    r.ImageDrawCircleV(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_image_draw_circle_lines(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.ImageDrawCircleLines(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_image_draw_circle_lines_v(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector2 = ptr_1.?.*;
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    r.ImageDrawCircleLinesV(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_image_draw_rectangle(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.ImageDrawRectangle(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_image_draw_rectangle_v(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector2 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector2 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector2 = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    r.ImageDrawRectangleV(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_image_draw_rectangle_rec(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Rectangle = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Rectangle = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Color = ptr_2.?.*;
+    r.ImageDrawRectangleRec(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_image_draw_rectangle_lines(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Rectangle = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Rectangle = ptr_1.?.*;
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    r.ImageDrawRectangleLines(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_image_draw_triangle(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector2 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector2 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector2 = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Vector2 = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Vector2 = ptr_3.?.*;
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.ImageDrawTriangle(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_image_draw_triangle_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector2 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector2 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector2 = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Vector2 = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Vector2 = ptr_3.?.*;
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    const foreign_6 = wren.wrenGetSlotForeign(vm, 7);
+    const ptr_6: ?*r.Color = @alignCast(@ptrCast(foreign_6));
+    const @"6": r.Color = ptr_6.?.*;
+    r.ImageDrawTriangleEx(@"0", @"1", @"2", @"3", @"4", @"5", @"6");
+}
+
+pub fn wren_raylib_image_draw_triangle_lines(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector2 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector2 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector2 = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Vector2 = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Vector2 = ptr_3.?.*;
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.ImageDrawTriangleLines(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_image_draw_triangle_fan(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.ImageDrawTriangleFan is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Image = ptr_0.?.*;
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    //const @"1": *r.Vector2 = ptr_1.?;
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    //const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    //const @"3": r.Color = ptr_3.?.*;
+    //r.ImageDrawTriangleFan(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_image_draw_triangle_strip(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.ImageDrawTriangleStrip is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    //const @"0": *r.Image = ptr_0.?;
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    //const @"1": r.Vector2 = ptr_1.?.*;
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    //const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    //const @"3": r.Color = ptr_3.?.*;
+    //r.ImageDrawTriangleStrip(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_image_draw(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": *r.Image = ptr_0.?;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Image = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Image = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Rectangle = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Rectangle = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Rectangle = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Rectangle = ptr_3.?.*;
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.ImageDraw(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_image_draw_text(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.ImageDrawText is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Image = ptr_0.?.*;
+    //const @"1" = wren.wrenGetSlotString(vm, 2);
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    //const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    //const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    //const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    //const @"5": r.Color = ptr_5.?.*;
+    //r.ImageDrawText(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_image_draw_text_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.ImageDrawTextEx is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Image = ptr_0.?.*;
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.Font = @alignCast(@ptrCast(foreign_1));
+    //const @"1": r.Font = ptr_1.?.*;
+    //const @"2" = wren.wrenGetSlotString(vm, 3);
+    //const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    //const ptr_3: ?*r.Vector2 = @alignCast(@ptrCast(foreign_3));
+    //const @"3": r.Vector2 = ptr_3.?.*;
+    //const @"4" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 5)));
+    //const @"5" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 6)));
+    //const foreign_6 = wren.wrenGetSlotForeign(vm, 7);
+    //const ptr_6: ?*r.Color = @alignCast(@ptrCast(foreign_6));
+    //const @"6": r.Color = ptr_6.?.*;
+    //r.ImageDrawTextEx(@"0", @"1", @"2", @"3", @"4", @"5", @"6");
+}
+
+pub fn wren_raylib_load_texture(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Texture2D));
+
+    const ptr: *r.Texture2D = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadTexture(@"0");
+}
+
+pub fn wren_raylib_load_texture_from_image(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Texture2D));
+
+    const ptr: *r.Texture2D = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadTextureFromImage(@"0");
+}
+
+pub fn wren_raylib_load_texture_cubemap(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.TextureCubemap));
+
+    const ptr: *r.TextureCubemap = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadTextureCubemap(@"0", @"1");
+}
+
+pub fn wren_raylib_load_render_texture(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.RenderTexture2D));
+
+    const ptr: *r.RenderTexture2D = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadRenderTexture(@"0", @"1");
+}
+
+pub fn wren_raylib_is_texture_valid(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Texture2D = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsTextureValid(@"0"));
+}
+
+pub fn wren_raylib_unload_texture(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Texture2D = ptr_0.?.*;
+    r.UnloadTexture(@"0");
+}
+
+pub fn wren_raylib_is_render_texture_valid(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.RenderTexture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.RenderTexture2D = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsRenderTextureValid(@"0"));
+}
+
+pub fn wren_raylib_unload_render_texture(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.RenderTexture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.RenderTexture2D = ptr_0.?.*;
+    r.UnloadRenderTexture(@"0");
+}
+
+pub fn wren_raylib_update_texture(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Texture2D = ptr_0.?.*;
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.const void = @alignCast(@ptrCast(foreign_1));
+    //const @"1": r.const void = ptr_1.?.*;
+    //r.UpdateTexture(@"0", @"1");
+}
+
+pub fn wren_raylib_update_texture_rec(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Texture2D = ptr_0.?.*;
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.Rectangle = @alignCast(@ptrCast(foreign_1));
+    //const @"1": r.Rectangle = ptr_1.?.*;
+    //const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    //const ptr_2: ?*r.const void = @alignCast(@ptrCast(foreign_2));
+    //const @"2": r.const void = ptr_2.?.*;
+    //r.UpdateTextureRec(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_gen_texture_mipmaps(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.GenTextureMipmaps is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Texture2D = ptr_0.?.*;
+    //r.GenTextureMipmaps(@"0");
+}
+
+pub fn wren_raylib_set_texture_filter(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Texture2D = ptr_0.?.*;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    r.SetTextureFilter(@"0", @"1");
+}
+
+pub fn wren_raylib_set_texture_wrap(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Texture2D = ptr_0.?.*;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    r.SetTextureWrap(@"0", @"1");
+}
+
+pub fn wren_raylib_draw_texture(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Texture2D = ptr_0.?.*;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    r.DrawTexture(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_draw_texture_v(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Texture2D = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector2 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Color = ptr_2.?.*;
+    r.DrawTextureV(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_draw_texture_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Texture2D = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector2 = ptr_1.?.*;
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.DrawTextureEx(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_draw_texture_rec(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Texture2D = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Rectangle = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Rectangle = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector2 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector2 = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    r.DrawTextureRec(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_draw_texture_pro(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Texture2D = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Rectangle = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Rectangle = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Rectangle = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Rectangle = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Vector2 = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Vector2 = ptr_3.?.*;
+    const @"4" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 5)));
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawTexturePro(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_draw_texture_n_patch(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Texture2D = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Texture2D = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.NPatchInfo = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.NPatchInfo = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Rectangle = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Rectangle = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Vector2 = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Vector2 = ptr_3.?.*;
+    const @"4" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 5)));
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawTextureNPatch(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_color_is_equal(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Color = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.ColorIsEqual(@"0", @"1"));
+}
+
+pub fn wren_raylib_fade(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Color = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    const ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.Fade(@"0", @"1");
+}
+
+pub fn wren_raylib_color_to_int(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Color = ptr_0.?.*;
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.ColorToInt(@"0"))));
+}
+
+pub fn wren_raylib_color_normalize(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Color = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Vector4));
+
+    const ptr: *r.Vector4 = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ColorNormalize(@"0");
+}
+
+pub fn wren_raylib_color_from_normalized(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector4 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector4 = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    const ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ColorFromNormalized(@"0");
+}
+
+pub fn wren_raylib_color_to_h_s_v(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Color = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Vector3));
+
+    const ptr: *r.Vector3 = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ColorToHSV(@"0");
+}
+
+pub fn wren_raylib_color_from_h_s_v(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 1)));
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    const ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ColorFromHSV(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_color_tint(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Color = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    const ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ColorTint(@"0", @"1");
+}
+
+pub fn wren_raylib_color_brightness(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Color = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    const ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ColorBrightness(@"0", @"1");
+}
+
+pub fn wren_raylib_color_contrast(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Color = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    const ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ColorContrast(@"0", @"1");
+}
+
+pub fn wren_raylib_color_alpha(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Color = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    const ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ColorAlpha(@"0", @"1");
+}
+
+pub fn wren_raylib_color_alpha_blend(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Color = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Color = ptr_2.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    const ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ColorAlphaBlend(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_color_lerp(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Color = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Color = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    const ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.ColorLerp(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_get_color(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_uint = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    const ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetColor(@"0");
+}
+
+pub fn wren_raylib_get_pixel_color(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.GetPixelColor is not supported yet");
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Color));
+
+    //const ptr: *r.Color = @alignCast(@ptrCast(foreign_ptr));
+    //ptr.* = r.GetPixelColor(@"0", @"1");
+}
+
+pub fn wren_raylib_set_pixel_color(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.SetPixelColor is not supported yet");
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    //const @"1": r.Color = ptr_1.?.*;
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //r.SetPixelColor(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_get_pixel_data_size(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.GetPixelDataSize(@"0", @"1", @"2"))));
+}
+
+pub fn wren_raylib_get_font_default(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Font));
+
+    const ptr: *r.Font = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetFontDefault();
+}
+
+pub fn wren_raylib_load_font(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Font));
+
+    const ptr: *r.Font = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadFont(@"0");
+}
+
+pub fn wren_raylib_load_font_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Font));
+
+    const ptr: *r.Font = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadFontEx(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_load_font_from_image(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Font));
+
+    const ptr: *r.Font = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadFontFromImage(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_load_font_from_memory(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    const @"5": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 6));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Font));
+
+    const ptr: *r.Font = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadFontFromMemory(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_is_font_valid(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Font = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Font = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsFontValid(@"0"));
+}
+
+pub fn wren_raylib_load_font_data(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.LoadFontData is not supported yet");
+    //const @"0" = wren.wrenGetSlotString(vm, 1);
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    //const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    //const @"5": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 6));
+    //const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.GlyphInfo));
+
+    //const ptr: *r.GlyphInfo = @alignCast(@ptrCast(foreign_ptr));
+    //ptr.* = r.LoadFontData(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_gen_image_font_atlas(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.GenImageFontAtlas is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.const GlyphInfo = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.const GlyphInfo = ptr_0.?.*;
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.Rectangle = @alignCast(@ptrCast(foreign_1));
+    //const @"1": r.Rectangle = ptr_1.?.*;
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    //const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    //const @"5": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 6));
+    //const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+
+    //const ptr: *r.Image = @alignCast(@ptrCast(foreign_ptr));
+    //ptr.* = r.GenImageFontAtlas(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_unload_font_data(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.UnloadFontData is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.GlyphInfo = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.GlyphInfo = ptr_0.?.*;
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //r.UnloadFontData(@"0", @"1");
+}
+
+pub fn wren_raylib_unload_font(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Font = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Font = ptr_0.?.*;
+    r.UnloadFont(@"0");
+}
+
+pub fn wren_raylib_export_font_as_code(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Font = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Font = ptr_0.?.*;
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    wren.wrenSetSlotBool(vm, 0, r.ExportFontAsCode(@"0", @"1"));
+}
+
+pub fn wren_raylib_draw_f_p_s(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    r.DrawFPS(@"0", @"1");
+}
+
+pub fn wren_raylib_draw_text_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Font = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Font = ptr_0.?.*;
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector2 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector2 = ptr_2.?.*;
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const @"4" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 5)));
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawTextEx(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_draw_text_pro(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Font = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Font = ptr_0.?.*;
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector2 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector2 = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Vector2 = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Vector2 = ptr_3.?.*;
+    const @"4" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 5)));
+    const @"5" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 6)));
+    const @"6" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 7)));
+    const foreign_7 = wren.wrenGetSlotForeign(vm, 8);
+    const ptr_7: ?*r.Color = @alignCast(@ptrCast(foreign_7));
+    const @"7": r.Color = ptr_7.?.*;
+    r.DrawTextPro(@"0", @"1", @"2", @"3", @"4", @"5", @"6", @"7");
+}
+
+pub fn wren_raylib_draw_text_codepoint(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Font = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Font = ptr_0.?.*;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector2 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector2 = ptr_2.?.*;
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.DrawTextCodepoint(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_draw_text_codepoints(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("DrawTextCodepoint is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Font = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Font = ptr_0.?.*;
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.const int = @alignCast(@ptrCast(foreign_1));
+    //const @"1": r.const int = ptr_1.?.*;
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    //const ptr_3: ?*r.Vector2 = @alignCast(@ptrCast(foreign_3));
+    //const @"3": r.Vector2 = ptr_3.?.*;
+    //const @"4" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 5)));
+    //const @"5" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 6)));
+    //const foreign_6 = wren.wrenGetSlotForeign(vm, 7);
+    //const ptr_6: ?*r.Color = @alignCast(@ptrCast(foreign_6));
+    //const @"6": r.Color = ptr_6.?.*;
+    //r.DrawTextCodepoints(@"0", @"1", @"2", @"3", @"4", @"5", @"6");
+}
+
+pub fn wren_raylib_set_text_line_spacing(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    r.SetTextLineSpacing(@"0");
+}
+
+pub fn wren_raylib_measure_text(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.MeasureText(@"0", @"1"))));
+}
+
+pub fn wren_raylib_measure_text_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Font = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Font = ptr_0.?.*;
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Vector2));
+
+    const ptr: *r.Vector2 = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.MeasureTextEx(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_get_glyph_index(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Font = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Font = ptr_0.?.*;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.GetGlyphIndex(@"0", @"1"))));
+}
+
+pub fn wren_raylib_get_glyph_info(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Font = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Font = ptr_0.?.*;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.GlyphInfo));
+
+    const ptr: *r.GlyphInfo = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetGlyphInfo(@"0", @"1");
+}
+
+pub fn wren_raylib_get_glyph_atlas_rec(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Font = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Font = ptr_0.?.*;
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Rectangle));
+
+    const ptr: *r.Rectangle = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetGlyphAtlasRec(@"0", @"1");
+}
+
+pub fn wren_raylib_load_u_t_f8(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.LoadUTF8 is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.const int = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.const int = ptr_0.?.*;
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //wren.wrenSetSlotString(vm, 0, r.LoadUTF8(@"0", @"1"));
+}
+
+pub fn wren_raylib_unload_u_t_f8(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.UnloadUTF8 is not supported yet");
+    //const @"0" = wren.wrenGetSlotString(vm, 1);
+    //r.UnloadUTF8(@"0");
+}
+
+pub fn wren_raylib_load_codepoints(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.LoadCodepoints is not supported");
+    //const @"0" = wren.wrenGetSlotString(vm, 1);
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.LoadCodepoints(@"0", @"1"))));
+}
+
+pub fn wren_raylib_unload_codepoints(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    r.UnloadCodepoints(@"0");
+}
+
+pub fn wren_raylib_get_codepoint_count(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.GetCodepointCount(@"0"))));
+}
+
+pub fn wren_raylib_get_codepoint(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.GetCodepoint(@"0", @"1"))));
+}
+
+pub fn wren_raylib_get_codepoint_next(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.GetCodepointNext(@"0", @"1"))));
+}
+
+pub fn wren_raylib_get_codepoint_previous(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.GetCodepointPrevious(@"0", @"1"))));
+}
+
+pub fn wren_raylib_codepoint_to_u_t_f8(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    wren.wrenSetSlotString(vm, 0, r.CodepointToUTF8(@"0", @"1"));
+}
+
+pub fn wren_raylib_text_copy(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.TextCopy is not supported yet");
+    //const @"0" = wren.wrenGetSlotString(vm, 1);
+    //const @"1" = wren.wrenGetSlotString(vm, 2);
+    //wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.TextCopy(@"0", @"1"))));
+}
+
+pub fn wren_raylib_text_is_equal(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    wren.wrenSetSlotBool(vm, 0, r.TextIsEqual(@"0", @"1"));
+}
+
+pub fn wren_raylib_text_length(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.TextLength(@"0"))));
+}
+
+pub fn wren_raylib_text_format(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.TextFormat is not supported yet");
+    //const @"0" = wren.wrenGetSlotString(vm, 1);
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.... = @alignCast(@ptrCast(foreign_1));
+    //const @"1": r.... = ptr_1.?.*;
+    //wren.wrenSetSlotString(vm, 0, r.TextFormat(@"0", @"1"));
+}
+
+pub fn wren_raylib_text_subtext(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    wren.wrenSetSlotString(vm, 0, r.TextSubtext(@"0", @"1", @"2"));
+}
+
+pub fn wren_raylib_text_replace(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    const @"2" = wren.wrenGetSlotString(vm, 3);
+    wren.wrenSetSlotString(vm, 0, r.TextReplace(@"0", @"1", @"2"));
+}
+
+pub fn wren_raylib_text_insert(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.TextJoin is not supported yet");
+    //const @"0" = wren.wrenGetSlotString(vm, 1);
+    //const @"1" = wren.wrenGetSlotString(vm, 2);
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //wren.wrenSetSlotString(vm, 0, r.TextInsert(@"0", @"1", @"2"));
+}
+
+pub fn wren_raylib_text_join(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.TextJoin is not supported yet");
+    //const @"0" = wren.wrenGetSlotString(vm, 1);
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //const @"2" = wren.wrenGetSlotString(vm, 3);
+    //wren.wrenSetSlotString(vm, 0, r.TextJoin(@"0", @"1", @"2"));
+}
+
+pub fn wren_raylib_text_split(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.TextSplit is not supported yet");
+    //const @"0" = wren.wrenGetSlotString(vm, 1);
+    //const @"1" = wren.wrenGetSlotString(vm, 2);
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //wren.wrenSetSlotString(vm, 0, r.TextSplit(@"0", @"1", @"2"));
+}
+
+pub fn wren_raylib_text_append(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.TextAppend is not supported yet");
+    //const @"0" = wren.wrenGetSlotString(vm, 1);
+    //const @"1" = wren.wrenGetSlotString(vm, 2);
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //r.TextAppend(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_text_find_index(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.TextFindIndex(@"0", @"1"))));
+}
+
+pub fn wren_raylib_text_to_upper(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    wren.wrenSetSlotString(vm, 0, r.TextToUpper(@"0"));
+}
+
+pub fn wren_raylib_text_to_lower(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    wren.wrenSetSlotString(vm, 0, r.TextToLower(@"0"));
+}
+
+pub fn wren_raylib_text_to_pascal(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    wren.wrenSetSlotString(vm, 0, r.TextToPascal(@"0"));
+}
+
+pub fn wren_raylib_text_to_snake(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    wren.wrenSetSlotString(vm, 0, r.TextToSnake(@"0"));
+}
+
+pub fn wren_raylib_text_to_camel(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    wren.wrenSetSlotString(vm, 0, r.TextToCamel(@"0"));
+}
+
+pub fn wren_raylib_text_to_integer(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatFromInt(r.TextToInteger(@"0"))));
+}
+
+pub fn wren_raylib_text_to_float(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    wren.wrenSetSlotDouble(vm, 0, r.TextToFloat(@"0"));
+}
+
+pub fn wren_raylib_draw_line3_d(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Color = ptr_2.?.*;
+    r.DrawLine3D(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_draw_point3_d(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    r.DrawPoint3D(@"0", @"1");
+}
+
+pub fn wren_raylib_draw_circle3_d(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector3 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector3 = ptr_2.?.*;
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.DrawCircle3D(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_draw_triangle3_d(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector3 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector3 = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    r.DrawTriangle3D(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_draw_triangle_strip3_d(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.DrawTriangleStrip3D is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.const Vector3 = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.const Vector3 = ptr_0.?.*;
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    //const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    //const @"2": r.Color = ptr_2.?.*;
+    //r.DrawTriangleStrip3D(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_draw_cube(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.DrawCube(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_draw_cube_v(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Color = ptr_2.?.*;
+    r.DrawCubeV(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_draw_cube_wires(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.DrawCubeWires(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_draw_cube_wires_v(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Color = ptr_2.?.*;
+    r.DrawCubeWiresV(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_draw_sphere(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Color = ptr_2.?.*;
+    r.DrawSphere(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_draw_sphere_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.DrawSphereEx(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_draw_sphere_wires(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.DrawSphereWires(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_draw_cylinder(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawCylinder(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_draw_cylinder_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawCylinderEx(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_draw_cylinder_wires(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawCylinderWires(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_draw_cylinder_wires_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawCylinderWiresEx(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_draw_capsule(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawCapsule(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_draw_capsule_wires(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawCapsuleWires(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_draw_plane(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector2 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector2 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Color = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Color = ptr_2.?.*;
+    r.DrawPlane(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_draw_ray(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Ray = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Ray = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    r.DrawRay(@"0", @"1");
+}
+
+pub fn wren_raylib_draw_grid(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.DrawGrid(@"0", @"1");
+}
+
+pub fn wren_raylib_load_model(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Model));
+
+    const ptr: *r.Model = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadModel(@"0");
+}
+
+pub fn wren_raylib_load_model_from_mesh(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Mesh = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Mesh = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Model));
+
+    const ptr: *r.Model = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadModelFromMesh(@"0");
+}
+
+pub fn wren_raylib_is_model_valid(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Model = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsModelValid(@"0"));
+}
+
+pub fn wren_raylib_unload_model(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Model = ptr_0.?.*;
+    r.UnloadModel(@"0");
+}
+
+pub fn wren_raylib_get_model_bounding_box(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Model = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.BoundingBox));
+
+    const ptr: *r.BoundingBox = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetModelBoundingBox(@"0");
+}
+
+pub fn wren_raylib_draw_model(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Model = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    r.DrawModel(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_draw_model_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Model = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector3 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector3 = ptr_2.?.*;
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Vector3 = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Vector3 = ptr_4.?.*;
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawModelEx(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_draw_model_wires(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Model = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    r.DrawModelWires(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_draw_model_wires_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Model = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector3 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector3 = ptr_2.?.*;
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Vector3 = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Vector3 = ptr_4.?.*;
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawModelWiresEx(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_draw_model_points(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Model = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Color = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Color = ptr_3.?.*;
+    r.DrawModelPoints(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_draw_model_points_ex(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Model = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector3 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector3 = ptr_2.?.*;
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Vector3 = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Vector3 = ptr_4.?.*;
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawModelPointsEx(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_draw_bounding_box(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.BoundingBox = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.BoundingBox = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Color = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Color = ptr_1.?.*;
+    r.DrawBoundingBox(@"0", @"1");
+}
+
+pub fn wren_raylib_draw_billboard(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Camera = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Camera = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Texture2D = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Texture2D = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector3 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector3 = ptr_2.?.*;
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Color = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Color = ptr_4.?.*;
+    r.DrawBillboard(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_draw_billboard_rec(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Camera = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Camera = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Texture2D = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Texture2D = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Rectangle = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Rectangle = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Vector3 = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Vector3 = ptr_3.?.*;
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Vector2 = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Vector2 = ptr_4.?.*;
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Color = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Color = ptr_5.?.*;
+    r.DrawBillboardRec(@"0", @"1", @"2", @"3", @"4", @"5");
+}
+
+pub fn wren_raylib_draw_billboard_pro(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Camera = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Camera = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Texture2D = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Texture2D = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Rectangle = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Rectangle = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Vector3 = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Vector3 = ptr_3.?.*;
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Vector3 = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Vector3 = ptr_4.?.*;
+    const foreign_5 = wren.wrenGetSlotForeign(vm, 6);
+    const ptr_5: ?*r.Vector2 = @alignCast(@ptrCast(foreign_5));
+    const @"5": r.Vector2 = ptr_5.?.*;
+    const foreign_6 = wren.wrenGetSlotForeign(vm, 7);
+    const ptr_6: ?*r.Vector2 = @alignCast(@ptrCast(foreign_6));
+    const @"6": r.Vector2 = ptr_6.?.*;
+    const @"7" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 8)));
+    const foreign_8 = wren.wrenGetSlotForeign(vm, 9);
+    const ptr_8: ?*r.Color = @alignCast(@ptrCast(foreign_8));
+    const @"8": r.Color = ptr_8.?.*;
+    r.DrawBillboardPro(@"0", @"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8");
+}
+
+pub fn wren_raylib_upload_mesh(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.UploadMesh is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Mesh = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Mesh = ptr_0.?.*;
+    //const @"1" = wren.wrenGetSlotBool(vm, 2);
+    //r.UploadMesh(@"0", @"1");
+}
+
+pub fn wren_raylib_update_mesh_buffer(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.UpdateMeshBuffer is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Mesh = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Mesh = ptr_0.?.*;
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    //const ptr_2: ?*r.const void = @alignCast(@ptrCast(foreign_2));
+    //const @"2": r.const void = ptr_2.?.*;
+    //const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    //const @"4": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 5));
+    //r.UpdateMeshBuffer(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_unload_mesh(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Mesh = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Mesh = ptr_0.?.*;
+    r.UnloadMesh(@"0");
+}
+
+pub fn wren_raylib_draw_mesh(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Mesh = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Mesh = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Material = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Material = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Matrix = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Matrix = ptr_2.?.*;
+    r.DrawMesh(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_draw_mesh_instanced(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.DrawMeshInstanced is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Mesh = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Mesh = ptr_0.?.*;
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.Material = @alignCast(@ptrCast(foreign_1));
+    //const @"1": r.Material = ptr_1.?.*;
+    //const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    //const ptr_2: ?*r.const Matrix = @alignCast(@ptrCast(foreign_2));
+    //const @"2": r.const Matrix = ptr_2.?.*;
+    //const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    //r.DrawMeshInstanced(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_get_mesh_bounding_box(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Mesh = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Mesh = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.BoundingBox));
+
+    const ptr: *r.BoundingBox = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetMeshBoundingBox(@"0");
+}
+
+pub fn wren_raylib_gen_mesh_tangents(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.GenMeshTangents is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Mesh = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Mesh = ptr_0.?.*;
+    //r.GenMeshTangents(@"0");
+}
+
+pub fn wren_raylib_export_mesh(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Mesh = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Mesh = ptr_0.?.*;
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    wren.wrenSetSlotBool(vm, 0, r.ExportMesh(@"0", @"1"));
+}
+
+pub fn wren_raylib_export_mesh_as_code(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Mesh = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Mesh = ptr_0.?.*;
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    wren.wrenSetSlotBool(vm, 0, r.ExportMeshAsCode(@"0", @"1"));
+}
+
+pub fn wren_raylib_gen_mesh_poly(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Mesh));
+
+    const ptr: *r.Mesh = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenMeshPoly(@"0", @"1");
+}
+
+pub fn wren_raylib_gen_mesh_plane(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 1)));
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Mesh));
+
+    const ptr: *r.Mesh = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenMeshPlane(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_gen_mesh_cube(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 1)));
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Mesh));
+
+    const ptr: *r.Mesh = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenMeshCube(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_gen_mesh_sphere(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 1)));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Mesh));
+
+    const ptr: *r.Mesh = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenMeshSphere(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_gen_mesh_hemi_sphere(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 1)));
+    const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Mesh));
+
+    const ptr: *r.Mesh = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenMeshHemiSphere(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_gen_mesh_cylinder(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 1)));
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Mesh));
+
+    const ptr: *r.Mesh = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenMeshCylinder(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_gen_mesh_cone(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 1)));
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Mesh));
+
+    const ptr: *r.Mesh = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenMeshCone(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_gen_mesh_torus(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 1)));
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Mesh));
+
+    const ptr: *r.Mesh = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenMeshTorus(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_gen_mesh_knot(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 1)));
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Mesh));
+
+    const ptr: *r.Mesh = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenMeshKnot(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_gen_mesh_heightmap(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Mesh));
+
+    const ptr: *r.Mesh = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenMeshHeightmap(@"0", @"1");
+}
+
+pub fn wren_raylib_gen_mesh_cubicmap(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Image = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Image = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Mesh));
+
+    const ptr: *r.Mesh = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GenMeshCubicmap(@"0", @"1");
+}
+
+pub fn wren_raylib_load_materials(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.LoadMaterials is not supported yet");
+    //const @"0" = wren.wrenGetSlotString(vm, 1);
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Material));
+
+    //const ptr: *r.Material = @alignCast(@ptrCast(foreign_ptr));
+    //ptr.* = r.LoadMaterials(@"0", @"1");
+}
+
+pub fn wren_raylib_load_material_default(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Material));
+
+    const ptr: *r.Material = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadMaterialDefault();
+}
+
+pub fn wren_raylib_is_material_valid(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Material = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Material = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsMaterialValid(@"0"));
+}
+
+pub fn wren_raylib_unload_material(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Material = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Material = ptr_0.?.*;
+    r.UnloadMaterial(@"0");
+}
+
+pub fn wren_raylib_set_material_texture(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.SetMaterialTexture is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Material = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Material = ptr_0.?.*;
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    //const ptr_2: ?*r.Texture2D = @alignCast(@ptrCast(foreign_2));
+    //const @"2": r.Texture2D = ptr_2.?.*;
+    //r.SetMaterialTexture(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_set_model_mesh_material(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.SetModelMeshMaterial is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Model = ptr_0.?.*;
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //r.SetModelMeshMaterial(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_load_model_animations(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.LoadModelAnimations is not supported yet");
+    //const @"0" = wren.wrenGetSlotString(vm, 1);
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.ModelAnimation));
+
+    //const ptr: *r.ModelAnimation = @alignCast(@ptrCast(foreign_ptr));
+    //ptr.* = r.LoadModelAnimations(@"0", @"1");
+}
+
+pub fn wren_raylib_update_model_animation(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Model = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.ModelAnimation = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.ModelAnimation = ptr_1.?.*;
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    r.UpdateModelAnimation(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_update_model_animation_bones(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Model = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.ModelAnimation = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.ModelAnimation = ptr_1.?.*;
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    r.UpdateModelAnimationBones(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_unload_model_animation(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.ModelAnimation = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.ModelAnimation = ptr_0.?.*;
+    r.UnloadModelAnimation(@"0");
+}
+
+pub fn wren_raylib_unload_model_animations(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.UnloadModelAnimations is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.ModelAnimation = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.ModelAnimation = ptr_0.?.*;
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //r.UnloadModelAnimations(@"0", @"1");
+}
+
+pub fn wren_raylib_is_model_animation_valid(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Model = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Model = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.ModelAnimation = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.ModelAnimation = ptr_1.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsModelAnimationValid(@"0", @"1"));
+}
+
+pub fn wren_raylib_check_collision_spheres(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Vector3 = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Vector3 = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector3 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector3 = ptr_2.?.*;
+    const @"3" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 4)));
+    wren.wrenSetSlotBool(vm, 0, r.CheckCollisionSpheres(@"0", @"1", @"2", @"3"));
+}
+
+pub fn wren_raylib_check_collision_boxes(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.BoundingBox = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.BoundingBox = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.BoundingBox = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.BoundingBox = ptr_1.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.CheckCollisionBoxes(@"0", @"1"));
+}
+
+pub fn wren_raylib_check_collision_box_sphere(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.BoundingBox = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.BoundingBox = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    wren.wrenSetSlotBool(vm, 0, r.CheckCollisionBoxSphere(@"0", @"1", @"2"));
+}
+
+pub fn wren_raylib_get_ray_collision_sphere(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Ray = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Ray = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const @"2" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 3)));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.RayCollision));
+
+    const ptr: *r.RayCollision = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetRayCollisionSphere(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_get_ray_collision_box(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Ray = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Ray = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.BoundingBox = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.BoundingBox = ptr_1.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.RayCollision));
+
+    const ptr: *r.RayCollision = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetRayCollisionBox(@"0", @"1");
+}
+
+pub fn wren_raylib_get_ray_collision_mesh(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Ray = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Ray = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Mesh = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Mesh = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Matrix = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Matrix = ptr_2.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.RayCollision));
+
+    const ptr: *r.RayCollision = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetRayCollisionMesh(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_get_ray_collision_triangle(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Ray = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Ray = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector3 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector3 = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Vector3 = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Vector3 = ptr_3.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.RayCollision));
+
+    const ptr: *r.RayCollision = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetRayCollisionTriangle(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_get_ray_collision_quad(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Ray = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Ray = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.Vector3 = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.Vector3 = ptr_1.?.*;
+    const foreign_2 = wren.wrenGetSlotForeign(vm, 3);
+    const ptr_2: ?*r.Vector3 = @alignCast(@ptrCast(foreign_2));
+    const @"2": r.Vector3 = ptr_2.?.*;
+    const foreign_3 = wren.wrenGetSlotForeign(vm, 4);
+    const ptr_3: ?*r.Vector3 = @alignCast(@ptrCast(foreign_3));
+    const @"3": r.Vector3 = ptr_3.?.*;
+    const foreign_4 = wren.wrenGetSlotForeign(vm, 5);
+    const ptr_4: ?*r.Vector3 = @alignCast(@ptrCast(foreign_4));
+    const @"4": r.Vector3 = ptr_4.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.RayCollision));
+
+    const ptr: *r.RayCollision = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.GetRayCollisionQuad(@"0", @"1", @"2", @"3", @"4");
+}
+
+pub fn wren_raylib_init_audio_device(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    r.InitAudioDevice();
+}
+
+pub fn wren_raylib_close_audio_device(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    r.CloseAudioDevice();
+}
+
+pub fn wren_raylib_is_audio_device_ready(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    wren.wrenSetSlotBool(vm, 0, r.IsAudioDeviceReady());
+}
+
+pub fn wren_raylib_set_master_volume(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 1)));
+    r.SetMasterVolume(@"0");
+}
+
+pub fn wren_raylib_get_master_volume(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    wren.wrenSetSlotDouble(vm, 0, r.GetMasterVolume());
+}
+
+pub fn wren_raylib_load_wave(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Wave));
+
+    const ptr: *r.Wave = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadWave(@"0");
+}
+
+pub fn wren_raylib_load_wave_from_memory(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Wave));
+
+    const ptr: *r.Wave = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadWaveFromMemory(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_is_wave_valid(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Wave = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Wave = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsWaveValid(@"0"));
+}
+
+pub fn wren_raylib_load_sound(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Sound));
+
+    const ptr: *r.Sound = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadSound(@"0");
+}
+
+pub fn wren_raylib_load_sound_from_wave(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Wave = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Wave = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Sound));
+
+    const ptr: *r.Sound = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadSoundFromWave(@"0");
+}
+
+pub fn wren_raylib_load_sound_alias(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Sound = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Sound));
+
+    const ptr: *r.Sound = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadSoundAlias(@"0");
+}
+
+pub fn wren_raylib_is_sound_valid(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Sound = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsSoundValid(@"0"));
+}
+
+pub fn wren_raylib_update_sound(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.UpdateSound is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Sound = ptr_0.?.*;
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.const void = @alignCast(@ptrCast(foreign_1));
+    //const @"1": r.const void = ptr_1.?.*;
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //r.UpdateSound(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_unload_wave(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Wave = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Wave = ptr_0.?.*;
+    r.UnloadWave(@"0");
+}
+
+pub fn wren_raylib_unload_sound(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Sound = ptr_0.?.*;
+    r.UnloadSound(@"0");
+}
+
+pub fn wren_raylib_unload_sound_alias(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Sound = ptr_0.?.*;
+    r.UnloadSoundAlias(@"0");
+}
+
+pub fn wren_raylib_export_wave(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Wave = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Wave = ptr_0.?.*;
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    wren.wrenSetSlotBool(vm, 0, r.ExportWave(@"0", @"1"));
+}
+
+pub fn wren_raylib_export_wave_as_code(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Wave = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Wave = ptr_0.?.*;
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    wren.wrenSetSlotBool(vm, 0, r.ExportWaveAsCode(@"0", @"1"));
+}
+
+pub fn wren_raylib_play_sound(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Sound = ptr_0.?.*;
+    r.PlaySound(@"0");
+}
+
+pub fn wren_raylib_stop_sound(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Sound = ptr_0.?.*;
+    r.StopSound(@"0");
+}
+
+pub fn wren_raylib_pause_sound(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Sound = ptr_0.?.*;
+    r.PauseSound(@"0");
+}
+
+pub fn wren_raylib_resume_sound(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Sound = ptr_0.?.*;
+    r.ResumeSound(@"0");
+}
+
+pub fn wren_raylib_is_sound_playing(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Sound = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsSoundPlaying(@"0"));
+}
+
+pub fn wren_raylib_set_sound_volume(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Sound = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.SetSoundVolume(@"0", @"1");
+}
+
+pub fn wren_raylib_set_sound_pitch(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Sound = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.SetSoundPitch(@"0", @"1");
+}
+
+pub fn wren_raylib_set_sound_pan(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Sound = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Sound = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.SetSoundPan(@"0", @"1");
+}
+
+pub fn wren_raylib_wave_copy(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Wave = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Wave = ptr_0.?.*;
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Wave));
+
+    const ptr: *r.Wave = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.WaveCopy(@"0");
+}
+
+pub fn wren_raylib_wave_crop(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Wave = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Wave = ptr_0.?.*;
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //r.WaveCrop(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_wave_format(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Wave = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Wave = ptr_0.?.*;
+    //const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //const @"3": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 4));
+    //r.WaveFormat(@"0", @"1", @"2", @"3");
+}
+
+pub fn wren_raylib_load_wave_samples(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.Wave = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.Wave = ptr_0.?.*;
+    //wren.wrenSetSlotDouble(vm, 0, r.LoadWaveSamples(@"0"));
+}
+
+pub fn wren_raylib_unload_wave_samples(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    //const @"0" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 1)));
+    //r.UnloadWaveSamples(@"0");
+}
+
+pub fn wren_raylib_load_music_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Music));
+
+    const ptr: *r.Music = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadMusicStream(@"0");
+}
+
+pub fn wren_raylib_load_music_stream_from_memory(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0" = wren.wrenGetSlotString(vm, 1);
+    const @"1" = wren.wrenGetSlotString(vm, 2);
+    const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Music));
+
+    const ptr: *r.Music = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadMusicStreamFromMemory(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_is_music_valid(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsMusicValid(@"0"));
+}
+
+pub fn wren_raylib_unload_music_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    r.UnloadMusicStream(@"0");
+}
+
+pub fn wren_raylib_play_music_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    r.PlayMusicStream(@"0");
+}
+
+pub fn wren_raylib_is_music_stream_playing(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsMusicStreamPlaying(@"0"));
+}
+
+pub fn wren_raylib_update_music_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    r.UpdateMusicStream(@"0");
+}
+
+pub fn wren_raylib_stop_music_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    r.StopMusicStream(@"0");
+}
+
+pub fn wren_raylib_pause_music_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    r.PauseMusicStream(@"0");
+}
+
+pub fn wren_raylib_resume_music_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    r.ResumeMusicStream(@"0");
+}
+
+pub fn wren_raylib_seek_music_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.SeekMusicStream(@"0", @"1");
+}
+
+pub fn wren_raylib_set_music_volume(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.SetMusicVolume(@"0", @"1");
+}
+
+pub fn wren_raylib_set_music_pitch(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.SetMusicPitch(@"0", @"1");
+}
+
+pub fn wren_raylib_set_music_pan(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.SetMusicPan(@"0", @"1");
+}
+
+pub fn wren_raylib_get_music_time_length(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    wren.wrenSetSlotDouble(vm, 0, r.GetMusicTimeLength(@"0"));
+}
+
+pub fn wren_raylib_get_music_time_played(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.Music = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.Music = ptr_0.?.*;
+    wren.wrenSetSlotDouble(vm, 0, r.GetMusicTimePlayed(@"0"));
+}
+
+pub fn wren_raylib_load_audio_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_uint = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const @"1": c_uint = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const @"2": c_uint = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.AudioStream));
+
+    const ptr: *r.AudioStream = @alignCast(@ptrCast(foreign_ptr));
+    ptr.* = r.LoadAudioStream(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_is_audio_stream_valid(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsAudioStreamValid(@"0"));
+}
+
+pub fn wren_raylib_unload_audio_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    r.UnloadAudioStream(@"0");
+}
+
+pub fn wren_raylib_update_audio_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    @panic("r.UpdateAudioStream is not supported yet");
+    //const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    //const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    //const @"0": r.AudioStream = ptr_0.?.*;
+    //const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    //const ptr_1: ?*r.const void = @alignCast(@ptrCast(foreign_1));
+    //const @"1": r.const void = ptr_1.?.*;
+    //const @"2": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 3));
+    //r.UpdateAudioStream(@"0", @"1", @"2");
+}
+
+pub fn wren_raylib_is_audio_stream_processed(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsAudioStreamProcessed(@"0"));
+}
+
+pub fn wren_raylib_play_audio_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    r.PlayAudioStream(@"0");
+}
+
+pub fn wren_raylib_pause_audio_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    r.PauseAudioStream(@"0");
+}
+
+pub fn wren_raylib_resume_audio_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    r.ResumeAudioStream(@"0");
+}
+
+pub fn wren_raylib_is_audio_stream_playing(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    wren.wrenSetSlotBool(vm, 0, r.IsAudioStreamPlaying(@"0"));
+}
+
+pub fn wren_raylib_stop_audio_stream(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    r.StopAudioStream(@"0");
+}
+
+pub fn wren_raylib_set_audio_stream_volume(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.SetAudioStreamVolume(@"0", @"1");
+}
+
+pub fn wren_raylib_set_audio_stream_pitch(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.SetAudioStreamPitch(@"0", @"1");
+}
+
+pub fn wren_raylib_set_audio_stream_pan(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    const @"1" = @as(f32, @floatCast(wren.wrenGetSlotDouble(vm, 2)));
+    r.SetAudioStreamPan(@"0", @"1");
+}
+
+pub fn wren_raylib_set_audio_stream_buffer_size_default(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const @"0": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    r.SetAudioStreamBufferSizeDefault(@"0");
+}
+
+pub fn wren_raylib_set_audio_stream_callback(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.AudioCallback = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.AudioCallback = ptr_1.?.*;
+    r.SetAudioStreamCallback(@"0", @"1");
+}
+
+pub fn wren_raylib_attach_audio_stream_processor(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.AudioCallback = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.AudioCallback = ptr_1.?.*;
+    r.AttachAudioStreamProcessor(@"0", @"1");
+}
+
+pub fn wren_raylib_detach_audio_stream_processor(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioStream = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioStream = ptr_0.?.*;
+    const foreign_1 = wren.wrenGetSlotForeign(vm, 2);
+    const ptr_1: ?*r.AudioCallback = @alignCast(@ptrCast(foreign_1));
+    const @"1": r.AudioCallback = ptr_1.?.*;
+    r.DetachAudioStreamProcessor(@"0", @"1");
+}
+
+pub fn wren_raylib_attach_audio_mixed_processor(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioCallback = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioCallback = ptr_0.?.*;
+    r.AttachAudioMixedProcessor(@"0");
+}
+
+pub fn wren_raylib_detach_audio_mixed_processor(vm: ?*wren.WrenVM) callconv(.C) void {
+    _ = .{vm};
+    const foreign_0 = wren.wrenGetSlotForeign(vm, 1);
+    const ptr_0: ?*r.AudioCallback = @alignCast(@ptrCast(foreign_0));
+    const @"0": r.AudioCallback = ptr_0.?.*;
+    r.DetachAudioMixedProcessor(@"0");
+}
+
 pub const WrenForeignMethodFn = fn (?*wren.WrenVM) callconv(.c) void;
 pub const WrenForeignClassAllocatorFn = fn (?*wren.WrenVM) callconv(.c) void;
 pub const ForeignClass = struct { allocate: ?*const WrenForeignClassAllocatorFn };
-
-pub const ForeignClassBindings = std.StaticStringMap(ForeignClass).initComptime(.{
-    .{ "raylib.Color", ForeignClass{ .allocate = Color.allocate } },
-    .{ "raylib.RenderTexture2D", ForeignClass{ .allocate = RenderTexture2D.allocate } },
-    .{ "raylib.Camera2D", ForeignClass{ .allocate = Camera2D.allocate } },
-    .{ "raylib.Vector2", ForeignClass{ .allocate = Vector2.allocate } },
-    .{ "raylib.Rectangle", ForeignClass{ .allocate = Rectangle.allocate } },
-});
 
 pub const RenderTexture2D = struct {
     pub fn texture(vm: ?*wren.WrenVM) callconv(.C) void {
@@ -2394,26 +5871,16 @@ pub const Camera2D = struct {
     }
 
     pub fn getTarget(vm: ?*wren.WrenVM) callconv(.c) void {
-        if (vm == null) return;
+        const foreign = wren.wrenGetSlotForeign(vm, 0);
+        const camera_2d_ptr: ?*r.Camera2D = @alignCast(@ptrCast(foreign));
 
-        const foreign = wren.wrenGetSlotForeign(vm, 0); // slot 0: receiver (Camera2D)
-        if (foreign == null) {
-            std.debug.print("foreign pointer is null\n", .{});
-            return;
-        }
+        wren.wrenEnsureSlots(vm, 1);
+        wren.wrenGetVariable(vm, "raylib", "Vector2", 0);
 
-        const camera_ptr: *r.Camera2D = @ptrCast(@alignCast(foreign));
-        std.debug.print("camera_ptr.target: {any}\n", .{camera_ptr.target});
+        const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Vector2));
 
-        // Put return value into slot 1 instead
-        const target_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Vector2));
-        if (target_ptr == null) {
-            std.debug.print("wrenSetSlotNewForeign returned null\n", .{});
-            return;
-        }
-
-        const vector_ptr: *r.Vector2 = @ptrCast(@alignCast(target_ptr));
-        vector_ptr.* = camera_ptr.target;
+        const tx: *r.Vector2 = @alignCast(@ptrCast(foreign_ptr));
+        tx.* = camera_2d_ptr.?.*.target;
     }
 
     pub fn setTarget(vm: ?*wren.WrenVM) callconv(.c) void {
@@ -2581,6 +6048,71 @@ pub const Rectangle = struct {
     }
 };
 
+pub const Vector3 = struct {
+    pub fn allocate(vm: ?*wren.WrenVM) callconv(.c) void {
+        const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Vector3));
+
+        const x = wren.wrenGetSlotDouble(vm, 1);
+        const y = wren.wrenGetSlotDouble(vm, 2);
+        const z = wren.wrenGetSlotDouble(vm, 3);
+
+        const vector_ptr: *r.Vector3 = @alignCast(@ptrCast(foreign_ptr));
+        vector_ptr.* = .{
+            .x = @floatCast(x),
+            .y = @floatCast(y),
+            .z = @floatCast(z),
+        };
+    }
+
+    pub fn get_x(vm: ?*wren.WrenVM) callconv(.C) void {
+        const foreign = wren.wrenGetSlotForeign(vm, 0);
+        const vector: ?*r.Vector3 = @alignCast(@ptrCast(foreign));
+
+        wren.wrenSetSlotDouble(vm, 0, @as(f32, vector.?.*.x));
+    }
+
+    pub fn set_x(vm: ?*wren.WrenVM) callconv(.C) void {
+        const foreign = wren.wrenGetSlotForeign(vm, 0);
+        const vector: ?*r.Vector3 = @alignCast(@ptrCast(foreign));
+
+        const x = wren.wrenGetSlotDouble(vm, 1);
+
+        vector.?.*.x = @floatCast(x);
+    }
+
+    pub fn get_y(vm: ?*wren.WrenVM) callconv(.C) void {
+        const foreign = wren.wrenGetSlotForeign(vm, 0);
+        const vector_ptr: ?*r.Vector3 = @alignCast(@ptrCast(foreign));
+
+        wren.wrenSetSlotDouble(vm, 0, @as(f32, vector_ptr.?.*.y));
+    }
+
+    pub fn set_y(vm: ?*wren.WrenVM) callconv(.C) void {
+        const foreign = wren.wrenGetSlotForeign(vm, 0);
+        const vector_ptr: ?*r.Vector3 = @alignCast(@ptrCast(foreign));
+
+        const y = wren.wrenGetSlotDouble(vm, 1);
+
+        vector_ptr.?.*.y = @floatCast(y);
+    }
+
+    pub fn get_z(vm: ?*wren.WrenVM) callconv(.C) void {
+        const foreign = wren.wrenGetSlotForeign(vm, 0);
+        const vector_ptr: ?*r.Vector3 = @alignCast(@ptrCast(foreign));
+
+        wren.wrenSetSlotDouble(vm, 0, @as(f32, vector_ptr.?.*.z));
+    }
+
+    pub fn set_z(vm: ?*wren.WrenVM) callconv(.C) void {
+        const foreign = wren.wrenGetSlotForeign(vm, 0);
+        const vector_ptr: ?*r.Vector3 = @alignCast(@ptrCast(foreign));
+
+        const z = wren.wrenGetSlotDouble(vm, 1);
+
+        vector_ptr.?.*.z = @floatCast(z);
+    }
+};
+
 pub const Vector2 = struct {
     pub fn allocate(vm: ?*wren.WrenVM) callconv(.c) void {
         const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Vector2));
@@ -2628,6 +6160,41 @@ pub const Vector2 = struct {
     }
 };
 
+pub const Image = struct {
+    pub fn allocate(vm: ?*wren.WrenVM) callconv(.c) void {
+        const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Image));
+        _ = foreign_ptr;
+    }
+};
+
+pub const Font = struct {
+    pub fn allocate(vm: ?*wren.WrenVM) callconv(.c) void {
+        const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Font));
+        _ = foreign_ptr;
+    }
+};
+
+pub const Wave = struct {
+    pub fn allocate(vm: ?*wren.WrenVM) callconv(.c) void {
+        const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Wave));
+        _ = foreign_ptr;
+    }
+};
+
+pub const Sound = struct {
+    pub fn allocate(vm: ?*wren.WrenVM) callconv(.c) void {
+        const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.Sound));
+        _ = foreign_ptr;
+    }
+};
+
+pub const AudioStream = struct {
+    pub fn allocate(vm: ?*wren.WrenVM) callconv(.c) void {
+        const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.AudioStream));
+        _ = foreign_ptr;
+    }
+};
+
 pub fn wren_raylib_draw_text(vm: ?*wren.WrenVM) callconv(.C) void {
     const title = wren.wrenGetSlotString(vm, 1);
     const x: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
@@ -2641,18 +6208,20 @@ pub fn wren_raylib_draw_text(vm: ?*wren.WrenVM) callconv(.C) void {
 }
 
 pub fn wren_load_render_texture(vm: ?*wren.WrenVM) callconv(.C) void {
-    const width: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
-    const height: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    _ = vm;
+    std.debug.print("We are here\n", .{});
+    //const width: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    //const height: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
 
-    const target = r.LoadRenderTexture(width, height);
+    //const target = r.LoadRenderTexture(width, height);
 
-    wren.wrenEnsureSlots(vm, 1);
-    wren.wrenGetVariable(vm, "raylib", "RenderTexture2D", 0);
+    //wren.wrenEnsureSlots(vm, 1);
+    //wren.wrenGetVariable(vm, "raylib", "RenderTexture2D", 0);
 
-    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.RenderTexture2D));
+    //const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.RenderTexture2D));
 
-    const render_texture_ptr: *r.RenderTexture2D = @alignCast(@ptrCast(foreign_ptr));
-    render_texture_ptr.* = target;
+    //const render_texture_ptr: *r.RenderTexture2D = @alignCast(@ptrCast(foreign_ptr));
+    //render_texture_ptr.* = target;
 }
 
 pub fn end_texture_mode(vm: ?*wren.WrenVM) callconv(.C) void {
@@ -2962,6 +6531,125 @@ pub const ForeignMethodBindings = std.StaticStringMap(?*const WrenForeignMethodF
     .{ "raylib.Raylib.checkCollisionPointPoly(_,_,_)", wren_raylib_check_collision_point_poly },
     .{ "raylib.Raylib.checkCollisionLines(_,_,_,_,_)", wren_raylib_check_collision_lines },
     .{ "raylib.Raylib.getCollisionRec(_,_)", wren_raylib_get_collision_rec },
+    .{ "raylib.Raylib.setShapesTexture(_,_)", wren_raylib_set_shapes_texture },
+    .{ "raylib.Raylib.getShapesTexture()", wren_raylib_get_shapes_texture },
+    .{ "raylib.Raylib.getShapesTextureRectangle()", wren_raylib_get_shapes_texture_rectangle },
+    .{ "raylib.Raylib.loadImage(_)", wren_raylib_load_image },
+    .{ "raylib.Raylib.loadImageRaw(_,_,_,_,_)", wren_raylib_load_image_raw },
+    .{ "raylib.Raylib.loadImageAnim(_,_)", wren_raylib_load_image_anim },
+    .{ "raylib.Raylib.loadImageAnimFromMemory(_,_,_,_)", wren_raylib_load_image_anim_from_memory },
+    .{ "raylib.Raylib.loadImageFromMemory(_,_,_)", wren_raylib_load_image_from_memory },
+    .{ "raylib.Raylib.loadImageFromTexture(_)", wren_raylib_load_image_from_texture },
+    .{ "raylib.Raylib.loadImageFromScreen()", wren_raylib_load_image_from_screen },
+    .{ "raylib.Raylib.isImageValid(_)", wren_raylib_is_image_valid },
+    .{ "raylib.Raylib.unloadImage(_)", wren_raylib_unload_image },
+    .{ "raylib.Raylib.exportImage(_,_)", wren_raylib_export_image },
+    .{ "raylib.Raylib.exportImageToMemory(_,_,_)", wren_raylib_export_image_to_memory },
+    .{ "raylib.Raylib.exportImageAsCode(_,_)", wren_raylib_export_image_as_code },
+    .{ "raylib.Raylib.genImageColor(_,_,_)", wren_raylib_gen_image_color },
+    .{ "raylib.Raylib.genImageGradientLinear(_,_,_,_,_)", wren_raylib_gen_image_gradient_linear },
+    .{ "raylib.Raylib.genImageGradientRadial(_,_,_,_,_)", wren_raylib_gen_image_gradient_radial },
+    .{ "raylib.Raylib.genImageGradientSquare(_,_,_,_,_)", wren_raylib_gen_image_gradient_square },
+    .{ "raylib.Raylib.genImageChecked(_,_,_,_,_,_)", wren_raylib_gen_image_checked },
+    .{ "raylib.Raylib.genImageWhiteNoise(_,_,_)", wren_raylib_gen_image_white_noise },
+    .{ "raylib.Raylib.genImagePerlinNoise(_,_,_,_,_)", wren_raylib_gen_image_perlin_noise },
+    .{ "raylib.Raylib.genImageCellular(_,_,_)", wren_raylib_gen_image_cellular },
+    .{ "raylib.Raylib.genImageText(_,_,_)", wren_raylib_gen_image_text },
+    .{ "raylib.Raylib.imageCopy(_)", wren_raylib_image_copy },
+    .{ "raylib.Raylib.imageFromImage(_,_)", wren_raylib_image_from_image },
+    .{ "raylib.Raylib.imageFromChannel(_,_)", wren_raylib_image_from_channel },
+    .{ "raylib.Raylib.imageText(_,_,_)", wren_raylib_image_text },
+    .{ "raylib.Raylib.imageTextEx(_,_,_,_,_)", wren_raylib_image_text_ex },
+    .{ "raylib.Raylib.imageFormat(_,_)", wren_raylib_image_format },
+    .{ "raylib.Raylib.imageToPOT(_,_)", wren_raylib_image_to_p_o_t },
+    .{ "raylib.Raylib.imageCrop(_,_)", wren_raylib_image_crop },
+    .{ "raylib.Raylib.imageAlphaCrop(_,_)", wren_raylib_image_alpha_crop },
+    .{ "raylib.Raylib.imageAlphaClear(_,_,_)", wren_raylib_image_alpha_clear },
+    .{ "raylib.Raylib.imageAlphaMask(_,_)", wren_raylib_image_alpha_mask },
+    .{ "raylib.Raylib.imageAlphaPremultiply(_)", wren_raylib_image_alpha_premultiply },
+    .{ "raylib.Raylib.imageBlurGaussian(_,_)", wren_raylib_image_blur_gaussian },
+    .{ "raylib.Raylib.imageKernelConvolution(_,_,_)", wren_raylib_image_kernel_convolution },
+    .{ "raylib.Raylib.imageResize(_,_,_)", wren_raylib_image_resize },
+    .{ "raylib.Raylib.imageResizeNN(_,_,_)", wren_raylib_image_resize_n_n },
+    .{ "raylib.Raylib.imageResizeCanvas(_,_,_,_,_,_)", wren_raylib_image_resize_canvas },
+    .{ "raylib.Raylib.imageMipmaps(_)", wren_raylib_image_mipmaps },
+    .{ "raylib.Raylib.imageDither(_,_,_,_,_)", wren_raylib_image_dither },
+    .{ "raylib.Raylib.imageFlipVertical(_)", wren_raylib_image_flip_vertical },
+    .{ "raylib.Raylib.imageFlipHorizontal(_)", wren_raylib_image_flip_horizontal },
+    .{ "raylib.Raylib.imageRotate(_,_)", wren_raylib_image_rotate },
+    .{ "raylib.Raylib.imageRotateCW(_)", wren_raylib_image_rotate_c_w },
+    .{ "raylib.Raylib.imageRotateCCW(_)", wren_raylib_image_rotate_c_c_w },
+    .{ "raylib.Raylib.imageColorTint(_,_)", wren_raylib_image_color_tint },
+    .{ "raylib.Raylib.imageColorInvert(_)", wren_raylib_image_color_invert },
+    .{ "raylib.Raylib.imageColorGrayscale(_)", wren_raylib_image_color_grayscale },
+    .{ "raylib.Raylib.imageColorContrast(_,_)", wren_raylib_image_color_contrast },
+    .{ "raylib.Raylib.imageColorBrightness(_,_)", wren_raylib_image_color_brightness },
+    .{ "raylib.Raylib.imageColorReplace(_,_,_)", wren_raylib_image_color_replace },
+    .{ "raylib.Raylib.loadImageColors(_)", wren_raylib_load_image_colors },
+    .{ "raylib.Raylib.loadImagePalette(_,_,_)", wren_raylib_load_image_palette },
+    .{ "raylib.Raylib.unloadImageColors(_)", wren_raylib_unload_image_colors },
+    .{ "raylib.Raylib.unloadImagePalette(_)", wren_raylib_unload_image_palette },
+    .{ "raylib.Raylib.getImageAlphaBorder(_,_)", wren_raylib_get_image_alpha_border },
+    .{ "raylib.Raylib.getImageColor(_,_,_)", wren_raylib_get_image_color },
+    .{ "raylib.Raylib.imageClearBackground(_,_)", wren_raylib_image_clear_background },
+    .{ "raylib.Raylib.imageDrawPixel(_,_,_,_)", wren_raylib_image_draw_pixel },
+    .{ "raylib.Raylib.imageDrawPixelV(_,_,_)", wren_raylib_image_draw_pixel_v },
+    .{ "raylib.Raylib.imageDrawLine(_,_,_,_,_,_)", wren_raylib_image_draw_line },
+    .{ "raylib.Raylib.imageDrawLineV(_,_,_,_)", wren_raylib_image_draw_line_v },
+    .{ "raylib.Raylib.imageDrawLineEx(_,_,_,_,_)", wren_raylib_image_draw_line_ex },
+    .{ "raylib.Raylib.imageDrawCircle(_,_,_,_,_)", wren_raylib_image_draw_circle },
+    .{ "raylib.Raylib.imageDrawCircleV(_,_,_,_)", wren_raylib_image_draw_circle_v },
+    .{ "raylib.Raylib.imageDrawCircleLines(_,_,_,_,_)", wren_raylib_image_draw_circle_lines },
+    .{ "raylib.Raylib.imageDrawCircleLinesV(_,_,_,_)", wren_raylib_image_draw_circle_lines_v },
+    .{ "raylib.Raylib.imageDrawRectangle(_,_,_,_,_,_)", wren_raylib_image_draw_rectangle },
+    .{ "raylib.Raylib.imageDrawRectangleV(_,_,_,_)", wren_raylib_image_draw_rectangle_v },
+    .{ "raylib.Raylib.imageDrawRectangleRec(_,_,_)", wren_raylib_image_draw_rectangle_rec },
+    .{ "raylib.Raylib.imageDrawRectangleLines(_,_,_,_)", wren_raylib_image_draw_rectangle_lines },
+    .{ "raylib.Raylib.imageDrawTriangle(_,_,_,_,_)", wren_raylib_image_draw_triangle },
+    .{ "raylib.Raylib.imageDrawTriangleEx(_,_,_,_,_,_,_)", wren_raylib_image_draw_triangle_ex },
+    .{ "raylib.Raylib.imageDrawTriangleLines(_,_,_,_,_)", wren_raylib_image_draw_triangle_lines },
+    .{ "raylib.Raylib.imageDrawTriangleFan(_,_,_,_)", wren_raylib_image_draw_triangle_fan },
+    .{ "raylib.Raylib.imageDrawTriangleStrip(_,_,_,_)", wren_raylib_image_draw_triangle_strip },
+    .{ "raylib.Raylib.imageDraw(_,_,_,_,_)", wren_raylib_image_draw },
+    .{ "raylib.Raylib.imageDrawText(_,_,_,_,_,_)", wren_raylib_image_draw_text },
+    .{ "raylib.Raylib.imageDrawTextEx(_,_,_,_,_,_,_)", wren_raylib_image_draw_text_ex },
+    .{ "raylib.Raylib.loadTexture(_)", wren_raylib_load_texture },
+    .{ "raylib.Raylib.loadTextureFromImage(_)", wren_raylib_load_texture_from_image },
+    .{ "raylib.Raylib.loadTextureCubemap(_,_)", wren_raylib_load_texture_cubemap },
+    .{ "raylib.Raylib.loadRenderTexture(_,_)", wren_raylib_load_render_texture },
+    .{ "raylib.Raylib.isTextureValid(_)", wren_raylib_is_texture_valid },
+    .{ "raylib.Raylib.unloadTexture(_)", wren_raylib_unload_texture },
+    .{ "raylib.Raylib.isRenderTextureValid(_)", wren_raylib_is_render_texture_valid },
+    .{ "raylib.Raylib.unloadRenderTexture(_)", wren_raylib_unload_render_texture },
+    .{ "raylib.Raylib.updateTexture(_,_)", wren_raylib_update_texture },
+    .{ "raylib.Raylib.updateTextureRec(_,_,_)", wren_raylib_update_texture_rec },
+    .{ "raylib.Raylib.genTextureMipmaps(_)", wren_raylib_gen_texture_mipmaps },
+    .{ "raylib.Raylib.setTextureFilter(_,_)", wren_raylib_set_texture_filter },
+    .{ "raylib.Raylib.setTextureWrap(_,_)", wren_raylib_set_texture_wrap },
+    .{ "raylib.Raylib.drawTexture(_,_,_,_)", wren_raylib_draw_texture },
+    .{ "raylib.Raylib.drawTextureV(_,_,_)", wren_raylib_draw_texture_v },
+    .{ "raylib.Raylib.drawTextureEx(_,_,_,_,_)", wren_raylib_draw_texture_ex },
+    .{ "raylib.Raylib.drawTextureRec(_,_,_,_)", wren_raylib_draw_texture_rec },
+    .{ "raylib.Raylib.drawTexturePro(_,_,_,_,_,_)", wren_raylib_draw_texture_pro },
+    .{ "raylib.Raylib.drawTextureNPatch(_,_,_,_,_,_)", wren_raylib_draw_texture_n_patch },
+    .{ "raylib.Raylib.colorIsEqual(_,_)", wren_raylib_color_is_equal },
+    .{ "raylib.Raylib.fade(_,_)", wren_raylib_fade },
+    .{ "raylib.Raylib.colorToInt(_)", wren_raylib_color_to_int },
+    .{ "raylib.Raylib.colorNormalize(_)", wren_raylib_color_normalize },
+    .{ "raylib.Raylib.colorFromNormalized(_)", wren_raylib_color_from_normalized },
+    .{ "raylib.Raylib.colorToHSV(_)", wren_raylib_color_to_h_s_v },
+    .{ "raylib.Raylib.colorFromHSV(_,_,_)", wren_raylib_color_from_h_s_v },
+    .{ "raylib.Raylib.colorTint(_,_)", wren_raylib_color_tint },
+    .{ "raylib.Raylib.colorBrightness(_,_)", wren_raylib_color_brightness },
+    .{ "raylib.Raylib.colorContrast(_,_)", wren_raylib_color_contrast },
+    .{ "raylib.Raylib.colorAlpha(_,_)", wren_raylib_color_alpha },
+    .{ "raylib.Raylib.colorAlphaBlend(_,_,_)", wren_raylib_color_alpha_blend },
+    .{ "raylib.Raylib.colorLerp(_,_,_)", wren_raylib_color_lerp },
+    .{ "raylib.Raylib.getColor(_)", wren_raylib_get_color },
+    .{ "raylib.Raylib.getPixelColor(_,_)", wren_raylib_get_pixel_color },
+    .{ "raylib.Raylib.setPixelColor(_,_,_)", wren_raylib_set_pixel_color },
+    .{ "raylib.Raylib.getPixelDataSize(_,_,_)", wren_raylib_get_pixel_data_size },
+
     .{ "raylib.RenderTexture2D.texture", RaylibBindings.RenderTexture2D.texture },
     .{ "raylib.Texture2D.width", RaylibBindings.Texture2D.width },
     .{ "raylib.Texture2D.height", RaylibBindings.Texture2D.height },
@@ -2969,7 +6657,7 @@ pub const ForeignMethodBindings = std.StaticStringMap(?*const WrenForeignMethodF
     .{ "raylib.Texture2D.loadTexture(_)", RaylibBindings.Texture2D.loadTexture },
     .{ "raylib.Camera2D.beginMode2D()", RaylibBindings.Camera2D.beginMode2D },
     .{ "raylib.Camera2D.endMode2D()", RaylibBindings.Camera2D.endMode2D },
-    .{ "raylib.Camera2D.target()", RaylibBindings.Camera2D.getTarget },
+    .{ "raylib.Camera2D.target", RaylibBindings.Camera2D.getTarget },
     .{ "raylib.Camera2D.target=(_)", RaylibBindings.Camera2D.setTarget },
     .{ "raylib.Camera2D.rotation", RaylibBindings.Camera2D.getRotation },
     .{ "raylib.Camera2D.rotation=(_)", RaylibBindings.Camera2D.setRotation },
@@ -2988,6 +6676,12 @@ pub const ForeignMethodBindings = std.StaticStringMap(?*const WrenForeignMethodF
     .{ "raylib.Vector2.x=(_)", RaylibBindings.Vector2.set_x },
     .{ "raylib.Vector2.y", RaylibBindings.Vector2.get_y },
     .{ "raylib.Vector2.y=(_)", RaylibBindings.Vector2.set_y },
+    .{ "raylib.Vector3.x", RaylibBindings.Vector3.get_x },
+    .{ "raylib.Vector3.x=(_)", RaylibBindings.Vector3.set_x },
+    .{ "raylib.Vector3.y", RaylibBindings.Vector3.get_y },
+    .{ "raylib.Vector3.y=(_)", RaylibBindings.Vector3.set_y },
+    .{ "raylib.Vector3.z", RaylibBindings.Vector3.get_z },
+    .{ "raylib.Vector3.z=(_)", RaylibBindings.Vector3.set_z },
     .{ "math.Math.min(_,_)", MathBindings.min },
     .{ "math.Math.max(_,_)", MathBindings.max },
     .{ "math.Math.sin(_)", MathBindings.sin },
@@ -2995,10 +6689,225 @@ pub const ForeignMethodBindings = std.StaticStringMap(?*const WrenForeignMethodF
     .{ "math.Math.pow(_,_)", MathBindings.pow },
     .{ "math.Math.exp(_)", MathBindings.exp },
     .{ "math.Math.log(_)", MathBindings.log },
+    .{ "math.Math.exp2(_)", MathBindings.exp2 },
+    .{ "math.Math.log2(_)", MathBindings.log2 },
+    .{ "math.Math.log10(_)", MathBindings.log10 },
+    .{ "math.Math.sqrt(_)", MathBindings.sqrt },
+    .{ "math.Math.floor(_)", MathBindings.floor },
+    .{ "math.Math.ceil(_)", MathBindings.ceil },
+    .{ "math.Math.round(_)", MathBindings.round },
+    .{ "math.Math.tan(_)", MathBindings.tan },
     // Manually added
-    .{ "raylib.Raylib.loadRenderTexture(_,_)", wren_load_render_texture },
+    //.{ "raylib.Raylib.loadRenderTexture(_,_)", wren_load_render_texture },
     .{ "raylib.Raylib.drawText(_,_,_,_,_)", wren_raylib_draw_text },
     .{ "raylib.Raylib.drawTexturePro(_,_,_,_,_,_)", draw_texture_pro },
     .{ "raylib.Raylib.endTextureMode(_)", end_texture_mode },
     .{ "raylib.Raylib.unloadRenderTexture(_)", wren_unload_render_texture },
+    .{ "raylib.Raylib.getFontDefault()", wren_raylib_get_font_default },
+    .{ "raylib.Raylib.loadFont(_)", wren_raylib_load_font },
+    .{ "raylib.Raylib.loadFontEx(_,_,_,_)", wren_raylib_load_font_ex },
+    .{ "raylib.Raylib.loadFontFromImage(_,_,_)", wren_raylib_load_font_from_image },
+    .{ "raylib.Raylib.loadFontFromMemory(_,_,_,_,_,_)", wren_raylib_load_font_from_memory },
+    .{ "raylib.Raylib.isFontValid(_)", wren_raylib_is_font_valid },
+    .{ "raylib.Raylib.loadFontData(_,_,_,_,_,_)", wren_raylib_load_font_data },
+    .{ "raylib.Raylib.genImageFontAtlas(_,_,_,_,_,_)", wren_raylib_gen_image_font_atlas },
+    .{ "raylib.Raylib.unloadFontData(_,_)", wren_raylib_unload_font_data },
+    .{ "raylib.Raylib.unloadFont(_)", wren_raylib_unload_font },
+    .{ "raylib.Raylib.exportFontAsCode(_,_)", wren_raylib_export_font_as_code },
+    .{ "raylib.Raylib.drawFPS(_,_)", wren_raylib_draw_f_p_s },
+    .{ "raylib.Raylib.drawText(_,_,_,_,_)", wren_raylib_draw_text },
+    .{ "raylib.Raylib.drawTextEx(_,_,_,_,_,_)", wren_raylib_draw_text_ex },
+    .{ "raylib.Raylib.drawTextPro(_,_,_,_,_,_,_,_)", wren_raylib_draw_text_pro },
+    .{ "raylib.Raylib.drawTextCodepoint(_,_,_,_,_)", wren_raylib_draw_text_codepoint },
+    .{ "raylib.Raylib.drawTextCodepoints(_,_,_,_,_,_,_)", wren_raylib_draw_text_codepoints },
+    .{ "raylib.Raylib.setTextLineSpacing(_)", wren_raylib_set_text_line_spacing },
+    .{ "raylib.Raylib.measureText(_,_)", wren_raylib_measure_text },
+    .{ "raylib.Raylib.measureTextEx(_,_,_,_)", wren_raylib_measure_text_ex },
+    .{ "raylib.Raylib.getGlyphIndex(_,_)", wren_raylib_get_glyph_index },
+    .{ "raylib.Raylib.getGlyphInfo(_,_)", wren_raylib_get_glyph_info },
+    .{ "raylib.Raylib.getGlyphAtlasRec(_,_)", wren_raylib_get_glyph_atlas_rec },
+    .{ "raylib.Raylib.loadUTF8(_,_)", wren_raylib_load_u_t_f8 },
+    .{ "raylib.Raylib.unloadUTF8(_)", wren_raylib_unload_u_t_f8 },
+    .{ "raylib.Raylib.loadCodepoints(_,_)", wren_raylib_load_codepoints },
+    .{ "raylib.Raylib.unloadCodepoints(_)", wren_raylib_unload_codepoints },
+    .{ "raylib.Raylib.getCodepointCount(_)", wren_raylib_get_codepoint_count },
+    .{ "raylib.Raylib.getCodepoint(_,_)", wren_raylib_get_codepoint },
+    .{ "raylib.Raylib.getCodepointNext(_,_)", wren_raylib_get_codepoint_next },
+    .{ "raylib.Raylib.getCodepointPrevious(_,_)", wren_raylib_get_codepoint_previous },
+    .{ "raylib.Raylib.codepointToUTF8(_,_)", wren_raylib_codepoint_to_u_t_f8 },
+    .{ "raylib.Raylib.textCopy(_,_)", wren_raylib_text_copy },
+    .{ "raylib.Raylib.textIsEqual(_,_)", wren_raylib_text_is_equal },
+    .{ "raylib.Raylib.textLength(_)", wren_raylib_text_length },
+    .{ "raylib.Raylib.textFormat(_,_)", wren_raylib_text_format },
+    .{ "raylib.Raylib.textSubtext(_,_,_)", wren_raylib_text_subtext },
+    .{ "raylib.Raylib.textReplace(_,_,_)", wren_raylib_text_replace },
+    .{ "raylib.Raylib.textInsert(_,_,_)", wren_raylib_text_insert },
+    .{ "raylib.Raylib.textJoin(_,_,_)", wren_raylib_text_join },
+    .{ "raylib.Raylib.textSplit(_,_,_)", wren_raylib_text_split },
+    .{ "raylib.Raylib.textAppend(_,_,_)", wren_raylib_text_append },
+    .{ "raylib.Raylib.textFindIndex(_,_)", wren_raylib_text_find_index },
+    .{ "raylib.Raylib.textToUpper(_)", wren_raylib_text_to_upper },
+    .{ "raylib.Raylib.textToLower(_)", wren_raylib_text_to_lower },
+    .{ "raylib.Raylib.textToPascal(_)", wren_raylib_text_to_pascal },
+    .{ "raylib.Raylib.textToSnake(_)", wren_raylib_text_to_snake },
+    .{ "raylib.Raylib.textToCamel(_)", wren_raylib_text_to_camel },
+    .{ "raylib.Raylib.textToInteger(_)", wren_raylib_text_to_integer },
+    .{ "raylib.Raylib.textToFloat(_)", wren_raylib_text_to_float },
+    .{ "raylib.Raylib.drawLine3D(_,_,_)", wren_raylib_draw_line3_d },
+    .{ "raylib.Raylib.drawPoint3D(_,_)", wren_raylib_draw_point3_d },
+    .{ "raylib.Raylib.drawCircle3D(_,_,_,_,_)", wren_raylib_draw_circle3_d },
+    .{ "raylib.Raylib.drawTriangle3D(_,_,_,_)", wren_raylib_draw_triangle3_d },
+    .{ "raylib.Raylib.drawTriangleStrip3D(_,_,_)", wren_raylib_draw_triangle_strip3_d },
+    .{ "raylib.Raylib.drawCube(_,_,_,_,_)", wren_raylib_draw_cube },
+    .{ "raylib.Raylib.drawCubeV(_,_,_)", wren_raylib_draw_cube_v },
+    .{ "raylib.Raylib.drawCubeWires(_,_,_,_,_)", wren_raylib_draw_cube_wires },
+    .{ "raylib.Raylib.drawCubeWiresV(_,_,_)", wren_raylib_draw_cube_wires_v },
+    .{ "raylib.Raylib.drawSphere(_,_,_)", wren_raylib_draw_sphere },
+    .{ "raylib.Raylib.drawSphereEx(_,_,_,_,_)", wren_raylib_draw_sphere_ex },
+    .{ "raylib.Raylib.drawSphereWires(_,_,_,_,_)", wren_raylib_draw_sphere_wires },
+    .{ "raylib.Raylib.drawCylinder(_,_,_,_,_,_)", wren_raylib_draw_cylinder },
+    .{ "raylib.Raylib.drawCylinderEx(_,_,_,_,_,_)", wren_raylib_draw_cylinder_ex },
+    .{ "raylib.Raylib.drawCylinderWires(_,_,_,_,_,_)", wren_raylib_draw_cylinder_wires },
+    .{ "raylib.Raylib.drawCylinderWiresEx(_,_,_,_,_,_)", wren_raylib_draw_cylinder_wires_ex },
+    .{ "raylib.Raylib.drawCapsule(_,_,_,_,_,_)", wren_raylib_draw_capsule },
+    .{ "raylib.Raylib.drawCapsuleWires(_,_,_,_,_,_)", wren_raylib_draw_capsule_wires },
+    .{ "raylib.Raylib.drawPlane(_,_,_)", wren_raylib_draw_plane },
+    .{ "raylib.Raylib.drawRay(_,_)", wren_raylib_draw_ray },
+    .{ "raylib.Raylib.drawGrid(_,_)", wren_raylib_draw_grid },
+    .{ "raylib.Raylib.loadModel(_)", wren_raylib_load_model },
+    .{ "raylib.Raylib.loadModelFromMesh(_)", wren_raylib_load_model_from_mesh },
+    .{ "raylib.Raylib.isModelValid(_)", wren_raylib_is_model_valid },
+    .{ "raylib.Raylib.unloadModel(_)", wren_raylib_unload_model },
+    .{ "raylib.Raylib.getModelBoundingBox(_)", wren_raylib_get_model_bounding_box },
+    .{ "raylib.Raylib.drawModel(_,_,_,_)", wren_raylib_draw_model },
+    .{ "raylib.Raylib.drawModelEx(_,_,_,_,_,_)", wren_raylib_draw_model_ex },
+    .{ "raylib.Raylib.drawModelWires(_,_,_,_)", wren_raylib_draw_model_wires },
+    .{ "raylib.Raylib.drawModelWiresEx(_,_,_,_,_,_)", wren_raylib_draw_model_wires_ex },
+    .{ "raylib.Raylib.drawModelPoints(_,_,_,_)", wren_raylib_draw_model_points },
+    .{ "raylib.Raylib.drawModelPointsEx(_,_,_,_,_,_)", wren_raylib_draw_model_points_ex },
+    .{ "raylib.Raylib.drawBoundingBox(_,_)", wren_raylib_draw_bounding_box },
+    .{ "raylib.Raylib.drawBillboard(_,_,_,_,_)", wren_raylib_draw_billboard },
+    .{ "raylib.Raylib.drawBillboardRec(_,_,_,_,_,_)", wren_raylib_draw_billboard_rec },
+    .{ "raylib.Raylib.drawBillboardPro(_,_,_,_,_,_,_,_,_)", wren_raylib_draw_billboard_pro },
+    .{ "raylib.Raylib.uploadMesh(_,_)", wren_raylib_upload_mesh },
+    .{ "raylib.Raylib.updateMeshBuffer(_,_,_,_,_)", wren_raylib_update_mesh_buffer },
+    .{ "raylib.Raylib.unloadMesh(_)", wren_raylib_unload_mesh },
+    .{ "raylib.Raylib.drawMesh(_,_,_)", wren_raylib_draw_mesh },
+    .{ "raylib.Raylib.drawMeshInstanced(_,_,_,_)", wren_raylib_draw_mesh_instanced },
+    .{ "raylib.Raylib.getMeshBoundingBox(_)", wren_raylib_get_mesh_bounding_box },
+    .{ "raylib.Raylib.genMeshTangents(_)", wren_raylib_gen_mesh_tangents },
+    .{ "raylib.Raylib.exportMesh(_,_)", wren_raylib_export_mesh },
+    .{ "raylib.Raylib.exportMeshAsCode(_,_)", wren_raylib_export_mesh_as_code },
+    .{ "raylib.Raylib.genMeshPoly(_,_)", wren_raylib_gen_mesh_poly },
+    .{ "raylib.Raylib.genMeshPlane(_,_,_,_)", wren_raylib_gen_mesh_plane },
+    .{ "raylib.Raylib.genMeshCube(_,_,_)", wren_raylib_gen_mesh_cube },
+    .{ "raylib.Raylib.genMeshSphere(_,_,_)", wren_raylib_gen_mesh_sphere },
+    .{ "raylib.Raylib.genMeshHemiSphere(_,_,_)", wren_raylib_gen_mesh_hemi_sphere },
+    .{ "raylib.Raylib.genMeshCylinder(_,_,_)", wren_raylib_gen_mesh_cylinder },
+    .{ "raylib.Raylib.genMeshCone(_,_,_)", wren_raylib_gen_mesh_cone },
+    .{ "raylib.Raylib.genMeshTorus(_,_,_,_)", wren_raylib_gen_mesh_torus },
+    .{ "raylib.Raylib.genMeshKnot(_,_,_,_)", wren_raylib_gen_mesh_knot },
+    .{ "raylib.Raylib.genMeshHeightmap(_,_)", wren_raylib_gen_mesh_heightmap },
+    .{ "raylib.Raylib.genMeshCubicmap(_,_)", wren_raylib_gen_mesh_cubicmap },
+    .{ "raylib.Raylib.loadMaterials(_,_)", wren_raylib_load_materials },
+    .{ "raylib.Raylib.loadMaterialDefault()", wren_raylib_load_material_default },
+    .{ "raylib.Raylib.isMaterialValid(_)", wren_raylib_is_material_valid },
+    .{ "raylib.Raylib.unloadMaterial(_)", wren_raylib_unload_material },
+    .{ "raylib.Raylib.setMaterialTexture(_,_,_)", wren_raylib_set_material_texture },
+    .{ "raylib.Raylib.setModelMeshMaterial(_,_,_)", wren_raylib_set_model_mesh_material },
+    .{ "raylib.Raylib.loadModelAnimations(_,_)", wren_raylib_load_model_animations },
+    .{ "raylib.Raylib.updateModelAnimation(_,_,_)", wren_raylib_update_model_animation },
+    .{ "raylib.Raylib.updateModelAnimationBones(_,_,_)", wren_raylib_update_model_animation_bones },
+    .{ "raylib.Raylib.unloadModelAnimation(_)", wren_raylib_unload_model_animation },
+    .{ "raylib.Raylib.unloadModelAnimations(_,_)", wren_raylib_unload_model_animations },
+    .{ "raylib.Raylib.isModelAnimationValid(_,_)", wren_raylib_is_model_animation_valid },
+    .{ "raylib.Raylib.checkCollisionSpheres(_,_,_,_)", wren_raylib_check_collision_spheres },
+    .{ "raylib.Raylib.checkCollisionBoxes(_,_)", wren_raylib_check_collision_boxes },
+    .{ "raylib.Raylib.checkCollisionBoxSphere(_,_,_)", wren_raylib_check_collision_box_sphere },
+    .{ "raylib.Raylib.getRayCollisionSphere(_,_,_)", wren_raylib_get_ray_collision_sphere },
+    .{ "raylib.Raylib.getRayCollisionBox(_,_)", wren_raylib_get_ray_collision_box },
+    .{ "raylib.Raylib.getRayCollisionMesh(_,_,_)", wren_raylib_get_ray_collision_mesh },
+    .{ "raylib.Raylib.getRayCollisionTriangle(_,_,_,_)", wren_raylib_get_ray_collision_triangle },
+    .{ "raylib.Raylib.getRayCollisionQuad(_,_,_,_,_)", wren_raylib_get_ray_collision_quad },
+    .{ "raylib.Raylib.initAudioDevice()", wren_raylib_init_audio_device },
+    .{ "raylib.Raylib.closeAudioDevice()", wren_raylib_close_audio_device },
+    .{ "raylib.Raylib.isAudioDeviceReady()", wren_raylib_is_audio_device_ready },
+    .{ "raylib.Raylib.setMasterVolume(_)", wren_raylib_set_master_volume },
+    .{ "raylib.Raylib.getMasterVolume()", wren_raylib_get_master_volume },
+    .{ "raylib.Raylib.loadWave(_)", wren_raylib_load_wave },
+    .{ "raylib.Raylib.loadWaveFromMemory(_,_,_)", wren_raylib_load_wave_from_memory },
+    .{ "raylib.Raylib.isWaveValid(_)", wren_raylib_is_wave_valid },
+    .{ "raylib.Raylib.loadSound(_)", wren_raylib_load_sound },
+    .{ "raylib.Raylib.loadSoundFromWave(_)", wren_raylib_load_sound_from_wave },
+    .{ "raylib.Raylib.loadSoundAlias(_)", wren_raylib_load_sound_alias },
+    .{ "raylib.Raylib.isSoundValid(_)", wren_raylib_is_sound_valid },
+    .{ "raylib.Raylib.updateSound(_,_,_)", wren_raylib_update_sound },
+    .{ "raylib.Raylib.unloadWave(_)", wren_raylib_unload_wave },
+    .{ "raylib.Raylib.unloadSound(_)", wren_raylib_unload_sound },
+    .{ "raylib.Raylib.unloadSoundAlias(_)", wren_raylib_unload_sound_alias },
+    .{ "raylib.Raylib.exportWave(_,_)", wren_raylib_export_wave },
+    .{ "raylib.Raylib.exportWaveAsCode(_,_)", wren_raylib_export_wave_as_code },
+    .{ "raylib.Raylib.playSound(_)", wren_raylib_play_sound },
+    .{ "raylib.Raylib.stopSound(_)", wren_raylib_stop_sound },
+    .{ "raylib.Raylib.pauseSound(_)", wren_raylib_pause_sound },
+    .{ "raylib.Raylib.resumeSound(_)", wren_raylib_resume_sound },
+    .{ "raylib.Raylib.isSoundPlaying(_)", wren_raylib_is_sound_playing },
+    .{ "raylib.Raylib.setSoundVolume(_,_)", wren_raylib_set_sound_volume },
+    .{ "raylib.Raylib.setSoundPitch(_,_)", wren_raylib_set_sound_pitch },
+    .{ "raylib.Raylib.setSoundPan(_,_)", wren_raylib_set_sound_pan },
+    .{ "raylib.Raylib.waveCopy(_)", wren_raylib_wave_copy },
+    .{ "raylib.Raylib.waveCrop(_,_,_)", wren_raylib_wave_crop },
+    .{ "raylib.Raylib.waveFormat(_,_,_,_)", wren_raylib_wave_format },
+    .{ "raylib.Raylib.loadWaveSamples(_)", wren_raylib_load_wave_samples },
+    .{ "raylib.Raylib.unloadWaveSamples(_)", wren_raylib_unload_wave_samples },
+    .{ "raylib.Raylib.loadMusicStream(_)", wren_raylib_load_music_stream },
+    .{ "raylib.Raylib.loadMusicStreamFromMemory(_,_,_)", wren_raylib_load_music_stream_from_memory },
+    .{ "raylib.Raylib.isMusicValid(_)", wren_raylib_is_music_valid },
+    .{ "raylib.Raylib.unloadMusicStream(_)", wren_raylib_unload_music_stream },
+    .{ "raylib.Raylib.playMusicStream(_)", wren_raylib_play_music_stream },
+    .{ "raylib.Raylib.isMusicStreamPlaying(_)", wren_raylib_is_music_stream_playing },
+    .{ "raylib.Raylib.updateMusicStream(_)", wren_raylib_update_music_stream },
+    .{ "raylib.Raylib.stopMusicStream(_)", wren_raylib_stop_music_stream },
+    .{ "raylib.Raylib.pauseMusicStream(_)", wren_raylib_pause_music_stream },
+    .{ "raylib.Raylib.resumeMusicStream(_)", wren_raylib_resume_music_stream },
+    .{ "raylib.Raylib.seekMusicStream(_,_)", wren_raylib_seek_music_stream },
+    .{ "raylib.Raylib.setMusicVolume(_,_)", wren_raylib_set_music_volume },
+    .{ "raylib.Raylib.setMusicPitch(_,_)", wren_raylib_set_music_pitch },
+    .{ "raylib.Raylib.setMusicPan(_,_)", wren_raylib_set_music_pan },
+    .{ "raylib.Raylib.getMusicTimeLength(_)", wren_raylib_get_music_time_length },
+    .{ "raylib.Raylib.getMusicTimePlayed(_)", wren_raylib_get_music_time_played },
+    .{ "raylib.Raylib.loadAudioStream(_,_,_)", wren_raylib_load_audio_stream },
+    .{ "raylib.Raylib.isAudioStreamValid(_)", wren_raylib_is_audio_stream_valid },
+    .{ "raylib.Raylib.unloadAudioStream(_)", wren_raylib_unload_audio_stream },
+    .{ "raylib.Raylib.updateAudioStream(_,_,_)", wren_raylib_update_audio_stream },
+    .{ "raylib.Raylib.isAudioStreamProcessed(_)", wren_raylib_is_audio_stream_processed },
+    .{ "raylib.Raylib.playAudioStream(_)", wren_raylib_play_audio_stream },
+    .{ "raylib.Raylib.pauseAudioStream(_)", wren_raylib_pause_audio_stream },
+    .{ "raylib.Raylib.resumeAudioStream(_)", wren_raylib_resume_audio_stream },
+    .{ "raylib.Raylib.isAudioStreamPlaying(_)", wren_raylib_is_audio_stream_playing },
+    .{ "raylib.Raylib.stopAudioStream(_)", wren_raylib_stop_audio_stream },
+    .{ "raylib.Raylib.setAudioStreamVolume(_,_)", wren_raylib_set_audio_stream_volume },
+    .{ "raylib.Raylib.setAudioStreamPitch(_,_)", wren_raylib_set_audio_stream_pitch },
+    .{ "raylib.Raylib.setAudioStreamPan(_,_)", wren_raylib_set_audio_stream_pan },
+    .{ "raylib.Raylib.setAudioStreamBufferSizeDefault(_)", wren_raylib_set_audio_stream_buffer_size_default },
+    .{ "raylib.Raylib.setAudioStreamCallback(_,_)", wren_raylib_set_audio_stream_callback },
+    .{ "raylib.Raylib.attachAudioStreamProcessor(_,_)", wren_raylib_attach_audio_stream_processor },
+    .{ "raylib.Raylib.detachAudioStreamProcessor(_,_)", wren_raylib_detach_audio_stream_processor },
+    .{ "raylib.Raylib.attachAudioMixedProcessor(_)", wren_raylib_attach_audio_mixed_processor },
+    .{ "raylib.Raylib.detachAudioMixedProcessor(_)", wren_raylib_detach_audio_mixed_processor },
+});
+
+pub const ForeignClassBindings = std.StaticStringMap(ForeignClass).initComptime(.{
+    .{ "raylib.Color", ForeignClass{ .allocate = Color.allocate } },
+    .{ "raylib.RenderTexture2D", ForeignClass{ .allocate = RenderTexture2D.allocate } },
+    .{ "raylib.Camera2D", ForeignClass{ .allocate = Camera2D.allocate } },
+    .{ "raylib.Vector2", ForeignClass{ .allocate = Vector2.allocate } },
+    .{ "raylib.Vector3", ForeignClass{ .allocate = RaylibBindings.Vector3.allocate } },
+    .{ "raylib.Rectangle", ForeignClass{ .allocate = Rectangle.allocate } },
+    .{ "raylib.Image", ForeignClass{ .allocate = Image.allocate } },
+    .{ "raylib.Font", ForeignClass{ .allocate = Font.allocate } },
+    .{ "raylib.Wave", ForeignClass{ .allocate = Wave.allocate } },
+    .{ "raylib.Sound", ForeignClass{ .allocate = Wave.allocate } },
+    .{ "raylib.Music", ForeignClass{ .allocate = Wave.allocate } },
+    .{ "raylib.AudioStream", ForeignClass{ .allocate = Wave.allocate } },
 });

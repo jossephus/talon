@@ -18,12 +18,15 @@ var i = 0
 
 while (i < MAX_BUILDINGS) {
   var height = Raylib.getRandomValue(100, 800)
+  var random =  Raylib.getRandomValue(50, 200)
+  
   var building = Rectangle.new(
-    Raylib.getRandomValue(50, 200),
-    height, 
     -6000 + spacing, 
-    screenHeight - 130.0 - height
+    screenHeight - 130.0 - height,
+    random,
+    height
   )
+
   buildings.add(building)
 
   spacing = spacing + building.width 
@@ -35,17 +38,17 @@ while (i < MAX_BUILDINGS) {
     255
   ))
 
-
   i = i + 1
 }
 
 var camera = Camera2D.new(
   Vector2.new(screenWidth / 2.0, screenHeight / 2.0), 
   Vector2.new(player.x + 20.0, player.y + 20.0),
-  0.0, 
-  1.0
+  1.0,
+  0.0
 )
 
+Raylib.setTargetFPS(60)               // Set our game to run at 60 frames-per-secon
 
 while (!Raylib.windowShouldClose()) {
 
@@ -63,7 +66,7 @@ while (!Raylib.windowShouldClose()) {
 
   if (camera.rotation > 40) {
     camera.rotation = 40
-  } else if (camera.rotation < 40) { camera.rotation = camera.rotation - 40 }
+  } else if (camera.rotation < -40) { camera.rotation = -40 }
 
   camera.zoom = Math.exp(Math.log(camera.zoom) + (Raylib.getMouseWheelMove() * 0.1))
 
@@ -93,8 +96,8 @@ while (!Raylib.windowShouldClose()) {
 
           Raylib.drawRectangleRec(player, Color.Red)
 
-//      Raylib.drawLine(camera.target.x, -screenHeight*10, camera.target.x, screenHeight*10, Color.Green)
-//      Raylib.drawLine(-screenWidth*10, camera.target.y, screenWidth*10, camera.target.y, Color.Green)
+      Raylib.drawLine(camera.target.x, -screenHeight*10, camera.target.x, screenHeight*10, Color.Green)
+      Raylib.drawLine(-screenWidth*10, camera.target.y, screenWidth*10, camera.target.y, Color.Green)
 
       Raylib.endMode2D()
 

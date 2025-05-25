@@ -18,6 +18,7 @@ var game = Game.new()
 Raylib.setTargetFPS(60)
 
 var target = Raylib.loadRenderTexture(width, height)
+System.print(target)
 
 
 while (!Raylib.windowShouldClose()) {

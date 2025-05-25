@@ -311,7 +311,7 @@ pub fn main() !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("{s}\n", .{try zig_program.toOwnedSlice()});
     try stdout.print("{s}\n", .{try binding_source.toOwnedSlice()});
-    //try stdout.print("{s}\n", .{try wren_source.toOwnedSlice()});
+    try stdout.print("{s}\n", .{try wren_source.toOwnedSlice()});
 }
 
 fn format_call(allocator: std.mem.Allocator, sign: RaylibHeaderSignature) ![]const u8 {
@@ -377,3 +377,5 @@ fn format_binding_call(allocator: std.mem.Allocator, size: usize) ![]const u8 {
 //    void *MemRealloc(void *ptr, unsigned int size);            // Internal memory reallocator
 //    void MemFree(void *ptr);                                   // Internal memory free
 //    bool SaveFileData(const char *fileName, void *data, int dataSize); // Save data to file from byte array (write), returns true on success
+//
+//    void UnloadModelAnimations(ModelAnimation *animations, int animCount);                // Unload animation array data

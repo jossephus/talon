@@ -13,6 +13,13 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    const raylib_dep = b.dependency("raylib", .{
+        .target = target,
+        .optimize = optimize,
+        .linux_display_backend = .X11,
+    });
+    const raylib_lib = raylib_dep.artifact("raylib");
+
     const wren_lib = b.addStaticLibrary(.{
         .name = "wren",
         .target = target,
@@ -46,11 +53,6 @@ pub fn build(b: *std.Build) void {
 
     b.installArtifact(wren_lib);
 
-    //const exe_mod = b.createModule(.{
-    //.target = target,
-    //.optimize = optimize,
-    //});
-
     //exe_mod.linkLibrary(wren_lib);
 
     const exe = b.addExecutable(.{
@@ -60,15 +62,27 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    exe.linkLibrary(wren_lib);
 
-    const raylib_dep = b.dependency("raylib", .{
+    exe.linkLibrary(wren_lib);
+    exe.linkLibrary(raylib_lib);
+
+    const c_exe_mod = b.createModule(.{
         .target = target,
         .optimize = optimize,
-        .linux_display_backend = .X11,
     });
-    const raylib_lib = raylib_dep.artifact("raylib");
-    exe.linkLibrary(raylib_lib);
+    const c_exe = b.addExecutable(.{
+        .name = "sample_c",
+        .root_module = c_exe_mod,
+    });
+    c_exe.addCSourceFiles(.{
+        .root = b.path("src/"),
+        .files = &.{"main.c"},
+    });
+    c_exe.linkLibrary(wren_lib);
+    c_exe.linkLibrary(raylib_lib);
+    const c_sample_step = b.step("sample", "Generate raylib bindings");
+    const sample_run = b.addRunArtifact(c_exe);
+    c_sample_step.dependOn(&sample_run.step);
 
     //const install_step = b.addInstallDirectory(.{
     //.source_dir = b.path("res"),
@@ -77,15 +91,6 @@ pub fn build(b: *std.Build) void {
     //});
     //exe.step.dependOn(&install_step.step);
     //addAssets(b, exe);
-
-    //const exe = b.addExecutable(.{
-    //.name = "example",
-    //.root_module = exe_mod,
-    //});
-    //exe.addCSourceFiles(.{
-    //.root = b.path("src/"),
-    //.files = &.{"main.c"},
-    //});
 
     b.installArtifact(exe);
 

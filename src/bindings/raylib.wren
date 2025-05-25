@@ -105,7 +105,7 @@ foreign class Camera2D {
   foreign beginMode2D()
   foreign endMode2D()
 
-  foreign target()
+  foreign target
   foreign target=(value)
 
   foreign zoom 
