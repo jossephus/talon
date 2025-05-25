@@ -1,10 +1,17 @@
 const std = @import("std");
 const builtin = @import("builtin");
+const aro = @import("aro");
 
 const wren = @cImport({
     @cInclude("wren.h");
     @cInclude("stdio.h");
 });
+
+const Narcissus = struct {
+    me: *Narcissus = undefined,
+    myself: *Narcissus = undefined,
+    echo: void = undefined,
+};
 
 pub const r = @cImport({
     @cInclude("raylib.h");
@@ -239,6 +246,29 @@ fn bindForeignMethod(vm: ?*wren.WrenVM, module: [*c]const u8, className: [*c]con
 pub fn main() !void {
     //const script = @embedFile("main.wren");
 
+    var diagnostics: aro.Diagnostics = .{ .output = .ignore };
+    var comp = aro.Compilation.init(allocator, &diagnostics, std.fs.cwd());
+    defer comp.deinit();
+
+    const f = try comp.addSourceFromBuffer("main.c",
+        \\int main(void) {}
+        \\
+    );
+
+    const builtin_macros = try comp.generateBuiltinMacros(.no_system_defines);
+
+    var pp = aro.Preprocessor.init(&comp, .default);
+    defer pp.deinit();
+    try pp.addBuiltinMacros();
+
+    _ = try pp.preprocess(builtin_macros);
+
+    const eof = try pp.preprocess(f);
+    try pp.addToken(eof);
+
+    var tree = try aro.Parser.parse(&pp);
+    defer tree.deinit();
+
     const args = std.process.argsAlloc(allocator) catch unreachable;
     defer std.process.argsFree(allocator, args);
 
@@ -253,6 +283,11 @@ pub fn main() !void {
         return;
     };
     defer file.close();
+    //const fields = @typeInfo(r.Rectangle).@"struct".fields;
+
+    //inline for (fields) |field| {
+    //std.debug.print("{s}\n", .{field.name});
+    //}
 
     var buf_reader = std.io.bufferedReader(file.reader());
     var in_stream = buf_reader.reader();

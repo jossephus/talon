@@ -13,6 +13,11 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    const aro = b.dependency("aro", .{
+        .target = target,
+        .optimize = optimize,
+    });
+
     const wren_lib = b.addStaticLibrary(.{
         .name = "wren",
         .target = target,
@@ -61,6 +66,7 @@ pub fn build(b: *std.Build) void {
         .link_libc = true,
     });
     exe.linkLibrary(wren_lib);
+    exe.root_module.addImport("aro", aro.module("aro"));
 
     const raylib_dep = b.dependency("raylib", .{
         .target = target,
@@ -114,6 +120,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
+    generator.root_module.addImport("aro", aro.module("aro"));
 
     const generator_step = b.step("generator", "Generate raylib bindings");
 

@@ -1,5 +1,6 @@
 const std = @import("std");
 const headers = @import("rcore.zig").headers;
+const aro = @import("aro");
 
 const WrenArgType = union(enum) {
     Double,
@@ -148,6 +149,90 @@ fn toLowerCamelCase(allocator: std.mem.Allocator, input: []const u8) ![]const u8
 pub fn main() !void {
     var tokenized = std.mem.tokenizeAny(u8, headers, "\n");
     const allocator = std.heap.page_allocator;
+
+    var diagnostics: aro.Diagnostics = .{ .output = .ignore };
+    var comp = aro.Compilation.init(allocator, &diagnostics, std.fs.cwd());
+    defer comp.deinit();
+
+    const f = try comp.addSourceFromBuffer("main.c",
+        \\ void InitWindow(const char* hello, int height, const char *title);
+        \\
+    );
+
+    const builtin_macros = try comp.generateBuiltinMacros(.no_system_defines);
+
+    var pp = aro.Preprocessor.init(&comp, .default);
+    defer pp.deinit();
+    try pp.addBuiltinMacros();
+
+    _ = try pp.preprocess(builtin_macros);
+
+    const eof = try pp.preprocess(f);
+    try pp.addToken(eof);
+
+    var tree = try aro.Parser.parse(&pp);
+    defer tree.deinit();
+
+    for (tree.root_decls.items) |node_index| {
+        const node = node_index.get(&tree);
+
+        switch (node) {
+            .fn_proto => |proto| {
+                const decl_name = tree.tokSlice(node_index.tok(&tree));
+                _ = decl_name;
+                std.debug.print("Function Name: {s}\n", .{tree.tokSlice(proto.name_tok)});
+
+                const base = proto.qt.base(&comp);
+                //std.debug.print("Node: {s}\n", .{decl_name});
+                //std.debug.print("Type: {any}\n", .{base.type});
+
+                // \\ void InitWindow(Vector* hello, int height, const char *title);
+
+                switch (base.type) {
+                    .func => |func| {
+                        const params = func.params;
+                        const return_type = func.return_type.base(&comp);
+                        std.debug.print("Kind: {s}\n", .{@tagName(func.kind)});
+
+                        switch (return_type.type) {
+                            else => {
+                                std.debug.print("Return Type {s}\n", .{@tagName(return_type.type)});
+                            },
+                        }
+
+                        for (params, 0..) |param, i| {
+                            const b = param.qt.base(&comp);
+                            const is_const = b.qt.@"const";
+                            if (is_const) {
+                                std.debug.print("Is Constant: {any}\n", .{is_const});
+                            }
+                            switch (b.type) {
+                                .pointer => |ptr| {
+                                    const p = ptr.child.base(&comp);
+                                    switch (p.type) {
+                                        .int => |a| {
+                                            std.debug.print("Pointer Param {d}: {d} \n", .{ i + 1, a.bits(&comp) });
+                                            //std.debug.print("Param {d}: {s}\n", .{ i + 1, @tagName(a.type) });
+                                        },
+                                        else => {},
+                                    }
+                                },
+                                else => {
+                                    std.debug.print("Param {d}: {s}\n", .{ i + 1, @tagName(b.type) });
+                                },
+                            }
+                            std.debug.print("{s}\n", .{param.name.lookup(&comp)});
+                        }
+                    },
+                    else => {},
+                }
+            },
+            .param => |param| {
+                _ = param;
+            },
+            else => {},
+        }
+    }
 
     var zig_program = std.ArrayList(u8).init(allocator);
     defer zig_program.deinit();
@@ -308,9 +393,9 @@ pub fn main() !void {
         \\ });
     );
 
-    const stdout = std.io.getStdOut().writer();
-    try stdout.print("{s}\n", .{try zig_program.toOwnedSlice()});
-    try stdout.print("{s}\n", .{try binding_source.toOwnedSlice()});
+    //const stdout = std.io.getStdOut().writer();
+    //try stdout.print("{s}\n", .{try zig_program.toOwnedSlice()});
+    //try stdout.print("{s}\n", .{try binding_source.toOwnedSlice()});
     //try stdout.print("{s}\n", .{try wren_source.toOwnedSlice()});
 }
 
