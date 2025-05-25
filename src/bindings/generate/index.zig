@@ -6208,20 +6208,18 @@ pub fn wren_raylib_draw_text(vm: ?*wren.WrenVM) callconv(.C) void {
 }
 
 pub fn wren_load_render_texture(vm: ?*wren.WrenVM) callconv(.C) void {
-    _ = vm;
-    std.debug.print("We are here\n", .{});
-    //const width: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
-    //const height: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
+    const width: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 1));
+    const height: c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
 
-    //const target = r.LoadRenderTexture(width, height);
+    const target = r.LoadRenderTexture(width, height);
 
-    //wren.wrenEnsureSlots(vm, 1);
-    //wren.wrenGetVariable(vm, "raylib", "RenderTexture2D", 0);
+    wren.wrenEnsureSlots(vm, 1);
+    wren.wrenGetVariable(vm, "raylib", "RenderTexture2D", 0);
 
-    //const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.RenderTexture2D));
+    const foreign_ptr = wren.wrenSetSlotNewForeign(vm, 0, 0, @sizeOf(r.RenderTexture2D));
 
-    //const render_texture_ptr: *r.RenderTexture2D = @alignCast(@ptrCast(foreign_ptr));
-    //render_texture_ptr.* = target;
+    const render_texture_ptr: *r.RenderTexture2D = @alignCast(@ptrCast(foreign_ptr));
+    render_texture_ptr.* = target;
 }
 
 pub fn end_texture_mode(vm: ?*wren.WrenVM) callconv(.C) void {
@@ -6616,7 +6614,6 @@ pub const ForeignMethodBindings = std.StaticStringMap(?*const WrenForeignMethodF
     .{ "raylib.Raylib.loadTexture(_)", wren_raylib_load_texture },
     .{ "raylib.Raylib.loadTextureFromImage(_)", wren_raylib_load_texture_from_image },
     .{ "raylib.Raylib.loadTextureCubemap(_,_)", wren_raylib_load_texture_cubemap },
-    .{ "raylib.Raylib.loadRenderTexture(_,_)", wren_raylib_load_render_texture },
     .{ "raylib.Raylib.isTextureValid(_)", wren_raylib_is_texture_valid },
     .{ "raylib.Raylib.unloadTexture(_)", wren_raylib_unload_texture },
     .{ "raylib.Raylib.isRenderTextureValid(_)", wren_raylib_is_render_texture_valid },
@@ -6698,7 +6695,7 @@ pub const ForeignMethodBindings = std.StaticStringMap(?*const WrenForeignMethodF
     .{ "math.Math.round(_)", MathBindings.round },
     .{ "math.Math.tan(_)", MathBindings.tan },
     // Manually added
-    //.{ "raylib.Raylib.loadRenderTexture(_,_)", wren_load_render_texture },
+    .{ "raylib.Raylib.loadRenderTexture(_,_)", wren_load_render_texture },
     .{ "raylib.Raylib.drawText(_,_,_,_,_)", wren_raylib_draw_text },
     .{ "raylib.Raylib.drawTexturePro(_,_,_,_,_,_)", draw_texture_pro },
     .{ "raylib.Raylib.endTextureMode(_)", end_texture_mode },
