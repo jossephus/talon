@@ -1,0 +1,9 @@
+services:
+  camera:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./dist:/build/zig-out/bin
+    working_dir: /build
+    command: /compiler/zig build -Dtarget=x86_64-windows
