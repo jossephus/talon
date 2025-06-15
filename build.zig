@@ -8,17 +8,8 @@ fn addAssets(b: *std.Build, exe: *std.Build.Step.Compile) void {
     }
 }
 
-pub fn build(b: *std.Build) void {
+fn addWrenDep(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.Mode) *std.Build.Step.Compile {
     const upstream = b.dependency("wren", .{});
-    const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{});
-
-    const raylib_dep = b.dependency("raylib", .{
-        .target = target,
-        .optimize = optimize,
-        .linux_display_backend = .X11,
-    });
-    const raylib_lib = raylib_dep.artifact("raylib");
 
     const wren_lib = b.addStaticLibrary(.{
         .name = "wren",
@@ -51,7 +42,29 @@ pub fn build(b: *std.Build) void {
         },
     });
 
+    if (target.result.cpu.arch.isWasm()) wren_lib.addIncludePath(.{ .cwd_relative = ".emscripten_cache-4.0.8/sysroot/include" });
+
     b.installArtifact(wren_lib);
+    return wren_lib;
+}
+
+pub fn build(b: *std.Build) void {
+    const target = b.standardTargetOptions(.{});
+    const optimize = b.standardOptimizeOption(.{});
+
+    const wren_lib = addWrenDep(b, target, optimize);
+
+    const raylib_dep = if (target.result.cpu.arch.isWasm()) b.dependency("raylib", .{
+        .target = target,
+        .optimize = optimize,
+        .rmodels = false,
+    }) else b.dependency("raylib", .{
+        .target = target,
+        .optimize = optimize,
+        .linux_display_backend = .X11,
+    });
+
+    const raylib_lib = raylib_dep.artifact("raylib");
 
     //exe_mod.linkLibrary(wren_lib);
 
@@ -65,6 +78,22 @@ pub fn build(b: *std.Build) void {
 
     exe.linkLibrary(wren_lib);
     exe.linkLibrary(raylib_lib);
+
+    const lib = b.addModule("tolan", .{
+        .root_source_file = b.path("src/root.zig"),
+    });
+
+    lib.linkLibrary(wren_lib);
+    lib.linkLibrary(raylib_lib);
+    if (target.result.cpu.arch.isWasm()) lib.addIncludePath(.{ .cwd_relative = ".emscripten_cache-4.0.8/sysroot/include" });
+
+    const libWasm = b.addModule("tolan-wasm", .{
+        .root_source_file = b.path("src/root-wasm.zig"),
+    });
+
+    libWasm.linkLibrary(wren_lib);
+    libWasm.linkLibrary(raylib_lib);
+    if (target.result.cpu.arch.isWasm()) libWasm.addIncludePath(.{ .cwd_relative = ".emscripten_cache-4.0.8/sysroot/include" });
 
     const c_exe_mod = b.createModule(.{
         .target = target,
@@ -93,6 +122,7 @@ pub fn build(b: *std.Build) void {
     //addAssets(b, exe);
 
     b.installArtifact(exe);
+    b.installArtifact(raylib_lib);
 
     const run_cmd = b.addRunArtifact(exe);
 
