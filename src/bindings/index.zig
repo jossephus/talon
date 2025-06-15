@@ -11,7 +11,9 @@ const r = @cImport({
     @cInclude("raymath.h");
     @cInclude("rlgl.h");
 });
+const root = @import("../common.zig");
 const MathBindings = @import("math.zig");
+const BuiltinBindings = @import("builtin.zig");
 const RaylibBindings = @import("raylib.zig");
 
 pub const ForeignMethodBindings = std.StaticStringMap(?*const WrenForeignMethodFn).initComptime(.{
@@ -444,6 +446,7 @@ pub const ForeignMethodBindings = std.StaticStringMap(?*const WrenForeignMethodF
     .{ "math.Math.ceil(_)", MathBindings.ceil },
     .{ "math.Math.round(_)", MathBindings.round },
     .{ "math.Math.tan(_)", MathBindings.tan },
+    .{ "builtin.Build.shouldStop()", BuiltinBindings.shouldStop },
     // Manually added
     .{ "raylib.Raylib.loadRenderTexture(_,_)", RaylibBindings.wren_load_render_texture },
     .{ "raylib.Raylib.drawText(_,_,_,_,_)", RaylibBindings.wren_raylib_draw_text },
@@ -642,6 +645,7 @@ pub const ForeignMethodBindings = std.StaticStringMap(?*const WrenForeignMethodF
     .{ "raylib.Raylib.detachAudioStreamProcessor(_,_)", RaylibBindings.wren_raylib_detach_audio_stream_processor },
     .{ "raylib.Raylib.attachAudioMixedProcessor(_)", RaylibBindings.wren_raylib_attach_audio_mixed_processor },
     .{ "raylib.Raylib.detachAudioMixedProcessor(_)", RaylibBindings.wren_raylib_detach_audio_mixed_processor },
+    .{ "embed.Load.foreignFunction(_,_)", root.wren_load_foreign_function },
 });
 
 pub const WrenForeignMethodFn = fn (?*wren.WrenVM) callconv(.c) void;

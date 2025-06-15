@@ -1,4 +1,11 @@
 import "raylib" for Color, Raylib, Rectangle, Vector2, Camera2D, KeyCode, Texture2D
+import "builtin" for Build
+
+// Automatic reloads are very crucial for ui buildings
+// Here is talon running in hot reload mode
+
+var title = "Title Screen Changed 2"
+var color = Color.Yellow
 
 class GameScreen {
   static Logo { 0 }
@@ -7,8 +14,8 @@ class GameScreen {
   static Ending { 3 }
 }
 
-var screenWidth = 800 
-var screenHeight = 450
+var screenWidth = 1000 
+var screenHeight = 1000
 
 Raylib.initWindow(screenWidth, screenHeight, "raylib [core] example - basic screen manager")
 
@@ -18,7 +25,7 @@ var framesCounter = 0
 
 Raylib.setTargetFPS(60)
 
-while (!Raylib.windowShouldClose()) {
+while (!Raylib.windowShouldClose() && !Build.shouldStop()) {
   if (currentScreen == GameScreen.Logo) {
     framesCounter = framesCounter + 1
     if (framesCounter > 120) {
@@ -43,13 +50,13 @@ while (!Raylib.windowShouldClose()) {
   Raylib.clearBackground(Color.RayWhite)
 
   if (currentScreen == GameScreen.Logo) {
-    Raylib.drawText("Logo Screen", 20, 20, 40, Color.LightGray)
-    Raylib.drawText("Wait for 2 seconds...", 290, 220, 20, Color.Gray)
+    Raylib.drawText(title, 20, 20, 60, color)
+    Raylib.drawText("Wait for 3 seconds...", 290, 220, 20, Color.Gray)
   }
 
   if (currentScreen == GameScreen.Title) {
     Raylib.drawRectangle(0, 0, screenWidth, screenHeight, Color.Green)
-    Raylib.drawText("TITLE SCREEN", 20, 20, 40, Color.Blue)
+    Raylib.drawText("TITLE SCREEN 4", 20, 20, 40, Color.Blue)
     Raylib.drawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, Color.DarkGreen)
   }
 

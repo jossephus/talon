@@ -16,6 +16,7 @@ pub fn wren_raylib_init_window(vm: ?*wren.WrenVM) callconv(.C) void {
     const @"1": c_int = @intFromFloat(wren.wrenGetSlotDouble(vm, 2));
     const @"2" = wren.wrenGetSlotString(vm, 3);
     r.InitWindow(@"0", @"1", @"2");
+    r.SetConfigFlags(r.FLAG_WINDOW_TOPMOST);
 }
 
 pub fn wren_raylib_close_window(vm: ?*wren.WrenVM) callconv(.C) void {

@@ -1,7 +1,7 @@
 import "raylib" for Raylib, Rectangle, Vector2, Color
 
 var SCREEN_WIDTH = 800
-var SCREEN_HEIGHT = 450
+var SCREEN_HEIGHT = 900
 
 Raylib.initWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Shapes")
 
