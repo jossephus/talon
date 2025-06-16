@@ -4,11 +4,21 @@
 
 ## Talon
 
-**Talon** is a (wannabe) 2D Game framwork that uses [Raylib](https://www.raylib.com/) as its rendering engine and [Wren](https://wren.io) as its scripting language. I recently started playing with Raylib to build a couple of toy games and I was really impressed with it. Wren is also one of my favorite lightweight languages that i use occasionally. This project is my attempt to deep dive into Raylib apis and to make use of wren as an embedded scripting language.
+**Talon** is a (wannabe) 2D Game framwork that uses [Raylib](https://www.raylib.com/) as its rendering engine and [Wren](https://wren.io) as its scripting language. I recently started playing with Raylib to build a couple of toy games and I was really impressed with it. Wren is also one of my favorite lightweight languages. This project is a love letter to both of these projects.
 
 ## Status
 
 The goal of this project is to eventually become stable enough to satisfy my needs in creating any 2D games. The inspiration for this was [love2d](love2d) and my plan is to make Talon a good alternative to love2d. At this time, it only implements basic Raylib functionalities, but in the future We will add Audio, Physics, Full Math, ... supports.
+
+### Features
+
+- [Raylib Functions](#raylib-functions)
+- [Hot Reload on File Change](#hot-reload-on-file-change)
+- [Build Executable files for Linux/Windows](#build-executable-files-for-linuxwindows)
+- [Build Wasm using emscripten for ur talon games](#build-html-files)
+- [Use dynamic libraries (.so, .dll) to add functionalities](#use-dynamic-libraries-sodll-to-to-add-functionalities)
+- [Playground](#playground)
+- ... and many others
 
 ## Demo
 
@@ -67,16 +77,58 @@ Raylib.closeWindow()
 
 ## Getting Started
 
-The only way to try out Talon at this time is to clone the repo and build it yourself. Make sure you have zig 0.14.0 installed.
+We provide releases for linux/windows (other platforms coming soon). You can download from releases and try it out. You can save the above demo program in index.wren file and you can use
 
 ```sh
-git clone https://github.com/jossephus/talon
-cd talon
-zig build run -- ./examples/src/main.wren
+$ talon index.wren
 ```
 
-You can also run the breakout example by running. (It will almost work :-))
+to run it. You should see a simple window at this point.
+
+## Features
+
+#### Raylib Functions
+
+Almost all Raylib functions are exposed to users of talon. We change each function of to be exposed from the Raylib class and uses Snake Case for Talon instead. For example for the raylib function 'InitWindow' it would be 'Raylib.initWindow' in Talon.
+
+Raylib structs like Camera2D, Vector2 and ... are exposed as class in Talon with the same name. You can checkout the examples to see how to utilize them.
+
+#### Hot Reload on File Change
+
+running talon with --hot option runs it in full file watcher mode and reloads when there is any change in ur wren files.
+
+```sh
+talon --hot index.wren
 
 ```
-zig build breakout
+
+TODO: At its current status we are rerunning the whole program but it will need some work so we can reload the parts that get changed.
+
+#### Build Executable files for Linux/Windows
+
+We use docker to provide linux/windows builds for talon. When you are ready to distribute your game for windows/linux users you can run
+
+```sh
+$ talon init-exe index.wren
 ```
+
+Two files with name Dockerfile and docker-compose.yml will be created for you and then You can use 'docker compose up --build -d' which will create windows/linux builds in ur current dist/ folder.
+
+#### Build HTML files
+
+We use emscripten to give u a working implementation of ur raylib games. This also depends on docker and you can run
+
+```sh
+$ talon init-wasm index.wren
+$ docker compose up --build -d
+```
+
+You can then see ur wasm builds in dist/ folder
+
+#### Use dynamic libraries (.so, .dll) to to add functionalities
+
+Check examples/extend to see how this works. TODO:// add details
+
+#### Playground
+
+Checkout [Playground](jossephus.github.io/talon/)
