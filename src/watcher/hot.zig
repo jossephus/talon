@@ -34,17 +34,17 @@ fn runProgramThreadFn(context: RunContext) !void {
 }
 
 fn startProgramThread(gpa: std.mem.Allocator, path: []const u8) !void {
-        // Ensure the signal is false before starting.
-        stop_signal.store(false, .release);
+    // Ensure the signal is false before starting.
+    stop_signal.store(false, .release);
 
-        const context = RunContext{
-            .gpa = gpa,
-            .path = path,
-        };
+    const context = RunContext{
+        .gpa = gpa,
+        .path = path,
+    };
 
-        // Spawn the new thread!
-        program_thread = try std.Thread.spawn(.{}, runProgramThreadFn, .{context});
-        std.log.info("Program thread started.", .{});
+    // Spawn the new thread!
+    program_thread = try std.Thread.spawn(.{}, runProgramThreadFn, .{context});
+    std.log.info("Program thread started.", .{});
 }
 
 pub fn hot(gpa: std.mem.Allocator, path: []const u8) !void {
@@ -97,7 +97,7 @@ pub fn hot(gpa: std.mem.Allocator, path: []const u8) !void {
 
     var build_lock: std.Thread.RwLock = .{};
 
-//    try runProgram(path);
+    //    try runProgram(path);
 
     try startProgramThread(gpa, path);
 

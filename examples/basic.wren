@@ -28,9 +28,9 @@ Raylib.setTargetFPS(60)
 while (!Raylib.windowShouldClose() && !Build.shouldStop()) {
   if (currentScreen == GameScreen.Logo) {
     framesCounter = framesCounter + 1
-    if (framesCounter > 120) {
-      currentScreen = GameScreen.Title
-    }
+   // if (framesCounter > 120) {
+   //   currentScreen = GameScreen.Title
+   // }
   }
 
   if (currentScreen == GameScreen.Title) {
@@ -74,5 +74,6 @@ while (!Raylib.windowShouldClose() && !Build.shouldStop()) {
 }
 
 Raylib.closeWindow()
+
 
 
