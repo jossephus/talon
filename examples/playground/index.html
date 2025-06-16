@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Talon Playground</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        height: 100vh;
+        overflow: hidden;
+        background: #1a1a1a;
+      }
+
+      .container {
+        display: flex;
+        height: 100vh;
+      }
+
+      /* Code Editor */
+      .editor-column {
+        width: 50%;
+        background: #1e1e1e;
+        border-right: 1px solid #333;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .editor-header {
+        background: #2d2d2d;
+        border-bottom: 1px solid #404040;
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .editor-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .code-icon {
+        width: 20px;
+        height: 20px;
+        color: #60a5fa;
+      }
+
+      .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      /* Samples Dropdown */
+      .samples-dropdown {
+        position: relative;
+      }
+
+      .samples-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: #374151;
+        color: #e5e7eb;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .samples-button:hover {
+        background: #4b5563;
+      }
+
+      .samples-button.active {
+        background: #3b82f6;
+        color: white;
+      }
+
+      .dropdown-icon {
+        width: 16px;
+        height: 16px;
+        transition: transform 0.2s ease;
+      }
+
+      .samples-button.active .dropdown-icon {
+        transform: rotate(180deg);
+      }
+
+      .samples-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 8px;
+        background: #374151;
+        border: 1px solid #4b5563;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        min-width: 250px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.2s ease;
+        z-index: 1000;
+      }
+
+      .samples-menu.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .sample-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 12px 16px;
+        background: none;
+        border: none;
+        color: #e5e7eb;
+        text-align: left;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        border-radius: 0;
+      }
+
+      .sample-item:first-child {
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+      }
+
+      .sample-item:last-child {
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+      }
+
+      .sample-item:hover {
+        background: #4b5563;
+      }
+
+      .sample-item.active {
+        background: #3b82f6;
+        color: white;
+      }
+
+      .file-icon {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+
+      .sample-info {
+        flex: 1;
+      }
+
+      .sample-name {
+        font-weight: 500;
+        font-size: 14px;
+        margin-bottom: 2px;
+      }
+
+      .sample-description {
+        font-size: 12px;
+        color: #9ca3af;
+      }
+
+      .sample-item.active .sample-description {
+        color: #bfdbfe;
+      }
+
+      .run-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: #16a34a;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .run-button:hover {
+        background: #15803d;
+        transform: translateY(-1px);
+      }
+
+      .run-button.stop {
+        background: #dc2626;
+      }
+
+      .run-button.stop:hover {
+        background: #b91c1c;
+      }
+
+      .play-icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      .editor-area {
+        flex: 1;
+        display: flex;
+        background: #1e1e1e;
+        overflow: hidden;
+      }
+
+      .line-numbers {
+        background: #2d2d2d;
+        border-right: 1px solid #404040;
+        padding: 16px 12px;
+        color: #6b7280;
+        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        user-select: none;
+        min-width: 60px;
+        text-align: right;
+        overflow-y: auto;
+        max-height: 100%;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .line-numbers::-webkit-scrollbar {
+        display: none;
+      }
+
+      .code-editor {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #script-input {
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        color: #e5e7eb;
+        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 16px;
+        border: none;
+        outline: none;
+        resize: none;
+        tab-size: 2;
+        overflow-y: auto;
+      }
+
+      #script-input::placeholder {
+        color: #6b7280;
+      }
+
+      .editor-footer {
+        background: #2d2d2d;
+        border-top: 1px solid #404040;
+        padding: 12px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #9ca3af;
+        font-size: 13px;
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+      }
+
+      /* Right Column - Canvas */
+      .canvas-column {
+        width: 50%;
+        background: #f9fafb;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      .canvas-header {
+        background: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .canvas-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #1f2937;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .monitor-icon {
+        width: 20px;
+        height: 20px;
+        color: #7c3aed;
+      }
+
+      .settings-icon {
+        width: 16px;
+        height: 16px;
+        color: #9ca3af;
+      }
+
+      .canvas-area {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: #f3f4f6;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .canvas-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+        position: relative;
+      }
+
+      #canvas {
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background-color: black;
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .canvas-footer {
+        background: #ffffff;
+        border-top: 1px solid #e5e7eb;
+        padding: 12px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #6b7280;
+        font-size: 13px;
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+        }
+
+        .editor-column,
+        .canvas-column {
+          width: 100%;
+          height: 50vh;
+        }
+
+        .samples-menu {
+          right: 0;
+          left: 0;
+          min-width: auto;
+        }
+      }
+
+      /* Loading state */
+      .loading {
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      /* Smooth transitions */
+      .run-button,
+      #canvas {
+        transition: all 0.2s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Left Column - Code Editor -->
+      <div class="editor-column">
+        <!-- Header -->
+        <div class="editor-header">
+          <div class="editor-title">
+            <svg
+              class="code-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+              />
+            </svg>
+            <span> Talon Playground </span>
+          </div>
+          <div class="header-controls">
+            <!-- Samples Dropdown -->
+            <div class="samples-dropdown">
+              <button id="samples-button" class="samples-button">
+                <svg
+                  class="file-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                <span id="samples-title">Samples</span>
+                <svg
+                  class="dropdown-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+              <div id="samples-menu" class="samples-menu">
+                <!-- Samples will be populated here -->
+              </div>
+            </div>
+
+            <button id="run-button" class="run-button">
+              <svg class="play-icon" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <span id="run-text">Run</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Editor Area -->
+        <div class="editor-area">
+          <!-- Line Numbers -->
+          <div class="line-numbers" id="line-numbers">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div>8</div>
+            <div>9</div>
+            <div>10</div>
+            <div>11</div>
+            <div>12</div>
+            <div>13</div>
+            <div>14</div>
+            <div>15</div>
+            <div>16</div>
+            <div>17</div>
+            <div>18</div>
+            <div>19</div>
+            <div>20</div>
+          </div>
+
+          <!-- Code Input -->
+          <div class="code-editor">
+            <textarea
+              id="script-input"
+              placeholder="// Write your raylib games in wren here...
+// Or choose from sample games provided in the dropdown above...
+// Press Ctrl+Enter to run"
+              spellcheck="false"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="editor-footer">
+          <span id="line-count">Lines: 1 (might require refreshing :-))</span>
+          <span>Ctrl+Enter to run • Tab for indent</span>
+        </div>
+      </div>
+
+      <!-- Right Column - Canvas -->
+      <div class="canvas-column">
+        <!-- Header -->
+        <div class="canvas-header">
+          <div class="canvas-title">
+            <svg
+              class="monitor-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg>
+            <span>Window</span>
+          </div>
+          <svg
+            class="settings-icon"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" />
+          </svg>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="canvas-area">
+          <div class="canvas-container">
+            <canvas id="canvas" width="800" height="450"></canvas>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="canvas-footer">
+          <span>Canvas: 800×450</span>
+          <span>Ready for Talon scripts</span>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      // Initialize variables
+      let isRunning = false;
+      let currentSample = null;
+      const scriptInput = document.getElementById("script-input");
+      const runButton = document.getElementById("run-button");
+      const runText = document.getElementById("run-text");
+      const lineNumbers = document.getElementById("line-numbers");
+      const lineCount = document.getElementById("line-count");
+      const samplesButton = document.getElementById("samples-button");
+      const samplesMenu = document.getElementById("samples-menu");
+      const samplesTitle = document.getElementById("samples-title");
+
+      // Sample files configuration
+      const samples = [
+        {
+          name: "Basic",
+          file: "basic.wren",
+          description: "Basic Window",
+        },
+        {
+          name: "Asteroid",
+          file: "asteroid.wren",
+          description: "Asteroid From Raylib Examples",
+        },
+        {
+          name: "Camera",
+          file: "camera.wren",
+          description: "Camera manipulation from Raylib Examples",
+        },
+      ];
+
+      // Load sample content
+      async function loadSample(filename) {
+        try {
+          const response = await fetch(`/samples/${filename}`);
+          if (response.ok) {
+            const content = await response.text();
+            // Extract code from markdown (simple extraction)
+            const codeMatch = content.match(/```[\w]*\n([\s\S]*?)\n```/);
+            if (codeMatch) {
+              scriptInput.value = codeMatch[1].trim();
+            } else {
+              scriptInput.value = content;
+            }
+            updateLineNumbers();
+            currentSample = filename;
+            updateSampleSelection();
+            toggleSamplesMenu(false);
+            samplesTitle.innerHTML = filename;
+          } else {
+            console.error("Failed to load sample:", filename);
+          }
+        } catch (error) {
+          console.error("Error loading sample:", error);
+        }
+      }
+
+      // Update sample selection UI
+      function updateSampleSelection() {
+        const sampleItems = samplesMenu.querySelectorAll(".sample-item");
+        sampleItems.forEach((item) => {
+          const filename = item.dataset.file;
+          if (filename === currentSample) {
+            item.classList.add("active");
+          } else {
+            item.classList.remove("active");
+          }
+        });
+      }
+
+      // Populate samples menu
+      function populateSamples() {
+        samplesMenu.innerHTML = "";
+        samples.forEach((sample) => {
+          const item = document.createElement("button");
+          item.className = "sample-item";
+          item.dataset.file = sample.file;
+          item.innerHTML = `
+            <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <div class="sample-info">
+              <div class="sample-name">${sample.name}</div>
+              <div class="sample-description">${sample.description}</div>
+            </div>
+          `;
+          item.addEventListener("click", () => {
+            loadSample(sample.file);
+          });
+          samplesMenu.appendChild(item);
+        });
+      }
+
+      // Toggle samples dropdown
+      function toggleSamplesMenu(show = null) {
+        const isOpen =
+          show !== null ? show : !samplesMenu.classList.contains("open");
+
+        if (isOpen) {
+          samplesMenu.classList.add("open");
+          samplesButton.classList.add("active");
+        } else {
+          samplesMenu.classList.remove("open");
+          samplesButton.classList.remove("active");
+        }
+      }
+
+      // Update line numbers and count
+      function updateLineNumbers() {
+        const lines = scriptInput.value.split("\n").length;
+        const maxLines = Math.max(lines, 20);
+
+        lineNumbers.innerHTML = "";
+        for (let i = 1; i <= maxLines; i++) {
+          const div = document.createElement("div");
+          div.textContent = i;
+          lineNumbers.appendChild(div);
+        }
+
+        lineCount.textContent = `Lines: ${lines}`;
+      }
+
+      // Sync line numbers scrolling with textarea
+      function syncScroll() {
+        lineNumbers.scrollTop = scriptInput.scrollTop;
+      }
+
+      // Clean canvas and WebGL context
+      function cleanCanvas() {
+        const canvas = document.getElementById("canvas");
+        if (canvas) {
+          // Get the WebGL context
+          const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
+          if (gl) {
+            // Clear the canvas
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+            // Reset viewport
+            gl.viewport(0, 0, canvas.width, canvas.height);
+
+            // Clear color to black
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+          }
+
+          // Also clear using 2D context as fallback
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+          }
+        }
+      }
+
+      // Handle script execution
+      async function runScript() {
+        if (isRunning) {
+          // Stop the current execution
+          try {
+            if (window.Module && window.Module.ccall) {
+              window.Module.ccall("stop_game", null, [], []);
+            }
+          } catch (error) {
+            console.log("Stop function not available or already stopped");
+          }
+
+          // Clean the canvas
+          cleanCanvas();
+
+          // Reset state
+          isRunning = false;
+          runText.textContent = "Run";
+          runButton.classList.remove("stop");
+
+          // Update button icon back to play
+          const playIcon = runButton.querySelector(".play-icon");
+          playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+
+          return;
+        }
+
+        const script = scriptInput.value.trim();
+        if (!script) return;
+
+        isRunning = true;
+        runText.textContent = "Stop";
+        runButton.classList.add("stop");
+
+        // Update button icon to stop
+        const playIcon = runButton.querySelector(".play-icon");
+        playIcon.innerHTML =
+          '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+
+        try {
+          if (window.Module && window.Module.cwrap) {
+            const runCFunction = window.Module.cwrap(
+              "run",
+              null,
+              ["string", "int"],
+              {
+                async: true,
+              },
+            );
+            await runCFunction(script, script.length);
+          }
+        } catch (error) {
+          console.error("Error running script:", error);
+        } finally {
+          // Only reset if we're still in running state (not manually stopped)
+          if (isRunning) {
+            isRunning = false;
+            runText.textContent = "Run";
+            runButton.classList.remove("stop");
+
+            // Update button icon back to play
+            const playIcon = runButton.querySelector(".play-icon");
+            playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+          }
+        }
+      }
+
+      // Event listeners
+      scriptInput.addEventListener("input", updateLineNumbers);
+      scriptInput.addEventListener("scroll", syncScroll);
+
+      scriptInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+          event.preventDefault();
+          runScript();
+        }
+
+        // Handle tab indentation
+        if (event.key === "Tab") {
+          event.preventDefault();
+          const start = this.selectionStart;
+          const end = this.selectionEnd;
+          this.value =
+            this.value.substring(0, start) + "  " + this.value.substring(end);
+          this.selectionStart = this.selectionEnd = start + 2;
+        }
+      });
+
+      runButton.addEventListener("click", runScript);
+      samplesButton.addEventListener("click", () => toggleSamplesMenu());
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", (event) => {
+        if (
+          !samplesButton.contains(event.target) &&
+          !samplesMenu.contains(event.target)
+        ) {
+          toggleSamplesMenu(false);
+        }
+      });
+
+      // Initialize Emscripten Module
+      var Module = {
+        printErr: function (text) {
+          console.error("[Talon Error]:", text);
+        },
+        canvas: document.getElementById("canvas"),
+        onRuntimeInitialized: function () {
+          console.log("Talon runtime is ready.");
+        },
+      };
+
+      // Initialize
+      populateSamples();
+      loadSample("asteroid.wren");
+      updateLineNumbers();
+    </script>
+
+    <script async src="shell.js"></script>
+  </body>
+</html>

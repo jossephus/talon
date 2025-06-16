@@ -25,5 +25,6 @@
         "build.zig",
         "build.zig.zon",
         "src",
+        "shell.html"
     },
 }

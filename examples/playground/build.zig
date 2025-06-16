@@ -96,7 +96,15 @@ pub fn build(b: *std.Build) !void {
         //emcc.addArg("--pre-js");
         emcc.addArg("-o");
 
-        const app_html = emcc.addOutputFileArg("index.html");
+        const app_html = emcc.addOutputFileArg("shell.html");
+
+        b.getInstallStep().dependOn(&b.addInstallFile(b.path("index.html"), "www/index.html").step);
+        b.getInstallStep().dependOn(&b.addInstallDirectory(.{
+            .source_dir = b.path("samples"),
+            .install_dir = .{ .custom = "www" },
+            .install_subdir = "samples",
+        }).step);
+
         b.getInstallStep().dependOn(&b.addInstallDirectory(.{
             .source_dir = app_html.dirname(),
             .install_dir = .{ .custom = "www" },
