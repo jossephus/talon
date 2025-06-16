@@ -811,7 +811,7 @@ function createExportWrapper(name, nargs) {
 var wasmBinaryFile;
 
 function findWasmBinary() {
-  return locateFile("index.wasm");
+  return locateFile("shell.wasm");
 }
 
 function getBinarySync(file) {
