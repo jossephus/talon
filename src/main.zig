@@ -2,6 +2,7 @@ const std = @import("std");
 const builtin = @import("builtin");
 const common = @import("common.zig");
 const hot = @import("watcher/hot.zig");
+const cli = @import("cli.zig");
 const wren = @cImport({
     @cInclude("wren.h");
     @cInclude("stdio.h");
@@ -22,6 +23,8 @@ pub const allocator = if (builtin.target.cpu.arch.isWasm()) std.heap.wasm_alloca
 
 const Command = enum {
     @"--hot",
+    @"init-exe",
+    @"init-wasm",
 };
 
 pub fn main() !void {
@@ -43,6 +46,13 @@ pub fn main() !void {
     switch (command) {
         .@"--hot" => {
             try hot.hot(allocator, args[2]);
+        },
+        .@"init-exe" => {
+            try cli.initExe(allocator, args[2]);
+        },
+
+        .@"init-wasm" => {
+            try cli.initWasm(allocator, args[2]);
         },
     }
 }

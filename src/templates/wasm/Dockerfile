@@ -1,6 +1,112 @@
+FROM nixos/nix
+
+ARG VERSION=0.14.0
+
+RUN echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
+
+WORKDIR /build
+COPY . /build
+
+
+RUN cat <<'EOF' > flake.nix
+{
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
+    zig.url = "github:mitchellh/zig-overlay";
+  };
+
+  outputs = {
+    nixpkgs,
+    flake-utils,
+    zig,
+    ...
+  }:
+    flake-utils.lib.eachDefaultSystem (
+      system: let
+        overlays = [
+          (final: prev: {
+            zigpkgs = zig.packages.${system};
+          })
+        ];
+        pkgs = import nixpkgs {
+          inherit overlays system;
+        };
+        packages = with pkgs; [
+          glfw
+          libGL
+          libxkbcommon
+          pkg-config
+          xorg.libxcb
+          xorg.libXft
+          xorg.libX11
+          xorg.libX11.dev
+          xorg.libXrandr
+          xorg.libXinerama
+          xorg.libXcursor
+          xorg.libXi
+          glfw-wayland
+          zigpkgs."0.14.0"
+          emscripten
+        ];
+      in {
+        devShell = pkgs.mkShell {
+          buildInputs = packages;
+          nativeBuildInputs = with pkgs; [cmake pkg-config ncurses fontconfig freetype];
+          shellHook = ''
+            export SHELL=/usr/bin/bash
+            if [ ! -d $(pwd)/.emscripten_cache-${pkgs.emscripten.version} ]; then
+              cp -R ${pkgs.emscripten}/share/emscripten/cache/ $(pwd)/.emscripten_cache-${pkgs.emscripten.version}
+              chmod u+rwX -R $(pwd)/.emscripten_cache-${pkgs.emscripten.version}
+            fi
+            export EM_CACHE=$(pwd)/.emscripten_cache-${pkgs.emscripten.version}
+            echo emscripten cache dir: $EM_CACHE
+          '';
+        };
+      }
+    );
+}
+
+EOF
+
+RUN cat <<'EOF' > build.zig.zon 
+.{
+    .name = .{{{ PROJECT_NAME }}},
+
+    .version = "0.0.0",
+
+    .fingerprint = 0x7aca45f40a314ba8, // Changing this has security and trust implications.
+
+    .minimum_zig_version = "0.14.0",
+
+    .dependencies = .{
+      .tolan = .{
+          .url = "git+https://github.com/jossephus/talon#ec9dc6910fa96c414406b5ed539e441943e4aadd",
+          .hash = "zig_wren-0.0.0-_Mx4iLclCACui2mzMF9z9j7iRplB0vS_jZjf-k9EQNLC",
+      },
+      .wren = .{
+          .url = "https://github.com/wren-lang/wren/archive/refs/heads/main.zip",
+          .hash = "N-V-__8AAPbpYgAZgdr-sM49A18GSKr5MVR56MwpfI65FmAZ",
+      },
+      .raylib = .{
+          .url = "git+https://github.com/raysan5/raylib#27a4fe885164b315a90b67682f981a1e03d6079c",
+          .hash = "raylib-5.5.0-whq8uFqtNARw6t1tTakBDSVYgUjlBqnDppOyNfE_yfCa",
+      },
+    },
+
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
+
+EOF
+
+RUN cat <<'EOF' > build.zig
 const std = @import("std");
 
-const mainFile = "main.wren";
+const mainFile = "{{{ MAIN_FILE }}}";
 
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
@@ -195,3 +301,11 @@ export fn sub(a: i32, b: i32) i32 {
 }
 
 const tolan = @import("tolan");
+
+EOF
+
+
+RUN nix develop -L --verbose
+
+# RUN /compiler/zig build -Doptimize=ReleaseSafe -Dtarget=x86_64-windows
+#RUN /compiler/zig build -Dtarget=x86_64-windows

@@ -1,4 +1,4 @@
 
 class Load {
-  foreign static foreignFunction(name, signature)
+  foreign static foreignFunction(name, signature, symbolName)
 }

@@ -645,7 +645,7 @@ pub const ForeignMethodBindings = std.StaticStringMap(?*const WrenForeignMethodF
     .{ "raylib.Raylib.detachAudioStreamProcessor(_,_)", RaylibBindings.wren_raylib_detach_audio_stream_processor },
     .{ "raylib.Raylib.attachAudioMixedProcessor(_)", RaylibBindings.wren_raylib_attach_audio_mixed_processor },
     .{ "raylib.Raylib.detachAudioMixedProcessor(_)", RaylibBindings.wren_raylib_detach_audio_mixed_processor },
-    .{ "embed.Load.foreignFunction(_,_)", root.wren_load_foreign_function },
+    .{ "embed.Load.foreignFunction(_,_,_)", root.wren_load_foreign_function },
 });
 
 pub const WrenForeignMethodFn = fn (?*wren.WrenVM) callconv(.c) void;

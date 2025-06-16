@@ -6,4 +6,5 @@ services:
     volumes:
       - ./dist:/build/zig-out/www
     working_dir: /build
-    command: nix develop -L --verbose && zig build -Dtarget=wasm32-emscripten -Doptimize=ReleaseSmall
+    #command: nix develop -L --verbose && zig build -Dtarget=wasm32-emscripten -Doptimize=ReleaseSmall && tail -f /dev/null
+    command: tail -f /dev/null

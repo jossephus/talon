@@ -34,7 +34,12 @@ pub const WrenForeignMethodFn = fn (?*wren.WrenVM) callconv(.c) void;
 //var map = std.StringHashMap(*const fn (?*wren.WrenVM) callconv(.c) void).init(
 //allocator,
 //);
-var map = std.StringHashMap([]const u8).init(
+
+const ForeignFunctionMap = struct {
+    name: []const u8,
+    bind_name: []const u8,
+};
+var map = std.StringHashMap(ForeignFunctionMap).init(
     allocator,
 );
 
@@ -99,12 +104,18 @@ pub fn bindForeignMethod(vm: ?*wren.WrenVM, module: [*c]const u8, className: [*c
         return method;
     }
 
+    const foreignFunctionName = std.mem.concat(allocator, u8, &[_][]const u8{
+        class, ".", sign,
+    }) catch unreachable;
+
+    defer allocator.free(foreignFunctionName);
+
     // Lets check if it is loaded dynamically
-    const load_method = map.get(name) orelse null;
+    const load_method = map.get(foreignFunctionName) orelse null;
 
     if (load_method) |method| {
         if (builtin.os.tag == .windows) {
-            const libname = "add.dll";
+            const libname = method.name;
 
             const handle = c.LoadLibraryA(libname.ptr);
             if (handle == null) {
@@ -112,7 +123,7 @@ pub fn bindForeignMethod(vm: ?*wren.WrenVM, module: [*c]const u8, className: [*c
                 return null;
             }
 
-            const symbol_name = "wren_c_embed_add";
+            const symbol_name = method.bind_name;
             const add_fn_ptr = c.GetProcAddress(handle, symbol_name.ptr);
 
             if (add_fn_ptr == null) {
@@ -328,8 +339,10 @@ pub fn wren_load_foreign_function(vm: ?*wren.WrenVM) callconv(.C) void {
 
     const @"1" = std.mem.span(wren.wrenGetSlotString(vm, 1)); // Shared Object File
     const @"2" = std.mem.span(wren.wrenGetSlotString(vm, 2)); // C function names
+    const @"3" = std.mem.span(wren.wrenGetSlotString(vm, 3)); // C function names
 
-    //std.debug.print("Load method: {s} {s}\n", .{ @"1", @"2" });
-    _ = .{ @"1", @"2" };
-    map.put(@"1", @"2") catch unreachable;
+    map.put(@"1", .{
+        .name = @"2",
+        .bind_name = @"3",
+    }) catch unreachable;
 }

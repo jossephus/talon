@@ -1,9 +1,3 @@
-import "embed" for Load
-
-Load.foreignFunction("add.dll", "C.add(_,_)", "wren_c_embed_add")
-class C {
-  foreign static add(a, b)
-}
-
+import "./game" for C
 
 System.print(C.add(3, 2))
