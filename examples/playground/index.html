@@ -579,17 +579,17 @@
       const samples = [
         {
           name: "Basic",
-          file: "https://raw.githubusercontent.com/jossephus/talon/refs/heads/gh-pages/samples/basic.wren",
+          file: "basic.wren",
           description: "Basic Window",
         },
         {
           name: "Asteroid",
-          file: "https://raw.githubusercontent.com/jossephus/talon/refs/heads/gh-pages/samples/asteroid.wren",
+          file: "asteroid.wren",
           description: "Asteroid From Raylib Examples",
         },
         {
           name: "Camera",
-          file: "https://raw.githubusercontent.com/jossephus/talon/refs/heads/gh-pages/samples/camera.wren",
+          file: "camera.wren",
           description: "Camera manipulation from Raylib Examples",
         },
       ];
@@ -597,7 +597,8 @@
       // Load sample content
       async function loadSample(filename) {
         try {
-          const response = await fetch(`/samples/${filename}`);
+          <!--const response = await fetch(`/samples/${filename}`);-->
+          const response = await fetch(`${filename}`);
           if (response.ok) {
             const content = await response.text();
             // Extract code from markdown (simple extraction)
