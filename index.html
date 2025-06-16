@@ -579,17 +579,17 @@
       const samples = [
         {
           name: "Basic",
-          file: "basic.wren",
+          file: "https://raw.githubusercontent.com/jossephus/talon/refs/heads/gh-pages/samples/basic.wren",
           description: "Basic Window",
         },
         {
           name: "Asteroid",
-          file: "asteroid.wren",
+          file: "https://raw.githubusercontent.com/jossephus/talon/refs/heads/gh-pages/samples/asteroid.wren",
           description: "Asteroid From Raylib Examples",
         },
         {
           name: "Camera",
-          file: "camera.wren",
+          file: "https://raw.githubusercontent.com/jossephus/talon/refs/heads/gh-pages/samples/camera.wren",
           description: "Camera manipulation from Raylib Examples",
         },
       ];
@@ -612,7 +612,7 @@
             currentSample = filename;
             updateSampleSelection();
             toggleSamplesMenu(false);
-            samplesTitle.innerHTML = filename;
+            samplesTitle.innerHTML = filename.split("/").pop();
           } else {
             console.error("Failed to load sample:", filename);
           }
@@ -833,7 +833,9 @@
 
       // Initialize
       populateSamples();
-      loadSample("asteroid.wren");
+      loadSample(
+        "https://raw.githubusercontent.com/jossephus/talon/refs/heads/gh-pages/samples/asteroid.wren",
+      );
       updateLineNumbers();
     </script>
 
