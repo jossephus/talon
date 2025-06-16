@@ -138,9 +138,9 @@ pub fn bindForeignMethod(vm: ?*wren.WrenVM, module: [*c]const u8, className: [*c
             //std.debug.print("Proc is {any}", .{proc});
             //return @ptrFromInt(@intFromPtr(proc));
         } else {
-            const proc = c.dlsym(main_program_handle, method.ptr);
+            const proc = c.dlsym(main_program_handle, @ptrCast(method.bind_name));
             std.debug.print("Proc is {any}\n", .{proc});
-            return @ptrFromInt(@intFromPtr(c.dlsym(main_program_handle, method.ptr)));
+            return @ptrFromInt(@intFromPtr(c.dlsym(main_program_handle, @ptrCast(method.bind_name))));
         }
 
         //return method;
