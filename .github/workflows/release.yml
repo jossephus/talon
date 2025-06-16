@@ -1,0 +1,36 @@
+on:
+  push:
+    tags:
+      - "*"
+
+name: Release
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - run: nix develop -L --verbose
+
+      - name: release-linux
+        run: nix develop -c zig build -Doptimize=ReleaseSmall
+
+      - name: release-windows
+        run: nix develop -c zig build -Dtarget=x86_64-windows -Doptimize=ReleaseSmall
+
+      - name: Upload Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./zig-out/bin/talon.exe
+            ./zig-out/bin/talon
