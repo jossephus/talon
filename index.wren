@@ -1,10 +1,3 @@
-System.print("Hello World")
-System.print("Hi")
-System.print("Hi 2")
+var a = []
 
-var i = 0
-
-while (i < 10) {
-  System.print(i)
-  i = i + 1
-}
+a[-1] = 1

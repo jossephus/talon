@@ -91,5 +91,5 @@ pub fn trunc(vm: ?*wren.WrenVM) callconv(.C) void {
 
 pub fn round(vm: ?*wren.WrenVM) callconv(.C) void {
     const a = wren.wrenGetSlotDouble(vm, 1);
-    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@round(a))));
+    wren.wrenSetSlotDouble(vm, 0, @as(f32, @floatCast(@trunc(a))));
 }
