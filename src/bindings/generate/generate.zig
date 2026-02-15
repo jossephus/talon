@@ -192,7 +192,7 @@ pub fn main() !void {
         if (signature) |sign| {
             var b: [600]u8 = undefined;
             const name = try std.fmt.bufPrint(&b,
-                \\pub fn wren_raylib_{s}(vm: ?*wren.WrenVM) callconv(.C) void  {c}
+                \\pub fn wren_raylib_{s}(vm: ?*wren.WrenVM) callconv(.c) void  {c}
                 \\    _ = .{c}vm{c};
                 \\
             , .{ sign.fn_name, '{', '{', '}' });

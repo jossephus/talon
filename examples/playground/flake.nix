@@ -26,16 +26,15 @@
           libGL
           libxkbcommon
           pkg-config
-          xorg.libxcb
-          xorg.libXft
-          xorg.libX11
-          xorg.libX11.dev
-          xorg.libXrandr
-          xorg.libXinerama
-          xorg.libXcursor
-          xorg.libXi
-          glfw-wayland
-          zigpkgs."0.14.0"
+          libxcb
+          libXft
+          libX11
+          libX11.dev
+          libXrandr
+          libXinerama
+          libXcursor
+          libXi
+          zigpkgs."0.15.2"
           emscripten
         ];
       in {

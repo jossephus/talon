@@ -40,7 +40,7 @@ pub fn build(b: *std.Build) !void {
         app_lib.shared_memory = true;
         app_lib.linkLibrary(wren_lib);
         app_lib.linkLibrary(raylib_lib);
-        app_lib.addIncludePath(.{ .cwd_relative = ".emscripten_cache-4.0.8/sysroot/include" });
+        app_lib.addIncludePath(.{ .cwd_relative = ".emscripten_cache-4.0.23/sysroot/include" });
 
         try addAssetsOption(b, app_lib, target, optimize, b.getInstallStep());
 
@@ -120,8 +120,8 @@ pub fn build(b: *std.Build) !void {
 pub fn addAssetsOption(b: *std.Build, exe: anytype, target: anytype, optimize: anytype, step: *std.Build.Step) !void {
     var options = b.addOptions();
 
-    var files = std.ArrayList([]const u8).init(b.allocator);
-    defer files.deinit();
+    var files: std.ArrayList([]const u8) = .empty;
+    defer files.deinit(b.allocator);
 
     try checkWrenFiles(b.allocator, &files, b, ".", ".", step);
 
@@ -160,7 +160,7 @@ fn checkWrenFiles(
                     const rel = try std.fs.path.relative(allocator, base_path, rel_to_base);
                     defer allocator.free(rel);
 
-                    try files.append(b.dupe(rel));
+                    try files.append(b.allocator, b.dupe(rel));
                 }
             },
             .directory => {

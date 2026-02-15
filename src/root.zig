@@ -1,16 +1,8 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const common = @import("common.zig");
-const wren = @cImport({
-    @cInclude("wren.h");
-    @cInclude("stdio.h");
-});
-
-pub const r = @cImport({
-    @cInclude("raylib.h");
-    @cInclude("raymath.h");
-    @cInclude("rlgl.h");
-});
+const wren = common.wren;
+pub const r = common.r;
 
 const Bindings = @import("bindings/index.zig");
 
@@ -104,11 +96,9 @@ pub fn loadModule(vm: ?*wren.WrenVM, name: [*c]const u8) callconv(.c) wren.WrenL
 
     defer file.close();
 
-    var buf_reader = std.io.bufferedReader(file.reader());
-    var in_stream = buf_reader.reader();
     var script: [8192]u8 = undefined;
 
-    const read = in_stream.readAll(&script) catch {
+    const read = file.readAll(&script) catch {
         return .{
             .source = null,
             .onComplete = null,
@@ -127,7 +117,7 @@ pub fn loadModule(vm: ?*wren.WrenVM, name: [*c]const u8) callconv(.c) wren.WrenL
     };
 }
 
-pub fn resolveModule(vm: ?*wren.WrenVM, importer: [*c]const u8, module: [*c]const u8) callconv(.C) ?[*:0]const u8 {
+pub fn resolveModule(vm: ?*wren.WrenVM, importer: [*c]const u8, module: [*c]const u8) callconv(.c) ?[*:0]const u8 {
     _ = .{ importer, module, vm };
     const imp = std.mem.span(importer);
     const mod = std.mem.span(module);

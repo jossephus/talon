@@ -84,21 +84,24 @@ pub const Connection = struct {
         header: Header,
         payload: []const u8,
     ) !void {
-        const writer = conn.stream.writer();
+        var buf: [4096]u8 = undefined;
+        var writer = conn.stream.writer(&buf);
 
-        try header.write(writer);
-        try writer.writeAll(payload);
+        try header.write(&writer.interface);
+        try writer.interface.writeAll(payload);
+        try writer.interface.flush();
     }
 
     /// Not thread safe, must be only called by one thread at a time.
     pub fn readMessage(conn: *const Connection, buffer: []u8) ![]u8 {
         // NOT named `read` because websockets is a message protocol, not a stream protocol.
 
-        const reader = conn.stream.reader();
+        var read_buf: [4096]u8 = undefined;
+        var reader = conn.stream.reader(&read_buf);
 
         var current_length: u64 = 0;
         while (true) {
-            const header = try Header.read(reader);
+            const header = try Header.read(&reader.interface);
             if (current_length > 0 and (header.op_code == .binary or header.op_code == .text)) {
                 return error.ExpectedContinuation;
             }
@@ -106,7 +109,7 @@ pub const Connection = struct {
             if (new_len > buffer.len) {
                 return error.NoSpaceLeft;
             }
-            try reader.readNoEof(buffer[current_length..new_len]);
+            try reader.interface.readNoEof(buffer[current_length..new_len]);
 
             if (header.mask) |mask| {
                 for (0.., buffer[current_length..new_len]) |i, *b| {

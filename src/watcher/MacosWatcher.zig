@@ -34,7 +34,7 @@ pub fn listen(watcher: *MacosWatcher) void {
     errdefer |err| switch (err) {
         error.OutOfMemory => {
             std.log.err("Out of memory", .{});
-            std.os.exit(1);
+            std.process.exit(1);
         },
     };
 
@@ -96,7 +96,7 @@ pub fn macosCallback(
     eventPaths: ?*anyopaque,
     eventFlags: ?[*]const c.FSEventStreamEventFlags,
     eventIds: ?[*]const c.FSEventStreamEventId,
-) callconv(.C) void {
+) callconv(.c) void {
     _ = eventIds;
     _ = eventFlags;
     _ = streamRef;

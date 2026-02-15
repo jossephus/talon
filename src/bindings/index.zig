@@ -2,16 +2,9 @@
 // and updated to fix unhandled cases
 
 const std = @import("std");
-const wren = @cImport({
-    @cInclude("wren.h");
-    @cInclude("stdio.h");
-});
-const r = @cImport({
-    @cInclude("raylib.h");
-    @cInclude("raymath.h");
-    @cInclude("rlgl.h");
-});
 const root = @import("../common.zig");
+const wren = root.wren;
+const r = root.r;
 const MathBindings = @import("math.zig");
 const BuiltinBindings = @import("builtin.zig");
 const RaylibBindings = @import("raylib.zig");

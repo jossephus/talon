@@ -8,15 +8,18 @@ fn addAssets(b: *std.Build, exe: *std.Build.Step.Compile) void {
     }
 }
 
-fn addWrenDep(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.Mode) *std.Build.Step.Compile {
+fn addWrenDep(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode) *std.Build.Step.Compile {
     const upstream = b.dependency("wren", .{});
 
-    const wren_lib = b.addStaticLibrary(.{
+    const wren_lib = b.addLibrary(.{
         .name = "wren",
-        .target = target,
-        .optimize = optimize,
+        .linkage = .static,
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = optimize,
+            .link_libc = true,
+        }),
     });
-    wren_lib.linkLibC();
     wren_lib.addIncludePath(upstream.path("src/include"));
     wren_lib.addIncludePath(upstream.path("src/vm"));
     wren_lib.addIncludePath(upstream.path("src/optional"));
@@ -42,7 +45,7 @@ fn addWrenDep(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bui
         },
     });
 
-    if (target.result.cpu.arch.isWasm()) wren_lib.addIncludePath(.{ .cwd_relative = ".emscripten_cache-4.0.8/sysroot/include" });
+    if (target.result.cpu.arch.isWasm()) wren_lib.addIncludePath(.{ .cwd_relative = ".emscripten_cache-4.0.23/sysroot/include" });
 
     b.installArtifact(wren_lib);
     return wren_lib;
@@ -52,7 +55,18 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const wren_lib = addWrenDep(b, target, optimize);
+    // Initialize emscripten sysroot before building if targeting WASM
+    const wren_lib = blk: {
+        if (target.result.cpu.arch.isWasm()) {
+            const init_emcc = b.addSystemCommand(&.{ "emcc", "--version" });
+            init_emcc.setName("init emscripten sysroot");
+            const wl = addWrenDep(b, target, optimize);
+            wl.step.dependOn(&init_emcc.step);
+            break :blk wl;
+        } else {
+            break :blk addWrenDep(b, target, optimize);
+        }
+    };
 
     const raylib_dep = if (target.result.cpu.arch.isWasm()) b.dependency("raylib", .{
         .target = target,
@@ -66,14 +80,14 @@ pub fn build(b: *std.Build) void {
 
     const raylib_lib = raylib_dep.artifact("raylib");
 
-    //exe_mod.linkLibrary(wren_lib);
-
     const exe = b.addExecutable(.{
         .name = "talon",
-        .root_source_file = b.path("src/main.zig"),
-        .target = target,
-        .optimize = optimize,
-        .link_libc = true,
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/main.zig"),
+            .target = target,
+            .optimize = optimize,
+            .link_libc = true,
+        }),
     });
 
     exe.linkLibrary(wren_lib);
@@ -113,14 +127,6 @@ pub fn build(b: *std.Build) void {
     const sample_run = b.addRunArtifact(c_exe);
     c_sample_step.dependOn(&sample_run.step);
 
-    //const install_step = b.addInstallDirectory(.{
-    //.source_dir = b.path("res"),
-    //.install_dir = std.Build.InstallDir{ .custom = "res" },
-    //.install_subdir = "res",
-    //});
-    //exe.step.dependOn(&install_step.step);
-    //addAssets(b, exe);
-
     b.installArtifact(exe);
     b.installArtifact(raylib_lib);
 
@@ -144,17 +150,17 @@ pub fn build(b: *std.Build) void {
 
     const generator = b.addExecutable(.{
         .name = "generator",
-        .root_source_file = b.path("src/bindings/generate/generate.zig"),
-        .target = target,
-        .optimize = optimize,
-        .link_libc = true,
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/bindings/generate/generate.zig"),
+            .target = target,
+            .optimize = optimize,
+            .link_libc = true,
+        }),
     });
 
-    const generator_step = b.step("generator", "Generate raylib bindings");
+    const generator_step = b.step("generator", "Generate raylib bindings from raylib_api.json");
 
     const generator_run = b.addRunArtifact(generator);
-    //generator_run.setCwd(b.path("examples/breakout"));
-    //run_abc.addArg("./main.wren");
 
     generator_step.dependOn(&generator_run.step);
 }

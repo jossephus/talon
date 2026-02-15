@@ -1,16 +1,8 @@
 const std = @import("std");
 const builtin = @import("builtin");
 const common = @import("common.zig");
-const wren = @cImport({
-    @cInclude("wren.h");
-    @cInclude("stdio.h");
-});
-
-pub const r = @cImport({
-    @cInclude("raylib.h");
-    @cInclude("raymath.h");
-    @cInclude("rlgl.h");
-});
+const wren = common.wren;
+pub const r = common.r;
 
 const Bindings = @import("bindings/index.zig");
 

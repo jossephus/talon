@@ -68,7 +68,7 @@ pub fn hot(gpa: std.mem.Allocator, path: []const u8) !void {
     var dirs_to_watch: std.ArrayListUnmanaged([:0]const u8) = .empty;
     defer if (builtin.mode == .Debug) dirs_to_watch.deinit(gpa);
 
-    try dirs_to_watch.append(gpa, try std.fmt.allocPrintZ(gpa, "{s}", .{"."}));
+    try dirs_to_watch.append(gpa, try gpa.dupeZ(u8, "."));
 
     var dir = try std.fs.cwd().openDir(".", .{ .iterate = true });
     defer dir.close();
@@ -77,11 +77,11 @@ pub fn hot(gpa: std.mem.Allocator, path: []const u8) !void {
     while (try it.next()) |entry| {
         if (entry.kind == .directory) {
             // entry.name is the relative path for the subdirectory
-            try dirs_to_watch.append(gpa, try std.fmt.allocPrintZ(gpa, "{s}", .{entry.name}));
+            try dirs_to_watch.append(gpa, try gpa.dupeZ(u8, entry.name));
         }
     }
 
-    var watcher: Watcher = try .init(
+    var watcher: Watcher = .init(
         gpa,
         &debouncer,
         dirs_to_watch.items,

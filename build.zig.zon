@@ -28,7 +28,7 @@
 
     // Tracks the earliest Zig version that the package considers to be a
     // supported use case.
-    .minimum_zig_version = "0.14.0",
+    .minimum_zig_version = "0.15.2",
 
     // This field is optional.
     // Each dependency must either provide a `url` and `hash`, or a `path`.
@@ -38,11 +38,11 @@
     .dependencies = .{
         .wren = .{
             .url = "https://github.com/wren-lang/wren/archive/refs/heads/main.zip",
-            .hash = "N-V-__8AAPbpYgAZgdr-sM49A18GSKr5MVR56MwpfI65FmAZ",
+            .hash = "N-V-__8AABrrYgAuUm9lX6RLXD_TZcXWng8x6QXaM1o8S4IB",
         },
         .raylib = .{
-            .url = "git+https://github.com/raysan5/raylib#27a4fe885164b315a90b67682f981a1e03d6079c",
-            .hash = "raylib-5.5.0-whq8uFqtNARw6t1tTakBDSVYgUjlBqnDppOyNfE_yfCa",
+            .url = "https://github.com/raysan5/raylib/archive/2057d9010d3aa57a5df9d0a459ee2f42bae141a2.tar.gz",
+            .hash = "raylib-5.6.0-dev-whq8uJAuDQUGiXbpdFmO7DRDYxCvib0B2i9Ue-kNq0Ku",
         },
     },
     .paths = .{

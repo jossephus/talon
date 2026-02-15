@@ -3,10 +3,7 @@ const builtin = @import("builtin");
 const common = @import("common.zig");
 const hot = @import("watcher/hot.zig");
 const cli = @import("cli.zig");
-const wren = @cImport({
-    @cInclude("wren.h");
-    @cInclude("stdio.h");
-});
+const wren = common.wren;
 
 pub const r = @cImport({
     @cInclude("raylib.h");
@@ -72,12 +69,20 @@ pub fn runProgram(path: []const u8) !void {
     };
     defer file.close();
 
-    var buf_reader = std.io.bufferedReader(file.reader());
-    var in_stream = buf_reader.reader();
-    var script: [std.fs.max_path_bytes]u8 = undefined;
+    const stat = file.stat() catch |err| {
+        std.log.err("Failed to stat file: {s}\n", .{@errorName(err)});
+        return;
+    };
+    const script = allocator.allocSentinel(u8, stat.size, 0) catch |err| {
+        std.log.err("Failed to allocate memory: {s}\n", .{@errorName(err)});
+        return;
+    };
+    defer allocator.free(script);
 
-    const read = try in_stream.readAll(&script);
-    script[read] = 0;
+    _ = file.readAll(script) catch |err| {
+        std.log.err("Failed to read file: {s}\n", .{@errorName(err)});
+        return;
+    };
 
     var config: wren.WrenConfiguration = undefined;
     wren.wrenInitConfiguration(&config);
@@ -93,7 +98,7 @@ pub fn runProgram(path: []const u8) !void {
     const vm = wren.wrenNewVM(&config);
     defer wren.wrenFreeVM(vm);
 
-    const source_code: [*c]const u8 = @ptrCast(&script);
+    const source_code: [*c]const u8 = @ptrCast(script.ptr);
 
     const result = wren.wrenInterpret(vm, module, source_code);
 
@@ -131,12 +136,20 @@ pub fn runProgramHot(path: []const u8, stop_signal: *std.atomic.Value(bool)) !vo
     };
     defer file.close();
 
-    var buf_reader = std.io.bufferedReader(file.reader());
-    var in_stream = buf_reader.reader();
-    var script: [std.fs.max_path_bytes]u8 = undefined;
+    const stat = file.stat() catch |err| {
+        std.log.err("Failed to stat file: {s}\n", .{@errorName(err)});
+        return;
+    };
+    const script = allocator.allocSentinel(u8, stat.size, 0) catch |err| {
+        std.log.err("Failed to allocate memory: {s}\n", .{@errorName(err)});
+        return;
+    };
+    defer allocator.free(script);
 
-    const read = try in_stream.readAll(&script);
-    script[read] = 0;
+    _ = file.readAll(script) catch |err| {
+        std.log.err("Failed to read file: {s}\n", .{@errorName(err)});
+        return;
+    };
 
     var config: wren.WrenConfiguration = undefined;
     wren.wrenInitConfiguration(&config);
@@ -157,7 +170,7 @@ pub fn runProgramHot(path: []const u8, stop_signal: *std.atomic.Value(bool)) !vo
     const vm = wren.wrenNewVM(&config);
     defer wren.wrenFreeVM(vm);
 
-    const source_code: [*c]const u8 = @ptrCast(&script);
+    const source_code: [*c]const u8 = @ptrCast(script.ptr);
 
     const result = wren.wrenInterpret(vm, module, source_code);
 

@@ -1,6 +1,6 @@
 const std = @import("std");
 const builtin = @import("builtin");
-const wren = @cImport({
+pub const wren = @cImport({
     @cInclude("wren.h");
     @cInclude("stdio.h");
 });
@@ -16,6 +16,8 @@ pub const r = @cImport({
     @cInclude("rlgl.h");
 });
 
+pub const WrenForeignMethodFn = fn (?*wren.WrenVM) callconv(.c) void;
+
 const Bindings = @import("bindings/index.zig");
 
 const raylib = @embedFile("bindings/raylib.wren");
@@ -30,7 +32,6 @@ var debug_allocator: std.heap.DebugAllocator(.{}) = .init;
 //pub const allocator = debug_allocator.allocator();
 pub const allocator = if (builtin.target.cpu.arch.isWasm()) std.heap.wasm_allocator else debug_allocator.allocator();
 
-pub const WrenForeignMethodFn = fn (?*wren.WrenVM) callconv(.c) void;
 //var map = std.StringHashMap(*const fn (?*wren.WrenVM) callconv(.c) void).init(
 //allocator,
 //);
@@ -152,7 +153,7 @@ pub fn bindForeignMethod(vm: ?*wren.WrenVM, module: [*c]const u8, className: [*c
     return null;
 }
 
-pub fn writeFn(vm: ?*wren.WrenVM, text: [*c]const u8) callconv(.C) void {
+pub fn writeFn(vm: ?*wren.WrenVM, text: [*c]const u8) callconv(.c) void {
     _ = vm;
     std.debug.print("{s}", .{text});
 }
@@ -163,7 +164,7 @@ pub fn errorFn(
     module: [*c]const u8,
     line: c_int,
     msg: [*c]const u8,
-) callconv(.C) void {
+) callconv(.c) void {
     _ = vm;
     switch (errorType) {
         wren.WREN_ERROR_COMPILE => {
@@ -256,11 +257,9 @@ pub fn loadModule(vm: ?*wren.WrenVM, name: [*c]const u8) callconv(.c) wren.WrenL
 
     defer file.close();
 
-    var buf_reader = std.io.bufferedReader(file.reader());
-    var in_stream = buf_reader.reader();
     var script: [8192]u8 = undefined;
 
-    const read = in_stream.readAll(&script) catch {
+    const read = file.readAll(&script) catch {
         return .{
             .source = null,
             .onComplete = null,
@@ -295,7 +294,7 @@ pub fn isRelative(path: []const u8) bool {
     return false;
 }
 
-pub fn resolveModule(vm: ?*wren.WrenVM, importer: [*c]const u8, module: [*c]const u8) callconv(.C) ?[*:0]const u8 {
+pub fn resolveModule(vm: ?*wren.WrenVM, importer: [*c]const u8, module: [*c]const u8) callconv(.c) ?[*:0]const u8 {
     _ = .{ importer, module, vm };
     const imp = std.mem.span(importer);
     const mod = std.mem.span(module);
@@ -334,7 +333,7 @@ pub fn finalize_binding_foreign_classes(data: ?*anyopaque) callconv(.c) void {
     _ = .{data};
 }
 
-pub fn wren_load_foreign_function(vm: ?*wren.WrenVM) callconv(.C) void {
+pub fn wren_load_foreign_function(vm: ?*wren.WrenVM) callconv(.c) void {
     _ = .{vm};
 
     const @"1" = std.mem.span(wren.wrenGetSlotString(vm, 1)); // Shared Object File

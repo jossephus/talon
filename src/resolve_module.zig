@@ -1,9 +1,7 @@
-const wren = @cImport({
-    @cInclude("wren.h");
-    @cInclude("stdio.h");
-});
 const std = @import("std");
-const allocator = @import("main.zig").allocator;
+const common = @import("common.zig");
+const wren = common.wren;
+const allocator = common.allocator;
 
 fn isRelative(path: []const u8) bool {
     if (path.len < 2) {
@@ -21,7 +19,7 @@ fn isRelative(path: []const u8) bool {
     return false;
 }
 
-pub fn resolveModule(vm: ?*wren.WrenVM, importer: [*c]const u8, module: [*c]const u8) callconv(.C) ?[*:0]const u8 {
+pub fn resolveModule(vm: ?*wren.WrenVM, importer: [*c]const u8, module: [*c]const u8) callconv(.c) ?[*:0]const u8 {
     _ = .{ importer, module, vm };
     const imp = std.mem.span(importer);
     const mod = std.mem.span(module);
