@@ -1,4 +1,5 @@
 const std = @import("std");
+const builtin = @import("builtin");
 
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
@@ -24,6 +25,9 @@ pub fn build(b: *std.Build) !void {
         const wren_lib = tolan_lib.artifact("wren");
         const raylib_lib = tolan_lib.artifact("raylib");
 
+        const emsdk_dep = b.dependency("emsdk", .{});
+        const emsdk_include = emsdk_dep.path("upstream/emscripten/cache/sysroot/include");
+
         const app_lib = b.addLibrary(.{
             .linkage = .static,
             .name = "camera",
@@ -40,11 +44,28 @@ pub fn build(b: *std.Build) !void {
         app_lib.shared_memory = true;
         app_lib.linkLibrary(wren_lib);
         app_lib.linkLibrary(raylib_lib);
-        app_lib.addIncludePath(.{ .cwd_relative = ".emscripten_cache-4.0.23/sysroot/include" });
+        app_lib.addIncludePath(emsdk_include);
 
         try addAssetsOption(b, app_lib, target, optimize, b.getInstallStep());
 
-        const emcc = b.addSystemCommand(&.{"emcc"});
+        const emcc_path = std.fs.path.join(b.allocator, &.{
+            emsdk_dep.path("").getPath(b),
+            "upstream",
+            "emscripten",
+            switch (builtin.target.os.tag) {
+                .windows => "emcc.bat",
+                else => "emcc",
+            },
+        }) catch unreachable;
+        const emcc = b.addSystemCommand(&.{emcc_path});
+        // Use emsdk's own cache, not a nix-provided one (avoids version mismatch)
+        const emsdk_cache = std.fs.path.join(b.allocator, &.{
+            emsdk_dep.path("").getPath(b),
+            "upstream",
+            "emscripten",
+            "cache",
+        }) catch unreachable;
+        emcc.setEnvironmentVariable("EM_CACHE", emsdk_cache);
 
         for (app_lib.getCompileDependencies(false)) |lib| {
             if (lib.isStaticLibrary()) {
@@ -66,7 +87,6 @@ pub fn build(b: *std.Build) !void {
 
         emcc.addArgs(&.{
             "-sUSE_GLFW=3",
-            "-sUSE_OFFSET_CONVERTER",
 
             //"-sAUDIO_WORKLET=1",
             //"-sWASM_WORKERS=1",

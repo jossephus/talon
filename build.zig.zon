@@ -44,6 +44,10 @@
             .url = "https://github.com/raysan5/raylib/archive/2057d9010d3aa57a5df9d0a459ee2f42bae141a2.tar.gz",
             .hash = "raylib-5.6.0-dev-whq8uJAuDQUGiXbpdFmO7DRDYxCvib0B2i9Ue-kNq0Ku",
         },
+        .emsdk = .{
+            .url = "git+https://github.com/emscripten-core/emsdk#4.0.9",
+            .hash = "N-V-__8AAJl1DwBezhYo_VE6f53mPVm00R-Fk28NPW7P14EQ",
+        },
     },
     .paths = .{
         "build.zig",

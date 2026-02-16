@@ -3,3 +3,4 @@
 .zig-cache
 zig-out
 .emscripten_cache-4.0.8
+.emscripten_cache-4.0.23

@@ -1,4 +1,5 @@
 const std = @import("std");
+const builtin = @import("builtin");
 
 fn addAssets(b: *std.Build, exe: *std.Build.Step.Compile) void {
     const assets = [_][]const u8{};
@@ -8,7 +9,7 @@ fn addAssets(b: *std.Build, exe: *std.Build.Step.Compile) void {
     }
 }
 
-fn addWrenDep(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode) *std.Build.Step.Compile {
+fn addWrenDep(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode, emsdk_include: ?std.Build.LazyPath) *std.Build.Step.Compile {
     const upstream = b.dependency("wren", .{});
 
     const wren_lib = b.addLibrary(.{
@@ -45,7 +46,7 @@ fn addWrenDep(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bui
         },
     });
 
-    if (target.result.cpu.arch.isWasm()) wren_lib.addIncludePath(.{ .cwd_relative = ".emscripten_cache-4.0.23/sysroot/include" });
+    if (emsdk_include) |inc| wren_lib.addIncludePath(inc);
 
     b.installArtifact(wren_lib);
     return wren_lib;
@@ -55,18 +56,37 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    // Initialize emscripten sysroot before building if targeting WASM
-    const wren_lib = blk: {
-        if (target.result.cpu.arch.isWasm()) {
-            const init_emcc = b.addSystemCommand(&.{ "emcc", "--version" });
-            init_emcc.setName("init emscripten sysroot");
-            const wl = addWrenDep(b, target, optimize);
-            wl.step.dependOn(&init_emcc.step);
-            break :blk wl;
-        } else {
-            break :blk addWrenDep(b, target, optimize);
+    const emsdk_include: ?std.Build.LazyPath = if (target.result.cpu.arch.isWasm())
+        b.dependency("emsdk", .{}).path("upstream/emscripten/cache/sysroot/include")
+    else
+        null;
+
+    const wren_lib = addWrenDep(b, target, optimize, emsdk_include);
+
+    // Activate emsdk so the sysroot is populated before compiling C sources
+    if (target.result.cpu.arch.isWasm()) {
+        const emsdk_path = b.dependency("emsdk", .{}).path("").getPath(b);
+        const emsdk_script = std.fs.path.join(b.allocator, &.{
+            emsdk_path,
+            switch (builtin.target.os.tag) {
+                .windows => "emsdk.bat",
+                else => "emsdk",
+            },
+        }) catch unreachable;
+
+        const emsdk_install = b.addSystemCommand(&.{ emsdk_script, "install", "4.0.3" });
+        switch (builtin.target.os.tag) {
+            .linux, .macos => {
+                emsdk_install.step.dependOn(&b.addSystemCommand(&.{ "chmod", "+x", emsdk_script }).step);
+            },
+            else => {},
         }
-    };
+
+        const emsdk_activate = b.addSystemCommand(&.{ emsdk_script, "activate", "4.0.3" });
+        emsdk_activate.step.dependOn(&emsdk_install.step);
+
+        wren_lib.step.dependOn(&emsdk_activate.step);
+    }
 
     const raylib_dep = if (target.result.cpu.arch.isWasm()) b.dependency("raylib", .{
         .target = target,
@@ -99,7 +119,7 @@ pub fn build(b: *std.Build) void {
 
     lib.linkLibrary(wren_lib);
     lib.linkLibrary(raylib_lib);
-    if (target.result.cpu.arch.isWasm()) lib.addIncludePath(.{ .cwd_relative = ".emscripten_cache-4.0.8/sysroot/include" });
+    if (emsdk_include) |inc| lib.addIncludePath(inc);
 
     const libWasm = b.addModule("tolan-wasm", .{
         .root_source_file = b.path("src/root-wasm.zig"),
@@ -107,7 +127,7 @@ pub fn build(b: *std.Build) void {
 
     libWasm.linkLibrary(wren_lib);
     libWasm.linkLibrary(raylib_lib);
-    if (target.result.cpu.arch.isWasm()) libWasm.addIncludePath(.{ .cwd_relative = ".emscripten_cache-4.0.8/sysroot/include" });
+    if (emsdk_include) |inc| libWasm.addIncludePath(inc);
 
     const c_exe_mod = b.createModule(.{
         .target = target,

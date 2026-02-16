@@ -36,6 +36,7 @@
           libXi
           zigpkgs."0.15.2"
           emscripten
+          python3
         ];
       in {
         devShell = pkgs.mkShell {
