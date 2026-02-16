@@ -31,6 +31,13 @@ if (ENVIRONMENT_IS_NODE) {}
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
+// Sometimes an existing Module object exists with properties
+// meant to overwrite the default module functionality. Here
+// we collect those properties and reapply _after_ we configure
+// the current environment's defaults to avoid having to be so
+// defensive during initialization.
+var moduleOverrides = Object.assign({}, Module);
+
 var arguments_ = [];
 
 var thisProgram = "./this.program";
@@ -41,10 +48,9 @@ var quit_ = (status, toThrow) => {
 
 // In MODULARIZE mode _scriptName needs to be captured already at the very top of the page immediately when the page is parsed, so it is generated there
 // before the page load. In non-MODULARIZE modes generate it here.
-var _scriptName = typeof document != "undefined" ? document.currentScript?.src : undefined;
+var _scriptName = (typeof document != "undefined") ? document.currentScript?.src : undefined;
 
-if (typeof __filename != "undefined") {
-  // Node
+if (ENVIRONMENT_IS_NODE) {
   _scriptName = __filename;
 } else if (ENVIRONMENT_IS_WORKER) {
   _scriptName = self.location.href;
@@ -93,11 +99,10 @@ if (ENVIRONMENT_IS_NODE) {
     return ret;
   };
   // end include: node_shell_read.js
-  if (process.argv.length > 1) {
+  if (!Module["thisProgram"] && process.argv.length > 1) {
     thisProgram = process.argv[1].replace(/\\/g, "/");
   }
   arguments_ = process.argv.slice(2);
-  // MODULARIZE will export the module in the proper place outside, we don't need to export here
   if (typeof module != "undefined") {
     module["exports"] = Module;
   }
@@ -111,9 +116,24 @@ if (ENVIRONMENT_IS_NODE) {
 // Node.js workers are detected as a combination of ENVIRONMENT_IS_WORKER and
 // ENVIRONMENT_IS_NODE.
 if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
-  try {
-    scriptDirectory = new URL(".", _scriptName).href;
-  } catch {}
+  if (ENVIRONMENT_IS_WORKER) {
+    // Check worker, not web, since window could be polyfilled
+    scriptDirectory = self.location.href;
+  } else if (typeof document != "undefined" && document.currentScript) {
+    // web
+    scriptDirectory = document.currentScript.src;
+  }
+  // blob urls look like blob:http://site.com/etc/etc and we cannot infer anything from them.
+  // otherwise, slice off the final part of the url to find the script directory.
+  // if scriptDirectory does not contain a slash, lastIndexOf will return -1,
+  // and scriptDirectory will correctly be replaced with an empty string.
+  // If scriptDirectory contains a query (starting with ?) or a fragment (starting with #),
+  // they are removed because they could contain a slash.
+  if (scriptDirectory.startsWith("blob:")) {
+    scriptDirectory = "";
+  } else {
+    scriptDirectory = scriptDirectory.slice(0, scriptDirectory.replace(/[?#].*/, "").lastIndexOf("/") + 1);
+  }
   if (!(typeof window == "object" || typeof WorkerGlobalScope != "undefined")) throw new Error("not compiled for this environment (did you build to HTML and try to run it not on the web, or set ENVIRONMENT to something - like node - and run it someplace else - like on the web?)");
   {
     // include: web_or_worker_shell_read.js
@@ -161,9 +181,58 @@ if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
   throw new Error("environment detection error");
 }
 
-var out = console.log.bind(console);
+var out = Module["print"] || console.log.bind(console);
 
-var err = console.error.bind(console);
+var err = Module["printErr"] || console.error.bind(console);
+
+// Merge back in the overrides
+Object.assign(Module, moduleOverrides);
+
+// Free the object hierarchy contained in the overrides, this lets the GC
+// reclaim data used.
+moduleOverrides = null;
+
+checkIncomingModuleAPI();
+
+// Emit code to handle expected values on the Module object. This applies Module.x
+// to the proper local x. This has two benefits: first, we only emit it if it is
+// expected to arrive, and second, by using a local everywhere else that can be
+// minified.
+if (Module["arguments"]) arguments_ = Module["arguments"];
+
+legacyModuleProp("arguments", "arguments_");
+
+if (Module["thisProgram"]) thisProgram = Module["thisProgram"];
+
+legacyModuleProp("thisProgram", "thisProgram");
+
+// perform assertions in shell.js after we set up out() and err(), as otherwise if an assertion fails it cannot print the message
+// Assertions on removed incoming Module JS APIs.
+assert(typeof Module["memoryInitializerPrefixURL"] == "undefined", "Module.memoryInitializerPrefixURL option was removed, use Module.locateFile instead");
+
+assert(typeof Module["pthreadMainPrefixURL"] == "undefined", "Module.pthreadMainPrefixURL option was removed, use Module.locateFile instead");
+
+assert(typeof Module["cdInitializerPrefixURL"] == "undefined", "Module.cdInitializerPrefixURL option was removed, use Module.locateFile instead");
+
+assert(typeof Module["filePackagePrefixURL"] == "undefined", "Module.filePackagePrefixURL option was removed, use Module.locateFile instead");
+
+assert(typeof Module["read"] == "undefined", "Module.read option was removed");
+
+assert(typeof Module["readAsync"] == "undefined", "Module.readAsync option was removed (modify readAsync in JS)");
+
+assert(typeof Module["readBinary"] == "undefined", "Module.readBinary option was removed (modify readBinary in JS)");
+
+assert(typeof Module["setWindowTitle"] == "undefined", "Module.setWindowTitle option was removed (modify emscripten_set_window_title in JS)");
+
+assert(typeof Module["TOTAL_MEMORY"] == "undefined", "Module.TOTAL_MEMORY has been renamed Module.INITIAL_MEMORY");
+
+legacyModuleProp("asm", "wasmExports");
+
+legacyModuleProp("readAsync", "readAsync");
+
+legacyModuleProp("readBinary", "readBinary");
+
+legacyModuleProp("setWindowTitle", "setWindowTitle");
 
 var IDBFS = "IDBFS is no longer included by default; build with -lidbfs.js";
 
@@ -181,8 +250,6 @@ var OPFS = "OPFS is no longer included by default; build with -lopfs.js";
 
 var NODEFS = "NODEFS is no longer included by default; build with -lnodefs.js";
 
-// perform assertions in shell.js after we set up out() and err(), as otherwise
-// if an assertion fails it cannot print the message
 assert(!ENVIRONMENT_IS_SHELL, "shell environment detected but not enabled at build time.  Add `shell` to `-sENVIRONMENT` to enable.");
 
 // end include: shell.js
@@ -195,7 +262,9 @@ assert(!ENVIRONMENT_IS_SHELL, "shell environment detected but not enabled at bui
 // You can also build docs locally as HTML or other formats in site/
 // An online HTML version (which may be of a different version of Emscripten)
 //    is up at http://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html
-var wasmBinary;
+var wasmBinary = Module["wasmBinary"];
+
+legacyModuleProp("wasmBinary", "wasmBinary");
 
 if (typeof WebAssembly != "object") {
   err("no native wasm support detected");
@@ -286,17 +355,6 @@ function checkStackCookie() {
 // include: runtime_exceptions.js
 // end include: runtime_exceptions.js
 // include: runtime_debug.js
-var runtimeDebug = true;
-
-// Switch to false at runtime to disable logging at the right times
-// Used by XXXXX_DEBUG settings to output debug messages.
-function dbg(...args) {
-  if (!runtimeDebug && typeof runtimeDebug != "undefined") return;
-  // TODO(sbc): Make this configurable somehow.  Its not always convenient for
-  // logging to show up as warnings.
-  console.warn(...args);
-}
-
 // Endianness check
 (() => {
   var h16 = new Int16Array(1);
@@ -305,12 +363,17 @@ function dbg(...args) {
   if (h8[0] !== 115 || h8[1] !== 99) throw "Runtime error: expected the system to be little-endian! (Run with -sSUPPORT_BIG_ENDIAN to bypass)";
 })();
 
-function consumedModuleProp(prop) {
+if (Module["ENVIRONMENT"]) {
+  throw new Error("Module.ENVIRONMENT has been deprecated. To force the environment, use the ENVIRONMENT compile-time option (for example, -sENVIRONMENT=web or -sENVIRONMENT=node)");
+}
+
+function legacyModuleProp(prop, newName, incoming = true) {
   if (!Object.getOwnPropertyDescriptor(Module, prop)) {
     Object.defineProperty(Module, prop, {
       configurable: true,
-      set() {
-        abort(`Attempt to set \`Module.${prop}\` after it has already been processed.  This can happen, for example, when code is injected via '--post-js' rather than '--pre-js'`);
+      get() {
+        let extra = incoming ? " (the initial value can be provided on Module, but after startup the value is only looked for on a local variable of that name)" : "";
+        abort(`\`Module.${prop}\` has been replaced by \`${newName}\`` + extra);
       }
     });
   }
@@ -392,6 +455,13 @@ function unexportedRuntimeSymbol(sym) {
   }
 }
 
+// Used by XXXXX_DEBUG settings to output debug messages.
+function dbg(...args) {
+  // TODO(sbc): Make this configurable somehow.  Its not always convenient for
+  // logging to show up as warnings.
+  console.warn(...args);
+}
+
 // end include: runtime_debug.js
 // include: memoryprofiler.js
 // end include: memoryprofiler.js
@@ -455,197 +525,29 @@ function GROWABLE_HEAP_F64() {
 }
 
 // end include: growableHeap.js
-var wasmOffsetConverter;
-
-// include: wasm_offset_converter.js
-/** @constructor */ function WasmOffsetConverter(wasmBytes, wasmModule) {
-  // This class parses a WASM binary file, and constructs a mapping from
-  // function indices to the start of their code in the binary file, as well
-  // as parsing the name section to allow conversion of offsets to function names.
-  // The main purpose of this module is to enable the conversion of function
-  // index and offset from start of function to an offset into the WASM binary.
-  // This is needed to look up the WASM source map as well as generate
-  // consistent program counter representations given v8's non-standard
-  // WASM stack trace format.
-  // v8 bug: https://crbug.com/v8/9172
-  // This code is also used to check if the candidate source map offset is
-  // actually part of the same function as the offset we are looking for,
-  // as well as providing the function names for a given offset.
-  // current byte offset into the WASM binary, as we parse it
-  // the first section starts at offset 8.
-  var offset = 8;
-  // the index of the next function we see in the binary
-  var funcidx = 0;
-  // map from function index to byte offset in WASM binary
-  this.offset_map = {};
-  this.func_starts = [];
-  // map from function index to names in WASM binary
-  this.name_map = {};
-  // number of imported functions this module has
-  this.import_functions = 0;
-  // the buffer unsignedLEB128 will read from.
-  var buffer = wasmBytes;
-  function unsignedLEB128() {
-    // consumes an unsigned LEB128 integer starting at `offset`.
-    // changes `offset` to immediately after the integer
-    var result = 0;
-    var shift = 0;
-    do {
-      var byte = buffer[offset++];
-      result += (byte & 127) << shift;
-      shift += 7;
-    } while (byte & 128);
-    return result;
-  }
-  function skipLimits() {
-    var flags = unsignedLEB128();
-    unsignedLEB128();
-    // initial size
-    var hasMax = (flags & 1) != 0;
-    if (hasMax) {
-      unsignedLEB128();
-    }
-  }
-  binary_parse: while (offset < buffer.length) {
-    var start = offset;
-    var type = buffer[offset++];
-    var end = unsignedLEB128() + offset;
-    switch (type) {
-     case 2:
-      // import section
-      // we need to find all function imports and increment funcidx for each one
-      // since functions defined in the module are numbered after all imports
-      var count = unsignedLEB128();
-      while (count-- > 0) {
-        // skip module
-        offset = unsignedLEB128() + offset;
-        // skip name
-        offset = unsignedLEB128() + offset;
-        var kind = buffer[offset++];
-        switch (kind) {
-         case 0:
-          // function import
-          ++funcidx;
-          unsignedLEB128();
-          // skip function type
-          break;
-
-         case 1:
-          // table import
-          unsignedLEB128();
-          // skip elem type
-          skipLimits();
-          break;
-
-         case 2:
-          // memory import
-          skipLimits();
-          break;
-
-         case 3:
-          // global import
-          offset += 2;
-          // skip type id byte and mutability byte
-          break;
-
-         case 4:
-          // tag import
-          ++offset;
-          // skip attribute
-          unsignedLEB128();
-          // skip tag type
-          break;
-
-         default:
-          throw "bad import kind: " + kind;
-        }
-      }
-      this.import_functions = funcidx;
-      break;
-
-     case 10:
-      // code section
-      var count = unsignedLEB128();
-      while (count-- > 0) {
-        var size = unsignedLEB128();
-        this.offset_map[funcidx++] = offset;
-        this.func_starts.push(offset);
-        offset += size;
-      }
-      break binary_parse;
-    }
-    offset = end;
-  }
-  var sections = WebAssembly.Module.customSections(wasmModule, "name");
-  var nameSection = sections.length ? sections[0] : undefined;
-  if (nameSection) {
-    buffer = new Uint8Array(nameSection);
-    offset = 0;
-    while (offset < buffer.length) {
-      var subsection_type = buffer[offset++];
-      var len = unsignedLEB128();
-      // byte count
-      if (subsection_type != 1) {
-        // Skip the whole sub-section if it's not a function name sub-section.
-        offset += len;
-        continue;
-      }
-      var count = unsignedLEB128();
-      while (count-- > 0) {
-        var index = unsignedLEB128();
-        var length = unsignedLEB128();
-        this.name_map[index] = UTF8ArrayToString(buffer, offset, length);
-        offset += length;
-      }
-    }
-  }
-}
-
-WasmOffsetConverter.prototype.convert = function(funcidx, offset) {
-  return this.offset_map[funcidx] + offset;
-};
-
-WasmOffsetConverter.prototype.getIndex = function(offset) {
-  var lo = 0;
-  var hi = this.func_starts.length;
-  var mid;
-  while (lo < hi) {
-    mid = Math.floor((lo + hi) / 2);
-    if (this.func_starts[mid] > offset) {
-      hi = mid;
-    } else {
-      lo = mid + 1;
-    }
-  }
-  return lo + this.import_functions - 1;
-};
-
-WasmOffsetConverter.prototype.isSameFunc = function(offset1, offset2) {
-  return this.getIndex(offset1) == this.getIndex(offset2);
-};
-
-WasmOffsetConverter.prototype.getName = function(offset) {
-  var index = this.getIndex(offset);
-  return this.name_map[index] || ("wasm-function[" + index + "]");
-};
-
-// end include: wasm_offset_converter.js
 function updateMemoryViews() {
   var b = wasmMemory.buffer;
-  HEAP8 = new Int8Array(b);
-  HEAP16 = new Int16Array(b);
-  HEAPU8 = new Uint8Array(b);
-  HEAPU16 = new Uint16Array(b);
-  HEAP32 = new Int32Array(b);
-  HEAPU32 = new Uint32Array(b);
-  HEAPF32 = new Float32Array(b);
-  HEAPF64 = new Float64Array(b);
-  HEAP64 = new BigInt64Array(b);
-  HEAPU64 = new BigUint64Array(b);
+  Module["HEAP8"] = HEAP8 = new Int8Array(b);
+  Module["HEAP16"] = HEAP16 = new Int16Array(b);
+  Module["HEAPU8"] = HEAPU8 = new Uint8Array(b);
+  Module["HEAPU16"] = HEAPU16 = new Uint16Array(b);
+  Module["HEAP32"] = HEAP32 = new Int32Array(b);
+  Module["HEAPU32"] = HEAPU32 = new Uint32Array(b);
+  Module["HEAPF32"] = HEAPF32 = new Float32Array(b);
+  Module["HEAPF64"] = HEAPF64 = new Float64Array(b);
+  Module["HEAP64"] = HEAP64 = new BigInt64Array(b);
+  Module["HEAPU64"] = HEAPU64 = new BigUint64Array(b);
 }
 
 // end include: runtime_shared.js
+assert(!Module["STACK_SIZE"], "STACK_SIZE can no longer be set at runtime.  Use -sSTACK_SIZE at link time");
+
 assert(typeof Int32Array != "undefined" && typeof Float64Array !== "undefined" && Int32Array.prototype.subarray != undefined && Int32Array.prototype.set != undefined, "JS engine does not provide full typed array support");
+
+// If memory is defined in wasm, the user can't provide it, or set INITIAL_MEMORY
+assert(!Module["wasmMemory"], "Use of `wasmMemory` detected.  Use -sIMPORTED_MEMORY to define wasmMemory externally");
+
+assert(!Module["INITIAL_MEMORY"], "Detected runtime INITIAL_MEMORY setting.  Use -sIMPORTED_MEMORY to define wasmMemory dynamically");
 
 function preRun() {
   if (Module["preRun"]) {
@@ -654,8 +556,6 @@ function preRun() {
       addOnPreRun(Module["preRun"].shift());
     }
   }
-  consumedModuleProp("preRun");
-  // Begin ATPRERUNS hooks
   callRuntimeCallbacks(onPreRuns);
 }
 
@@ -663,12 +563,9 @@ function initRuntime() {
   assert(!runtimeInitialized);
   runtimeInitialized = true;
   checkStackCookie();
-  // Begin ATINITS hooks
   if (!Module["noFSInit"] && !FS.initialized) FS.init();
   TTY.init();
-  // End ATINITS hooks
   wasmExports["__wasm_call_ctors"]();
-  // Begin ATPOSTCTORS hooks
   FS.ignorePermissions = false;
 }
 
@@ -678,15 +575,12 @@ function preMain() {
 
 function postRun() {
   checkStackCookie();
-  // PThreads reuse the runtime from the main thread.
   if (Module["postRun"]) {
     if (typeof Module["postRun"] == "function") Module["postRun"] = [ Module["postRun"] ];
     while (Module["postRun"].length) {
       addOnPostRun(Module["postRun"].shift());
     }
   }
-  consumedModuleProp("postRun");
-  // Begin ATPOSTRUNS hooks
   callRuntimeCallbacks(onPostRuns);
 }
 
@@ -841,9 +735,6 @@ async function instantiateArrayBuffer(binaryFile, imports) {
   try {
     var binary = await getWasmBinary(binaryFile);
     var instance = await WebAssembly.instantiate(binary, imports);
-    // wasmOffsetConverter needs to be assigned before calling resolve.
-    // See comments below in instantiateAsync.
-    wasmOffsetConverter = new WasmOffsetConverter(binary, instance.module);
     return instance;
   } catch (reason) {
     err(`failed to asynchronously prepare wasm: ${reason}`);
@@ -861,27 +752,7 @@ async function instantiateAsync(binary, binaryFile, imports) {
       var response = fetch(binaryFile, {
         credentials: "same-origin"
       });
-      // We need the wasm binary for the offset converter. Clone the response
-      // in order to get its arrayBuffer (cloning should be more efficient
-      // than doing another entire request).
-      // (We must clone the response now in order to use it later, as if we
-      // try to clone it asynchronously lower down then we will get a
-      // "response was already consumed" error.)
-      var clonedResponse = (await response).clone();
       var instantiationResult = await WebAssembly.instantiateStreaming(response, imports);
-      // When using the offset converter, we must interpose here. First,
-      // the instantiation result must arrive (if it fails, the error
-      // handling later down will handle it). Once it arrives, we can
-      // initialize the offset converter. And only then is it valid to
-      // call receiveInstantiationResult, as that function will use the
-      // offset converter (in the case of pthreads, it will create the
-      // pthreads and send them the offsets along with the wasm instance).
-      var arrayBufferResult = await clonedResponse.arrayBuffer();
-      try {
-        wasmOffsetConverter = new WasmOffsetConverter(new Uint8Array(arrayBufferResult), instantiationResult.module);
-      } catch (reason) {
-        err(`failed to initialize offset-converter: ${reason}`);
-      }
       return instantiationResult;
     } catch (reason) {
       // We expect the most common failure cause to be a bad MIME type for the binary,
@@ -945,7 +816,8 @@ async function createWasm() {
     return new Promise((resolve, reject) => {
       try {
         Module["instantiateWasm"](info, (mod, inst) => {
-          resolve(receiveInstance(mod, inst));
+          receiveInstance(mod, inst);
+          resolve(mod.exports);
         });
       } catch (e) {
         err(`Module.instantiateWasm callback failed with error: ${e}`);
@@ -959,8 +831,312 @@ async function createWasm() {
   return exports;
 }
 
+// === Body ===
+var ASM_CONSTS = {
+  230493: () => {
+    if (document.fullscreenElement) return 1;
+  },
+  230539: () => Module.canvas.width,
+  230571: () => parseInt(Module.canvas.style.width),
+  230619: () => {
+    document.exitFullscreen();
+  },
+  230646: () => {
+    setTimeout(function() {
+      Module.requestFullscreen(false, false);
+    }, 100);
+  },
+  230718: () => {
+    if (document.fullscreenElement) return 1;
+  },
+  230764: () => Module.canvas.width,
+  230796: () => screen.width,
+  230821: () => {
+    document.exitFullscreen();
+  },
+  230848: $0 => {
+    const canvasId = UTF8ToString($0);
+    setTimeout(function() {
+      Module.requestFullscreen(false, true);
+      setTimeout(function() {
+        document.querySelector(canvasId).style.width = "unset";
+      }, 100);
+    }, 100);
+  },
+  231042: () => window.innerWidth,
+  231068: () => window.innerHeight,
+  231095: () => {
+    if (document.fullscreenElement) return 1;
+  },
+  231141: () => Module.canvas.width,
+  231173: () => parseInt(Module.canvas.style.width),
+  231221: () => {
+    if (document.fullscreenElement) return 1;
+  },
+  231267: () => Module.canvas.width,
+  231299: () => screen.width,
+  231324: () => window.innerWidth,
+  231350: () => window.innerHeight,
+  231377: () => {
+    if (document.fullscreenElement) return 1;
+  },
+  231423: () => Module.canvas.width,
+  231455: () => screen.width,
+  231480: () => {
+    document.exitFullscreen();
+  },
+  231507: () => {
+    if (document.fullscreenElement) return 1;
+  },
+  231553: () => Module.canvas.width,
+  231585: () => parseInt(Module.canvas.style.width),
+  231633: () => {
+    document.exitFullscreen();
+  },
+  231660: $0 => {
+    Module.canvas.style.opacity = $0;
+  },
+  231698: () => screen.width,
+  231723: () => screen.height,
+  231749: () => window.screenX,
+  231776: () => window.screenY,
+  231803: () => window.devicePixelRatio,
+  231839: $0 => {
+    navigator.clipboard.writeText(UTF8ToString($0));
+  },
+  231892: $0 => {
+    Module.canvas.style.cursor = UTF8ToString($0);
+  },
+  231943: () => {
+    Module.canvas.style.cursor = "none";
+  },
+  231980: ($0, $1, $2, $3) => {
+    try {
+      navigator.getGamepads()[$0].vibrationActuator.playEffect("dual-rumble", {
+        startDelay: 0,
+        duration: $3,
+        weakMagnitude: $1,
+        strongMagnitude: $2
+      });
+    } catch (e) {
+      try {
+        navigator.getGamepads()[$0].hapticActuators[0].pulse($2, $3);
+      } catch (e) {}
+    }
+  },
+  232236: $0 => {
+    Module.canvas.style.cursor = UTF8ToString($0);
+  },
+  232287: () => {
+    if (document.pointerLockElement) return 1;
+  },
+  232334: () => {
+    if (document.fullscreenElement) return 1;
+  },
+  232380: () => window.innerWidth,
+  232406: () => window.innerHeight,
+  232433: ($0, $1, $2, $3, $4) => {
+    if (typeof window === "undefined" || (window.AudioContext || window.webkitAudioContext) === undefined) {
+      return 0;
+    }
+    if (typeof (window.miniaudio) === "undefined") {
+      window.miniaudio = {
+        referenceCount: 0
+      };
+      window.miniaudio.device_type = {};
+      window.miniaudio.device_type.playback = $0;
+      window.miniaudio.device_type.capture = $1;
+      window.miniaudio.device_type.duplex = $2;
+      window.miniaudio.device_state = {};
+      window.miniaudio.device_state.stopped = $3;
+      window.miniaudio.device_state.started = $4;
+      let miniaudio = window.miniaudio;
+      miniaudio.devices = [];
+      miniaudio.track_device = function(device) {
+        for (var iDevice = 0; iDevice < miniaudio.devices.length; ++iDevice) {
+          if (miniaudio.devices[iDevice] == null) {
+            miniaudio.devices[iDevice] = device;
+            return iDevice;
+          }
+        }
+        miniaudio.devices.push(device);
+        return miniaudio.devices.length - 1;
+      };
+      miniaudio.untrack_device_by_index = function(deviceIndex) {
+        miniaudio.devices[deviceIndex] = null;
+        while (miniaudio.devices.length > 0) {
+          if (miniaudio.devices[miniaudio.devices.length - 1] == null) {
+            miniaudio.devices.pop();
+          } else {
+            break;
+          }
+        }
+      };
+      miniaudio.untrack_device = function(device) {
+        for (var iDevice = 0; iDevice < miniaudio.devices.length; ++iDevice) {
+          if (miniaudio.devices[iDevice] == device) {
+            return miniaudio.untrack_device_by_index(iDevice);
+          }
+        }
+      };
+      miniaudio.get_device_by_index = function(deviceIndex) {
+        return miniaudio.devices[deviceIndex];
+      };
+      miniaudio.unlock_event_types = (function() {
+        return [ "touchend", "click" ];
+      })();
+      miniaudio.unlock = function() {
+        for (var i = 0; i < miniaudio.devices.length; ++i) {
+          var device = miniaudio.devices[i];
+          if (device != null && device.webaudio != null && device.state === miniaudio.device_state.started) {
+            device.webaudio.resume().then(() => {
+              _ma_device__on_notification_unlocked(device.pDevice);
+            }, error => {
+              console.error("Failed to resume audiocontext", error);
+            });
+          }
+        }
+        miniaudio.unlock_event_types.map(function(event_type) {
+          document.removeEventListener(event_type, miniaudio.unlock, true);
+        });
+      };
+      miniaudio.unlock_event_types.map(function(event_type) {
+        document.addEventListener(event_type, miniaudio.unlock, true);
+      });
+    }
+    window.miniaudio.referenceCount += 1;
+    return 1;
+  },
+  234611: () => {
+    if (typeof (window.miniaudio) !== "undefined") {
+      window.miniaudio.unlock_event_types.map(function(event_type) {
+        document.removeEventListener(event_type, window.miniaudio.unlock, true);
+      });
+      window.miniaudio.referenceCount -= 1;
+      if (window.miniaudio.referenceCount === 0) {
+        delete window.miniaudio;
+      }
+    }
+  },
+  234915: () => (navigator.mediaDevices !== undefined && navigator.mediaDevices.getUserMedia !== undefined),
+  235019: () => {
+    try {
+      var temp = new (window.AudioContext || window.webkitAudioContext);
+      var sampleRate = temp.sampleRate;
+      temp.close();
+      return sampleRate;
+    } catch (e) {
+      return 0;
+    }
+  },
+  235190: ($0, $1, $2, $3, $4, $5) => {
+    var deviceType = $0;
+    var channels = $1;
+    var sampleRate = $2;
+    var bufferSize = $3;
+    var pIntermediaryBuffer = $4;
+    var pDevice = $5;
+    if (typeof (window.miniaudio) === "undefined") {
+      return -1;
+    }
+    var device = {};
+    var audioContextOptions = {};
+    if (deviceType == window.miniaudio.device_type.playback && sampleRate != 0) {
+      audioContextOptions.sampleRate = sampleRate;
+    }
+    device.webaudio = new (window.AudioContext || window.webkitAudioContext)(audioContextOptions);
+    device.webaudio.suspend();
+    device.state = window.miniaudio.device_state.stopped;
+    var channelCountIn = 0;
+    var channelCountOut = channels;
+    if (deviceType != window.miniaudio.device_type.playback) {
+      channelCountIn = channels;
+    }
+    device.scriptNode = device.webaudio.createScriptProcessor(bufferSize, channelCountIn, channelCountOut);
+    device.scriptNode.onaudioprocess = function(e) {
+      if (device.intermediaryBufferView == null || device.intermediaryBufferView.length == 0) {
+        device.intermediaryBufferView = new Float32Array(GROWABLE_HEAP_F32().buffer, pIntermediaryBuffer, bufferSize * channels);
+      }
+      if (deviceType == window.miniaudio.device_type.capture || deviceType == window.miniaudio.device_type.duplex) {
+        for (var iChannel = 0; iChannel < channels; iChannel += 1) {
+          var inputBuffer = e.inputBuffer.getChannelData(iChannel);
+          var intermediaryBuffer = device.intermediaryBufferView;
+          for (var iFrame = 0; iFrame < bufferSize; iFrame += 1) {
+            intermediaryBuffer[iFrame * channels + iChannel] = inputBuffer[iFrame];
+          }
+        }
+        _ma_device_process_pcm_frames_capture__webaudio(pDevice, bufferSize, pIntermediaryBuffer);
+      }
+      if (deviceType == window.miniaudio.device_type.playback || deviceType == window.miniaudio.device_type.duplex) {
+        _ma_device_process_pcm_frames_playback__webaudio(pDevice, bufferSize, pIntermediaryBuffer);
+        for (var iChannel = 0; iChannel < e.outputBuffer.numberOfChannels; ++iChannel) {
+          var outputBuffer = e.outputBuffer.getChannelData(iChannel);
+          var intermediaryBuffer = device.intermediaryBufferView;
+          for (var iFrame = 0; iFrame < bufferSize; iFrame += 1) {
+            outputBuffer[iFrame] = intermediaryBuffer[iFrame * channels + iChannel];
+          }
+        }
+      } else {
+        for (var iChannel = 0; iChannel < e.outputBuffer.numberOfChannels; ++iChannel) {
+          e.outputBuffer.getChannelData(iChannel).fill(0);
+        }
+      }
+    };
+    if (deviceType == window.miniaudio.device_type.capture || deviceType == window.miniaudio.device_type.duplex) {
+      navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false
+      }).then(function(stream) {
+        device.streamNode = device.webaudio.createMediaStreamSource(stream);
+        device.streamNode.connect(device.scriptNode);
+        device.scriptNode.connect(device.webaudio.destination);
+      }).catch(function(error) {
+        console.log("Failed to get user media: " + error);
+      });
+    }
+    if (deviceType == window.miniaudio.device_type.playback) {
+      device.scriptNode.connect(device.webaudio.destination);
+    }
+    device.pDevice = pDevice;
+    return window.miniaudio.track_device(device);
+  },
+  238067: $0 => window.miniaudio.get_device_by_index($0).webaudio.sampleRate,
+  238140: $0 => {
+    var device = window.miniaudio.get_device_by_index($0);
+    if (device.scriptNode !== undefined) {
+      device.scriptNode.onaudioprocess = function(e) {};
+      device.scriptNode.disconnect();
+      device.scriptNode = undefined;
+    }
+    if (device.streamNode !== undefined) {
+      device.streamNode.disconnect();
+      device.streamNode = undefined;
+    }
+    device.webaudio.close();
+    device.webaudio = undefined;
+    device.pDevice = undefined;
+  },
+  238540: $0 => {
+    window.miniaudio.untrack_device_by_index($0);
+  },
+  238590: $0 => {
+    var device = window.miniaudio.get_device_by_index($0);
+    device.webaudio.resume();
+    device.state = window.miniaudio.device_state.started;
+  },
+  238729: $0 => {
+    var device = window.miniaudio.get_device_by_index($0);
+    device.webaudio.suspend();
+    device.state = window.miniaudio.device_state.stopped;
+  }
+};
+
+function SetCanvasIdJs(out, outSize) {
+  var canvasId = "#" + Module.canvas.id;
+  stringToUTF8(canvasId, out, outSize);
+}
+
 // end include: preamble.js
-// Begin JS library code
 class ExitStatus {
   name="ExitStatus";
   constructor(status) {
@@ -968,63 +1144,6 @@ class ExitStatus {
     this.status = status;
   }
 }
-
-var UTF8Decoder = typeof TextDecoder != "undefined" ? new TextDecoder : undefined;
-
-/**
-     * Given a pointer 'idx' to a null-terminated UTF8-encoded string in the given
-     * array that contains uint8 values, returns a copy of that string as a
-     * Javascript String object.
-     * heapOrArray is either a regular array, or a JavaScript typed array view.
-     * @param {number=} idx
-     * @param {number=} maxBytesToRead
-     * @return {string}
-     */ var UTF8ArrayToString = (heapOrArray, idx = 0, maxBytesToRead = NaN) => {
-  var endIdx = idx + maxBytesToRead;
-  var endPtr = idx;
-  // TextDecoder needs to know the byte length in advance, it doesn't stop on
-  // null terminator by itself.  Also, use the length info to avoid running tiny
-  // strings through TextDecoder, since .subarray() allocates garbage.
-  // (As a tiny code save trick, compare endPtr against endIdx using a negation,
-  // so that undefined/NaN means Infinity)
-  while (heapOrArray[endPtr] && !(endPtr >= endIdx)) ++endPtr;
-  if (endPtr - idx > 16 && heapOrArray.buffer && UTF8Decoder) {
-    return UTF8Decoder.decode(heapOrArray.buffer instanceof ArrayBuffer ? heapOrArray.subarray(idx, endPtr) : heapOrArray.slice(idx, endPtr));
-  }
-  var str = "";
-  // If building with TextDecoder, we have already computed the string length
-  // above, so test loop end condition against that
-  while (idx < endPtr) {
-    // For UTF8 byte structure, see:
-    // http://en.wikipedia.org/wiki/UTF-8#Description
-    // https://www.ietf.org/rfc/rfc2279.txt
-    // https://tools.ietf.org/html/rfc3629
-    var u0 = heapOrArray[idx++];
-    if (!(u0 & 128)) {
-      str += String.fromCharCode(u0);
-      continue;
-    }
-    var u1 = heapOrArray[idx++] & 63;
-    if ((u0 & 224) == 192) {
-      str += String.fromCharCode(((u0 & 31) << 6) | u1);
-      continue;
-    }
-    var u2 = heapOrArray[idx++] & 63;
-    if ((u0 & 240) == 224) {
-      u0 = ((u0 & 15) << 12) | (u1 << 6) | u2;
-    } else {
-      if ((u0 & 248) != 240) warnOnce("Invalid UTF-8 leading byte " + ptrToString(u0) + " encountered when deserializing a UTF-8 string in wasm memory to a JS string!");
-      u0 = ((u0 & 7) << 18) | (u1 << 12) | (u2 << 6) | (heapOrArray[idx++] & 63);
-    }
-    if (u0 < 65536) {
-      str += String.fromCharCode(u0);
-    } else {
-      var ch = u0 - 65536;
-      str += String.fromCharCode(55296 | (ch >> 10), 56320 | (ch & 1023));
-    }
-  }
-  return str;
-};
 
 var callRuntimeCallbacks = callbacks => {
   while (callbacks.length > 0) {
@@ -1035,11 +1154,11 @@ var callRuntimeCallbacks = callbacks => {
 
 var onPostRuns = [];
 
-var addOnPostRun = cb => onPostRuns.push(cb);
+var addOnPostRun = cb => onPostRuns.unshift(cb);
 
 var onPreRuns = [];
 
-var addOnPreRun = cb => onPreRuns.push(cb);
+var addOnPreRun = cb => onPreRuns.unshift(cb);
 
 /**
      * @param {number} ptr
@@ -1076,7 +1195,7 @@ var addOnPreRun = cb => onPreRuns.push(cb);
   }
 }
 
-var noExitRuntime = true;
+var noExitRuntime = Module["noExitRuntime"] || true;
 
 var ptrToString = ptr => {
   assert(typeof ptr === "number");
@@ -1665,6 +1784,63 @@ var PATH_FS = {
   }
 };
 
+var UTF8Decoder = typeof TextDecoder != "undefined" ? new TextDecoder : undefined;
+
+/**
+     * Given a pointer 'idx' to a null-terminated UTF8-encoded string in the given
+     * array that contains uint8 values, returns a copy of that string as a
+     * Javascript String object.
+     * heapOrArray is either a regular array, or a JavaScript typed array view.
+     * @param {number=} idx
+     * @param {number=} maxBytesToRead
+     * @return {string}
+     */ var UTF8ArrayToString = (heapOrArray, idx = 0, maxBytesToRead = NaN) => {
+  var endIdx = idx + maxBytesToRead;
+  var endPtr = idx;
+  // TextDecoder needs to know the byte length in advance, it doesn't stop on
+  // null terminator by itself.  Also, use the length info to avoid running tiny
+  // strings through TextDecoder, since .subarray() allocates garbage.
+  // (As a tiny code save trick, compare endPtr against endIdx using a negation,
+  // so that undefined/NaN means Infinity)
+  while (heapOrArray[endPtr] && !(endPtr >= endIdx)) ++endPtr;
+  if (endPtr - idx > 16 && heapOrArray.buffer && UTF8Decoder) {
+    return UTF8Decoder.decode(heapOrArray.buffer instanceof ArrayBuffer ? heapOrArray.subarray(idx, endPtr) : heapOrArray.slice(idx, endPtr));
+  }
+  var str = "";
+  // If building with TextDecoder, we have already computed the string length
+  // above, so test loop end condition against that
+  while (idx < endPtr) {
+    // For UTF8 byte structure, see:
+    // http://en.wikipedia.org/wiki/UTF-8#Description
+    // https://www.ietf.org/rfc/rfc2279.txt
+    // https://tools.ietf.org/html/rfc3629
+    var u0 = heapOrArray[idx++];
+    if (!(u0 & 128)) {
+      str += String.fromCharCode(u0);
+      continue;
+    }
+    var u1 = heapOrArray[idx++] & 63;
+    if ((u0 & 224) == 192) {
+      str += String.fromCharCode(((u0 & 31) << 6) | u1);
+      continue;
+    }
+    var u2 = heapOrArray[idx++] & 63;
+    if ((u0 & 240) == 224) {
+      u0 = ((u0 & 15) << 12) | (u1 << 6) | u2;
+    } else {
+      if ((u0 & 248) != 240) warnOnce("Invalid UTF-8 leading byte " + ptrToString(u0) + " encountered when deserializing a UTF-8 string in wasm memory to a JS string!");
+      u0 = ((u0 & 7) << 18) | (u1 << 12) | (u2 << 6) | (heapOrArray[idx++] & 63);
+    }
+    if (u0 < 65536) {
+      str += String.fromCharCode(u0);
+    } else {
+      var ch = u0 - 65536;
+      str += String.fromCharCode(55296 | (ch >> 10), 56320 | (ch & 1023));
+    }
+  }
+  return str;
+};
+
 var FS_stdin_getChar_buffer = [];
 
 var lengthBytesUTF8 = str => {
@@ -1911,6 +2087,15 @@ var TTY = {
   }
 };
 
+var zeroMemory = (address, size) => {
+  GROWABLE_HEAP_U8().fill(0, address, address + size);
+};
+
+var alignMemory = (size, alignment) => {
+  assert(alignment, "alignment argument is required");
+  return Math.ceil(size / alignment) * alignment;
+};
+
 var mmapAlloc = size => {
   abort("internal error: mmapAlloc called but `emscripten_builtin_memalign` native symbol not exported");
 };
@@ -1951,6 +2136,7 @@ var MEMFS = {
           llseek: MEMFS.stream_ops.llseek,
           read: MEMFS.stream_ops.read,
           write: MEMFS.stream_ops.write,
+          allocate: MEMFS.stream_ops.allocate,
           mmap: MEMFS.stream_ops.mmap,
           msync: MEMFS.stream_ops.msync
         }
@@ -2202,6 +2388,10 @@ var MEMFS = {
       }
       return position;
     },
+    allocate(stream, offset, length) {
+      MEMFS.expandFileStorage(stream.node, offset + length);
+      stream.node.usedBytes = Math.max(stream.node.usedBytes, offset + length);
+    },
     mmap(stream, length, position, prot, flags) {
       if (!FS.isFile(stream.node.mode)) {
         throw new FS.ErrnoError(43);
@@ -2254,9 +2444,11 @@ var asyncLoad = async url => {
 
 asyncLoad.isAsync = true;
 
-var FS_createDataFile = (...args) => FS.createDataFile(...args);
+var FS_createDataFile = (parent, name, fileData, canRead, canWrite, canOwn) => {
+  FS.createDataFile(parent, name, fileData, canRead, canWrite, canOwn);
+};
 
-var preloadPlugins = [];
+var preloadPlugins = Module["preloadPlugins"] || [];
 
 var FS_handledByPreloadPlugin = (byteArray, fullname, finish, onerror) => {
   // Ensure plugins are ready.
@@ -2481,9 +2673,6 @@ var FS = {
   currentPath: "/",
   initialized: false,
   ignorePermissions: true,
-  filesystems: null,
-  syncFSRequests: 0,
-  readFiles: {},
   ErrnoError: class extends Error {
     name="ErrnoError";
     // We set the `name` property to be able to identify `FS.ErrnoError`
@@ -2503,6 +2692,9 @@ var FS = {
       }
     }
   },
+  filesystems: null,
+  syncFSRequests: 0,
+  readFiles: {},
   FSStream: class {
     shared={};
     get object() {
@@ -2596,12 +2788,7 @@ var FS = {
         }
         if (parts[i] === "..") {
           current_path = PATH.dirname(current_path);
-          if (FS.isRoot(current)) {
-            path = current_path + "/" + parts.slice(i + 1).join("/");
-            continue linkloop;
-          } else {
-            current = current.parent;
-          }
+          current = current.parent;
           continue;
         }
         current_path = PATH.join2(current_path, parts[i]);
@@ -3070,10 +3257,9 @@ var FS = {
   mkdirTree(path, mode) {
     var dirs = path.split("/");
     var d = "";
-    for (var dir of dirs) {
-      if (!dir) continue;
-      if (d || PATH.isAbs(path)) d += "/";
-      d += dir;
+    for (var i = 0; i < dirs.length; ++i) {
+      if (!dirs[i]) continue;
+      d += "/" + dirs[i];
       try {
         FS.mkdir(d, mode);
       } catch (e) {
@@ -3568,6 +3754,24 @@ var FS = {
     if (!seeking) stream.position += bytesWritten;
     return bytesWritten;
   },
+  allocate(stream, offset, length) {
+    if (FS.isClosed(stream)) {
+      throw new FS.ErrnoError(8);
+    }
+    if (offset < 0 || length <= 0) {
+      throw new FS.ErrnoError(28);
+    }
+    if ((stream.flags & 2097155) === 0) {
+      throw new FS.ErrnoError(8);
+    }
+    if (!FS.isFile(stream.node.mode) && !FS.isDir(stream.node.mode)) {
+      throw new FS.ErrnoError(43);
+    }
+    if (!stream.stream_ops.allocate) {
+      throw new FS.ErrnoError(138);
+    }
+    stream.stream_ops.allocate(stream, offset, length);
+  },
   mmap(stream, length, position, prot, flags) {
     // User requests writing to file (prot & PROT_WRITE != 0).
     // Checking if we have permissions to write to the file unless
@@ -3785,10 +3989,12 @@ var FS = {
     // force-flush all streams, so we get musl std streams printed out
     _fflush(0);
     // close all of our streams
-    for (var stream of FS.streams) {
-      if (stream) {
-        FS.close(stream);
+    for (var i = 0; i < FS.streams.length; i++) {
+      var stream = FS.streams[i];
+      if (!stream) {
+        continue;
       }
+      FS.close(stream);
     }
   },
   findObject(path, dontResolveLastLink) {
@@ -3847,9 +4053,7 @@ var FS = {
       var current = PATH.join2(parent, part);
       try {
         FS.mkdir(current);
-      } catch (e) {
-        if (e.errno != 20) throw e;
-      }
+      } catch (e) {}
       parent = current;
     }
     return current;
@@ -4313,10 +4517,6 @@ function ___syscall_fcntl64(fd, cmd, varargs) {
 
      case 13:
      case 14:
-      // Pretend that the locking is successful. These are process-level locks,
-      // and Emscripten programs are a single process. If we supported linking a
-      // filesystem between programs, we'd need to do more here.
-      // See https://github.com/emscripten-core/emscripten/issues/23697
       return 0;
     }
     return -28;
@@ -4964,7 +5164,7 @@ var _emscripten_cancel_main_loop = () => {
 
 var onExits = [];
 
-var addOnExit = cb => onExits.push(cb);
+var addOnExit = cb => onExits.unshift(cb);
 
 var JSEvents = {
   memcpy(target, src, size) {
@@ -5297,7 +5497,7 @@ var GL = {
       }
       canvas.getContext = fixedGetContext;
     }
-    var ctx = canvas.getContext("webgl", webGLContextAttributes);
+    var ctx = (canvas.getContext("webgl", webGLContextAttributes));
     if (!ctx) return 0;
     var handle = GL.registerContext(ctx, webGLContextAttributes);
     return handle;
@@ -7231,11 +7431,6 @@ var getHeapMax = () => // Stay one Wasm page short of 4GB: while e.g. Chrome is 
 // casing all heap size related code to treat 0 specially.
 2147483648;
 
-var alignMemory = (size, alignment) => {
-  assert(alignment, "alignment argument is required");
-  return Math.ceil(size / alignment) * alignment;
-};
-
 var growMemory = size => {
   var b = wasmMemory.buffer;
   var pages = ((size - b.byteLength + 65535) / 65536) | 0;
@@ -7298,39 +7493,6 @@ var _emscripten_resize_heap = requestedSize => {
   }
   err(`Failed to grow the heap from ${oldSize} bytes to ${newSize} bytes, not enough memory!`);
   return false;
-};
-
-/** @returns {number} */ var convertFrameToPC = frame => {
-  assert(wasmOffsetConverter);
-  var match;
-  if (match = /\bwasm-function\[\d+\]:(0x[0-9a-f]+)/.exec(frame)) {
-    // some engines give the binary offset directly, so we use that as return address
-    return +match[1];
-  } else if (match = /\bwasm-function\[(\d+)\]:(\d+)/.exec(frame)) {
-    // other engines only give function index and offset in the function,
-    // so we try using the offset converter. If that doesn't work,
-    // we pack index and offset into a "return address"
-    return wasmOffsetConverter.convert(+match[1], +match[2]);
-  } else if (match = /:(\d+):\d+(?:\)|$)/.exec(frame)) {
-    // If we are in js, we can use the js line number as the "return address".
-    // This should work for wasm2js.  We tag the high bit to distinguish this
-    // from wasm addresses.
-    return 2147483648 | +match[1];
-  }
-  // return 0 if we can't find any
-  return 0;
-};
-
-var jsStackTrace = () => (new Error).stack.toString();
-
-var _emscripten_return_address = level => {
-  var callstack = jsStackTrace().split("\n");
-  if (callstack[0] == "Error") {
-    callstack.shift();
-  }
-  // skip this function and the caller to get caller's return address
-  var caller = callstack[level + 3];
-  return convertFrameToPC(caller);
 };
 
 var _emscripten_run_script = ptr => {
@@ -8189,6 +8351,40 @@ function _fd_close(fd) {
   }
 }
 
+/** @param {number=} offset */ var doWritev = (stream, iov, iovcnt, offset) => {
+  var ret = 0;
+  for (var i = 0; i < iovcnt; i++) {
+    var ptr = GROWABLE_HEAP_U32()[((iov) >> 2)];
+    var len = GROWABLE_HEAP_U32()[(((iov) + (4)) >> 2)];
+    iov += 8;
+    var curr = FS.write(stream, GROWABLE_HEAP_I8(), ptr, len, offset);
+    if (curr < 0) return -1;
+    ret += curr;
+    if (curr < len) {
+      // No more space to write.
+      break;
+    }
+    if (typeof offset != "undefined") {
+      offset += curr;
+    }
+  }
+  return ret;
+};
+
+function _fd_pwrite(fd, iov, iovcnt, offset, pnum) {
+  offset = bigintToI53Checked(offset);
+  try {
+    if (isNaN(offset)) return 61;
+    var stream = SYSCALLS.getStreamFromFD(fd);
+    var num = doWritev(stream, iov, iovcnt, offset);
+    GROWABLE_HEAP_U32()[((pnum) >> 2)] = num;
+    return 0;
+  } catch (e) {
+    if (typeof FS == "undefined" || !(e.name === "ErrnoError")) throw e;
+    return e.errno;
+  }
+}
+
 /** @param {number=} offset */ var doReadv = (stream, iov, iovcnt, offset) => {
   var ret = 0;
   for (var i = 0; i < iovcnt; i++) {
@@ -8235,26 +8431,6 @@ function _fd_seek(fd, offset, whence, newOffset) {
   }
 }
 
-/** @param {number=} offset */ var doWritev = (stream, iov, iovcnt, offset) => {
-  var ret = 0;
-  for (var i = 0; i < iovcnt; i++) {
-    var ptr = GROWABLE_HEAP_U32()[((iov) >> 2)];
-    var len = GROWABLE_HEAP_U32()[(((iov) + (4)) >> 2)];
-    iov += 8;
-    var curr = FS.write(stream, GROWABLE_HEAP_I8(), ptr, len, offset);
-    if (curr < 0) return -1;
-    ret += curr;
-    if (curr < len) {
-      // No more space to write.
-      break;
-    }
-    if (typeof offset != "undefined") {
-      offset += curr;
-    }
-  }
-  return ret;
-};
-
 function _fd_write(fd, iov, iovcnt, pnum) {
   try {
     var stream = SYSCALLS.getStreamFromFD(fd);
@@ -8288,9 +8464,7 @@ function _fd_write(fd, iov, iovcnt, pnum) {
   this.title = title;
   this.monitor = monitor;
   this.share = share;
-  this.attributes = {
-    ...GLFW.hints
-  };
+  this.attributes = Object.assign({}, GLFW.hints);
   this.inputModes = {
     208897: 212993,
     // GLFW_CURSOR (GLFW_CURSOR_NORMAL)
@@ -9251,7 +9425,7 @@ var GLFW = {
       reader.readAsArrayBuffer(file);
       var filename = stringToNewUTF8(path);
       filenamesArray.push(filename);
-      GROWABLE_HEAP_U32()[(((filenames) + (i * 4)) >> 2)] = filename;
+      GROWABLE_HEAP_U32()[((filenames + i * 4) >> 2)] = filename;
     }
     for (var i = 0; i < count; ++i) {
       save(event.dataTransfer.files[i]);
@@ -9432,9 +9606,7 @@ var GLFW = {
     }
   },
   defaultWindowHints: () => {
-    GLFW.hints = {
-      ...GLFW.defaultHints
-    };
+    GLFW.hints = Object.assign({}, GLFW.defaultHints);
   },
   createWindow: (width, height, title, monitor, share) => {
     var i, id;
@@ -9491,13 +9663,9 @@ var GLFW = {
       (a1 => dynCall_vi(win.windowCloseFunc, a1))(win.id);
     }
     GLFW.windows[win.id - 1] = null;
-    if (GLFW.active.id == win.id) {
-      GLFW.active = null;
-    }
+    if (GLFW.active.id == win.id) GLFW.active = null;
     // Destroy context when no alive windows
-    for (win of GLFW.windows) {
-      if (win !== null) return;
-    }
+    for (var i = 0; i < GLFW.windows.length; i++) if (GLFW.windows[i] !== null) return;
     delete Module["ctx"];
   },
   swapBuffers: winid => {},
@@ -10267,7 +10435,7 @@ Module["resumeMainLoop"] = MainLoop.resume;
 
 MainLoop.init();
 
-for (let i = 0; i < 32; ++i) tempFixedLengthArray.push(new Array(i));
+for (var i = 0; i < 32; ++i) tempFixedLengthArray.push(new Array(i));
 
 var miniTempWebGLFloatBuffersStorage = new Float32Array(288);
 
@@ -10294,359 +10462,8 @@ Module["getUserMedia"] = Browser.getUserMedia;
 
 Module["createContext"] = Browser.createContext;
 
-// End JS library code
-// include: postlibrary.js
-// This file is included after the automatically-generated JS library code
-// but before the wasm module is created.
-{
-  // Begin ATMODULES hooks
-  if (Module["noExitRuntime"]) noExitRuntime = Module["noExitRuntime"];
-  if (Module["preloadPlugins"]) preloadPlugins = Module["preloadPlugins"];
-  if (Module["print"]) out = Module["print"];
-  if (Module["printErr"]) err = Module["printErr"];
-  if (Module["wasmBinary"]) wasmBinary = Module["wasmBinary"];
-  // End ATMODULES hooks
-  checkIncomingModuleAPI();
-  if (Module["arguments"]) arguments_ = Module["arguments"];
-  if (Module["thisProgram"]) thisProgram = Module["thisProgram"];
-  // Assertions on removed incoming Module JS APIs.
-  assert(typeof Module["memoryInitializerPrefixURL"] == "undefined", "Module.memoryInitializerPrefixURL option was removed, use Module.locateFile instead");
-  assert(typeof Module["pthreadMainPrefixURL"] == "undefined", "Module.pthreadMainPrefixURL option was removed, use Module.locateFile instead");
-  assert(typeof Module["cdInitializerPrefixURL"] == "undefined", "Module.cdInitializerPrefixURL option was removed, use Module.locateFile instead");
-  assert(typeof Module["filePackagePrefixURL"] == "undefined", "Module.filePackagePrefixURL option was removed, use Module.locateFile instead");
-  assert(typeof Module["read"] == "undefined", "Module.read option was removed");
-  assert(typeof Module["readAsync"] == "undefined", "Module.readAsync option was removed (modify readAsync in JS)");
-  assert(typeof Module["readBinary"] == "undefined", "Module.readBinary option was removed (modify readBinary in JS)");
-  assert(typeof Module["setWindowTitle"] == "undefined", "Module.setWindowTitle option was removed (modify emscripten_set_window_title in JS)");
-  assert(typeof Module["TOTAL_MEMORY"] == "undefined", "Module.TOTAL_MEMORY has been renamed Module.INITIAL_MEMORY");
-  assert(typeof Module["ENVIRONMENT"] == "undefined", "Module.ENVIRONMENT has been deprecated. To force the environment, use the ENVIRONMENT compile-time option (for example, -sENVIRONMENT=web or -sENVIRONMENT=node)");
-  assert(typeof Module["STACK_SIZE"] == "undefined", "STACK_SIZE can no longer be set at runtime.  Use -sSTACK_SIZE at link time");
-  // If memory is defined in wasm, the user can't provide it, or set INITIAL_MEMORY
-  assert(typeof Module["wasmMemory"] == "undefined", "Use of `wasmMemory` detected.  Use -sIMPORTED_MEMORY to define wasmMemory externally");
-  assert(typeof Module["INITIAL_MEMORY"] == "undefined", "Detected runtime INITIAL_MEMORY setting.  Use -sIMPORTED_MEMORY to define wasmMemory dynamically");
-}
-
-// Begin runtime exports
-Module["ccall"] = ccall;
-
-Module["cwrap"] = cwrap;
-
-var missingLibrarySymbols = [ "writeI53ToI64Clamped", "writeI53ToI64Signaling", "writeI53ToU64Clamped", "writeI53ToU64Signaling", "convertI32PairToI53", "convertI32PairToI53Checked", "convertU32PairToI53", "getTempRet0", "setTempRet0", "zeroMemory", "inetPton4", "inetNtop4", "inetPton6", "inetNtop6", "readSockaddr", "writeSockaddr", "emscriptenLog", "runMainThreadEmAsm", "getExecutableName", "listenOnce", "autoResumeAudioContext", "dynCallLegacy", "getDynCaller", "dynCall", "asmjsMangle", "HandleAllocator", "getNativeTypeSize", "addOnInit", "addOnPostCtor", "addOnPreMain", "STACK_SIZE", "STACK_ALIGN", "POINTER_SIZE", "ASSERTIONS", "uleb128Encode", "generateFuncType", "convertJsFunctionToWasm", "getEmptyTableSlot", "updateTableMap", "getFunctionAddress", "addFunction", "removeFunction", "reallyNegative", "unSign", "strLen", "reSign", "formatString", "intArrayToString", "AsciiToString", "stringToAscii", "UTF16ToString", "stringToUTF16", "lengthBytesUTF16", "UTF32ToString", "stringToUTF32", "lengthBytesUTF32", "registerKeyEventCallback", "registerWheelEventCallback", "fillDeviceOrientationEventData", "registerDeviceOrientationEventCallback", "fillDeviceMotionEventData", "registerDeviceMotionEventCallback", "screenOrientation", "fillOrientationChangeEventData", "registerOrientationChangeEventCallback", "JSEvents_requestFullscreen", "JSEvents_resizeCanvasForFullscreen", "registerRestoreOldStyle", "hideEverythingExceptGivenElement", "restoreHiddenElements", "setLetterbox", "softFullscreenResizeWebGLRenderTarget", "doRequestFullscreen", "registerPointerlockErrorEventCallback", "registerBeforeUnloadEventCallback", "fillBatteryEventData", "battery", "registerBatteryEventCallback", "setCanvasElementSize", "getCanvasElementSize", "getCallstack", "convertPCtoSourceLocation", "getEnvStrings", "wasiRightsToMuslOFlags", "wasiOFlagsToMuslOFlags", "setImmediateWrapped", "safeRequestAnimationFrame", "clearImmediateWrapped", "registerPostMainLoop", "registerPreMainLoop", "getPromise", "makePromise", "idsToPromises", "makePromiseCallback", "ExceptionInfo", "findMatchingCatch", "Browser_asyncPrepareDataCounter", "isLeapYear", "ydayFromDate", "arraySum", "addDays", "getSocketFromFD", "getSocketAddress", "FS_mkdirTree", "_setNetworkCallback", "writeGLArray", "registerWebGlEventCallback", "ALLOC_NORMAL", "ALLOC_STACK", "allocate", "writeStringToMemory", "writeAsciiToMemory", "demangle", "stackTrace" ];
-
-missingLibrarySymbols.forEach(missingLibrarySymbol);
-
-var unexportedSymbols = [ "run", "addRunDependency", "removeRunDependency", "out", "err", "callMain", "abort", "wasmMemory", "wasmExports", "HEAPF32", "HEAPF64", "HEAP8", "HEAPU8", "HEAP16", "HEAPU16", "HEAP32", "HEAPU32", "HEAP64", "HEAPU64", "WasmOffsetConverter", "writeStackCookie", "checkStackCookie", "writeI53ToI64", "readI53FromI64", "readI53FromU64", "INT53_MAX", "INT53_MIN", "bigintToI53Checked", "stackSave", "stackRestore", "stackAlloc", "ptrToString", "exitJS", "getHeapMax", "growMemory", "ENV", "ERRNO_CODES", "strError", "DNS", "Protocols", "Sockets", "timers", "warnOnce", "readEmAsmArgsArray", "readEmAsmArgs", "runEmAsmFunction", "jstoi_q", "handleException", "keepRuntimeAlive", "runtimeKeepalivePush", "runtimeKeepalivePop", "callUserCallback", "maybeExit", "asyncLoad", "alignMemory", "mmapAlloc", "wasmTable", "noExitRuntime", "addOnPreRun", "addOnExit", "addOnPostRun", "getCFunc", "sigToWasmTypes", "freeTableIndexes", "functionsInTableMap", "setValue", "getValue", "PATH", "PATH_FS", "UTF8Decoder", "UTF8ArrayToString", "UTF8ToString", "stringToUTF8Array", "stringToUTF8", "lengthBytesUTF8", "intArrayFromString", "UTF16Decoder", "stringToNewUTF8", "stringToUTF8OnStack", "writeArrayToMemory", "JSEvents", "specialHTMLTargets", "maybeCStringToJsString", "findEventTarget", "findCanvasEventTarget", "getBoundingClientRect", "fillMouseEventData", "registerMouseEventCallback", "registerUiEventCallback", "registerFocusEventCallback", "fillFullscreenChangeEventData", "registerFullscreenChangeEventCallback", "currentFullscreenStrategy", "restoreOldWindowedStyle", "fillPointerlockChangeEventData", "registerPointerlockChangeEventCallback", "requestPointerLock", "fillVisibilityChangeEventData", "registerVisibilityChangeEventCallback", "registerTouchEventCallback", "fillGamepadEventData", "registerGamepadEventCallback", "jsStackTrace", "UNWIND_CACHE", "ExitStatus", "checkWasiClock", "doReadv", "doWritev", "initRandomFill", "randomFill", "safeSetTimeout", "emSetImmediate", "emClearImmediate_deps", "emClearImmediate", "promiseMap", "uncaughtExceptionCount", "exceptionLast", "exceptionCaught", "Browser", "getPreloadedImageData__data", "wget", "MONTH_DAYS_REGULAR", "MONTH_DAYS_LEAP", "MONTH_DAYS_REGULAR_CUMULATIVE", "MONTH_DAYS_LEAP_CUMULATIVE", "SYSCALLS", "preloadPlugins", "FS_createPreloadedFile", "FS_modeStringToFlags", "FS_getMode", "FS_stdin_getChar_buffer", "FS_stdin_getChar", "FS_unlink", "FS_createPath", "FS_createDevice", "FS_readFile", "FS", "FS_root", "FS_mounts", "FS_devices", "FS_streams", "FS_nextInode", "FS_nameTable", "FS_currentPath", "FS_initialized", "FS_ignorePermissions", "FS_filesystems", "FS_syncFSRequests", "FS_readFiles", "FS_lookupPath", "FS_getPath", "FS_hashName", "FS_hashAddNode", "FS_hashRemoveNode", "FS_lookupNode", "FS_createNode", "FS_destroyNode", "FS_isRoot", "FS_isMountpoint", "FS_isFile", "FS_isDir", "FS_isLink", "FS_isChrdev", "FS_isBlkdev", "FS_isFIFO", "FS_isSocket", "FS_flagsToPermissionString", "FS_nodePermissions", "FS_mayLookup", "FS_mayCreate", "FS_mayDelete", "FS_mayOpen", "FS_checkOpExists", "FS_nextfd", "FS_getStreamChecked", "FS_getStream", "FS_createStream", "FS_closeStream", "FS_dupStream", "FS_doSetAttr", "FS_chrdev_stream_ops", "FS_major", "FS_minor", "FS_makedev", "FS_registerDevice", "FS_getDevice", "FS_getMounts", "FS_syncfs", "FS_mount", "FS_unmount", "FS_lookup", "FS_mknod", "FS_statfs", "FS_statfsStream", "FS_statfsNode", "FS_create", "FS_mkdir", "FS_mkdev", "FS_symlink", "FS_rename", "FS_rmdir", "FS_readdir", "FS_readlink", "FS_stat", "FS_fstat", "FS_lstat", "FS_doChmod", "FS_chmod", "FS_lchmod", "FS_fchmod", "FS_doChown", "FS_chown", "FS_lchown", "FS_fchown", "FS_doTruncate", "FS_truncate", "FS_ftruncate", "FS_utime", "FS_open", "FS_close", "FS_isClosed", "FS_llseek", "FS_read", "FS_write", "FS_mmap", "FS_msync", "FS_ioctl", "FS_writeFile", "FS_cwd", "FS_chdir", "FS_createDefaultDirectories", "FS_createDefaultDevices", "FS_createSpecialDirectories", "FS_createStandardStreams", "FS_staticInit", "FS_init", "FS_quit", "FS_findObject", "FS_analyzePath", "FS_createFile", "FS_createDataFile", "FS_forceLoadFile", "FS_createLazyFile", "FS_absolutePath", "FS_createFolder", "FS_createLink", "FS_joinPath", "FS_mmapAlloc", "FS_standardizePath", "MEMFS", "TTY", "PIPEFS", "SOCKFS", "tempFixedLengthArray", "miniTempWebGLFloatBuffers", "miniTempWebGLIntBuffers", "heapObjectForWebGLType", "toTypedArrayIndex", "webgl_enable_ANGLE_instanced_arrays", "webgl_enable_OES_vertex_array_object", "webgl_enable_WEBGL_draw_buffers", "webgl_enable_WEBGL_multi_draw", "webgl_enable_EXT_polygon_offset_clamp", "webgl_enable_EXT_clip_control", "webgl_enable_WEBGL_polygon_mode", "GL", "emscriptenWebGLGet", "computeUnpackAlignedImageSize", "colorChannelsInGlTextureFormat", "emscriptenWebGLGetTexPixelData", "emscriptenWebGLGetUniform", "webglGetUniformLocation", "webglPrepareUniformLocationsBeforeFirstUse", "webglGetLeftBracePos", "emscriptenWebGLGetVertexAttrib", "__glGetActiveAttribOrUniform", "AL", "GLUT", "EGL", "GLEW", "IDBStore", "runAndAbortIfError", "Asyncify", "Fibers", "SDL", "SDL_gfx", "GLFW_Window", "GLFW", "allocateUTF8", "allocateUTF8OnStack", "print", "printErr", "jstoi_s" ];
-
-unexportedSymbols.forEach(unexportedRuntimeSymbol);
-
-// End runtime exports
-// Begin JS library exports
-// End JS library exports
-// end include: postlibrary.js
 function checkIncomingModuleAPI() {
   ignoredModuleProp("fetchSettings");
-}
-
-var ASM_CONSTS = {
-  231384: () => {
-    if (document.fullscreenElement) return 1;
-  },
-  231430: () => Module.canvas.width,
-  231462: () => parseInt(Module.canvas.style.width),
-  231510: () => {
-    document.exitFullscreen();
-  },
-  231537: () => {
-    setTimeout(function() {
-      Module.requestFullscreen(false, false);
-    }, 100);
-  },
-  231610: () => {
-    if (document.fullscreenElement) return 1;
-  },
-  231656: () => Module.canvas.width,
-  231688: () => screen.width,
-  231713: () => {
-    document.exitFullscreen();
-  },
-  231740: () => {
-    setTimeout(function() {
-      Module.requestFullscreen(false, true);
-      setTimeout(function() {
-        canvas.style.width = "unset";
-      }, 100);
-    }, 100);
-  },
-  231873: () => window.innerWidth,
-  231899: () => window.innerHeight,
-  231926: () => {
-    if (document.fullscreenElement) return 1;
-  },
-  231972: () => Module.canvas.width,
-  232004: () => parseInt(Module.canvas.style.width),
-  232052: () => {
-    if (document.fullscreenElement) return 1;
-  },
-  232098: () => Module.canvas.width,
-  232130: () => screen.width,
-  232155: () => window.innerWidth,
-  232181: () => window.innerHeight,
-  232208: () => {
-    if (document.fullscreenElement) return 1;
-  },
-  232254: () => Module.canvas.width,
-  232286: () => screen.width,
-  232311: () => {
-    document.exitFullscreen();
-  },
-  232338: () => {
-    if (document.fullscreenElement) return 1;
-  },
-  232384: () => Module.canvas.width,
-  232416: () => parseInt(Module.canvas.style.width),
-  232464: () => {
-    document.exitFullscreen();
-  },
-  232491: $0 => {
-    Module.canvas.style.opacity = $0;
-  },
-  232529: () => screen.width,
-  232554: () => screen.height,
-  232580: () => window.screenX,
-  232607: () => window.screenY,
-  232634: () => window.devicePixelRatio,
-  232670: $0 => {
-    navigator.clipboard.writeText(UTF8ToString($0));
-  },
-  232723: $0 => {
-    Module.canvas.style.cursor = UTF8ToString($0);
-  },
-  232774: () => {
-    Module.canvas.style.cursor = "none";
-  },
-  232811: ($0, $1, $2, $3) => {
-    try {
-      navigator.getGamepads()[$0].vibrationActuator.playEffect("dual-rumble", {
-        startDelay: 0,
-        duration: $3,
-        weakMagnitude: $1,
-        strongMagnitude: $2
-      });
-    } catch (e) {
-      try {
-        navigator.getGamepads()[$0].hapticActuators[0].pulse($2, $3);
-      } catch (e) {}
-    }
-  },
-  233067: $0 => {
-    Module.canvas.style.cursor = UTF8ToString($0);
-  },
-  233118: () => {
-    if (document.fullscreenElement) return 1;
-  },
-  233164: () => window.innerWidth,
-  233190: () => window.innerHeight,
-  233217: () => {
-    if (document.pointerLockElement) return 1;
-  },
-  233264: ($0, $1, $2, $3, $4) => {
-    if (typeof window === "undefined" || (window.AudioContext || window.webkitAudioContext) === undefined) {
-      return 0;
-    }
-    if (typeof (window.miniaudio) === "undefined") {
-      window.miniaudio = {
-        referenceCount: 0
-      };
-      window.miniaudio.device_type = {};
-      window.miniaudio.device_type.playback = $0;
-      window.miniaudio.device_type.capture = $1;
-      window.miniaudio.device_type.duplex = $2;
-      window.miniaudio.device_state = {};
-      window.miniaudio.device_state.stopped = $3;
-      window.miniaudio.device_state.started = $4;
-      miniaudio.devices = [];
-      miniaudio.track_device = function(device) {
-        for (var iDevice = 0; iDevice < miniaudio.devices.length; ++iDevice) {
-          if (miniaudio.devices[iDevice] == null) {
-            miniaudio.devices[iDevice] = device;
-            return iDevice;
-          }
-        }
-        miniaudio.devices.push(device);
-        return miniaudio.devices.length - 1;
-      };
-      miniaudio.untrack_device_by_index = function(deviceIndex) {
-        miniaudio.devices[deviceIndex] = null;
-        while (miniaudio.devices.length > 0) {
-          if (miniaudio.devices[miniaudio.devices.length - 1] == null) {
-            miniaudio.devices.pop();
-          } else {
-            break;
-          }
-        }
-      };
-      miniaudio.untrack_device = function(device) {
-        for (var iDevice = 0; iDevice < miniaudio.devices.length; ++iDevice) {
-          if (miniaudio.devices[iDevice] == device) {
-            return miniaudio.untrack_device_by_index(iDevice);
-          }
-        }
-      };
-      miniaudio.get_device_by_index = function(deviceIndex) {
-        return miniaudio.devices[deviceIndex];
-      };
-      miniaudio.unlock_event_types = (function() {
-        return [ "touchend", "click" ];
-      })();
-      miniaudio.unlock = function() {
-        for (var i = 0; i < miniaudio.devices.length; ++i) {
-          var device = miniaudio.devices[i];
-          if (device != null && device.webaudio != null && device.state === window.miniaudio.device_state.started) {
-            device.webaudio.resume().then(() => {
-              Module._ma_device__on_notification_unlocked(device.pDevice);
-            }, error => {
-              console.error("Failed to resume audiocontext", error);
-            });
-          }
-        }
-        miniaudio.unlock_event_types.map(function(event_type) {
-          document.removeEventListener(event_type, miniaudio.unlock, true);
-        });
-      };
-      miniaudio.unlock_event_types.map(function(event_type) {
-        document.addEventListener(event_type, miniaudio.unlock, true);
-      });
-    }
-    window.miniaudio.referenceCount += 1;
-    return 1;
-  },
-  235422: () => {
-    if (typeof (window.miniaudio) !== "undefined") {
-      window.miniaudio.referenceCount -= 1;
-      if (window.miniaudio.referenceCount === 0) {
-        delete window.miniaudio;
-      }
-    }
-  },
-  235586: () => (navigator.mediaDevices !== undefined && navigator.mediaDevices.getUserMedia !== undefined),
-  235690: () => {
-    try {
-      var temp = new (window.AudioContext || window.webkitAudioContext);
-      var sampleRate = temp.sampleRate;
-      temp.close();
-      return sampleRate;
-    } catch (e) {
-      return 0;
-    }
-  },
-  235861: ($0, $1, $2, $3, $4, $5) => {
-    var deviceType = $0;
-    var channels = $1;
-    var sampleRate = $2;
-    var bufferSize = $3;
-    var pIntermediaryBuffer = $4;
-    var pDevice = $5;
-    if (typeof (window.miniaudio) === "undefined") {
-      return -1;
-    }
-    var device = {};
-    var audioContextOptions = {};
-    if (deviceType == window.miniaudio.device_type.playback && sampleRate != 0) {
-      audioContextOptions.sampleRate = sampleRate;
-    }
-    device.webaudio = new (window.AudioContext || window.webkitAudioContext)(audioContextOptions);
-    device.webaudio.suspend();
-    device.state = window.miniaudio.device_state.stopped;
-    var channelCountIn = 0;
-    var channelCountOut = channels;
-    if (deviceType != window.miniaudio.device_type.playback) {
-      channelCountIn = channels;
-    }
-    device.scriptNode = device.webaudio.createScriptProcessor(bufferSize, channelCountIn, channelCountOut);
-    device.scriptNode.onaudioprocess = function(e) {
-      if (device.intermediaryBufferView == null || device.intermediaryBufferView.length == 0) {
-        device.intermediaryBufferView = new Float32Array(Module.HEAPF32.buffer, pIntermediaryBuffer, bufferSize * channels);
-      }
-      if (deviceType == miniaudio.device_type.capture || deviceType == miniaudio.device_type.duplex) {
-        for (var iChannel = 0; iChannel < channels; iChannel += 1) {
-          var inputBuffer = e.inputBuffer.getChannelData(iChannel);
-          var intermediaryBuffer = device.intermediaryBufferView;
-          for (var iFrame = 0; iFrame < bufferSize; iFrame += 1) {
-            intermediaryBuffer[iFrame * channels + iChannel] = inputBuffer[iFrame];
-          }
-        }
-        _ma_device_process_pcm_frames_capture__webaudio(pDevice, bufferSize, pIntermediaryBuffer);
-      }
-      if (deviceType == miniaudio.device_type.playback || deviceType == miniaudio.device_type.duplex) {
-        _ma_device_process_pcm_frames_playback__webaudio(pDevice, bufferSize, pIntermediaryBuffer);
-        for (var iChannel = 0; iChannel < e.outputBuffer.numberOfChannels; ++iChannel) {
-          var outputBuffer = e.outputBuffer.getChannelData(iChannel);
-          var intermediaryBuffer = device.intermediaryBufferView;
-          for (var iFrame = 0; iFrame < bufferSize; iFrame += 1) {
-            outputBuffer[iFrame] = intermediaryBuffer[iFrame * channels + iChannel];
-          }
-        }
-      } else {
-        for (var iChannel = 0; iChannel < e.outputBuffer.numberOfChannels; ++iChannel) {
-          e.outputBuffer.getChannelData(iChannel).fill(0);
-        }
-      }
-    };
-    if (deviceType == miniaudio.device_type.capture || deviceType == miniaudio.device_type.duplex) {
-      navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: false
-      }).then(function(stream) {
-        device.streamNode = device.webaudio.createMediaStreamSource(stream);
-        device.streamNode.connect(device.scriptNode);
-        device.scriptNode.connect(device.webaudio.destination);
-      }).catch(function(error) {
-        console.log("Failed to get user media: " + error);
-      });
-    }
-    if (deviceType == miniaudio.device_type.playback) {
-      device.scriptNode.connect(device.webaudio.destination);
-    }
-    device.pDevice = pDevice;
-    return miniaudio.track_device(device);
-  },
-  238689: $0 => miniaudio.get_device_by_index($0).webaudio.sampleRate,
-  238755: $0 => {
-    var device = miniaudio.get_device_by_index($0);
-    if (device.scriptNode !== undefined) {
-      device.scriptNode.onaudioprocess = function(e) {};
-      device.scriptNode.disconnect();
-      device.scriptNode = undefined;
-    }
-    if (device.streamNode !== undefined) {
-      device.streamNode.disconnect();
-      device.streamNode = undefined;
-    }
-    device.webaudio.close();
-    device.webaudio = undefined;
-    device.pDevice = undefined;
-  },
-  239148: $0 => {
-    miniaudio.untrack_device_by_index($0);
-  },
-  239191: $0 => {
-    var device = miniaudio.get_device_by_index($0);
-    device.webaudio.resume();
-    device.state = miniaudio.device_state.started;
-  },
-  239316: $0 => {
-    var device = miniaudio.get_device_by_index($0);
-    device.webaudio.suspend();
-    device.state = miniaudio.device_state.stopped;
-  }
-};
-
-function GetCanvasIdJs() {
-  var canvasId = "#" + Module.canvas.id;
-  var lengthBytes = lengthBytesUTF8(canvasId) + 1;
-  var stringOnWasmHeap = _malloc(lengthBytes);
-  stringToUTF8(canvasId, stringOnWasmHeap, lengthBytes);
-  return stringOnWasmHeap;
 }
 
 var wasmImports = {
@@ -10697,7 +10514,6 @@ var wasmImports = {
   /** @export */ GenMeshPoly: _GenMeshPoly,
   /** @export */ GenMeshSphere: _GenMeshSphere,
   /** @export */ GenMeshTorus: _GenMeshTorus,
-  /** @export */ GetCanvasIdJs,
   /** @export */ GetMeshBoundingBox: _GetMeshBoundingBox,
   /** @export */ GetModelBoundingBox: _GetModelBoundingBox,
   /** @export */ GetRayCollisionBox: _GetRayCollisionBox,
@@ -10711,6 +10527,7 @@ var wasmImports = {
   /** @export */ LoadMaterialDefault: _LoadMaterialDefault,
   /** @export */ LoadModel: _LoadModel,
   /** @export */ LoadModelFromMesh: _LoadModelFromMesh,
+  /** @export */ SetCanvasIdJs,
   /** @export */ UnloadMaterial: _UnloadMaterial,
   /** @export */ UnloadMesh: _UnloadMesh,
   /** @export */ UnloadModel: _UnloadModel,
@@ -10906,7 +10723,6 @@ var wasmImports = {
   /** @export */ emscripten_glViewport: _emscripten_glViewport,
   /** @export */ emscripten_request_pointerlock: _emscripten_request_pointerlock,
   /** @export */ emscripten_resize_heap: _emscripten_resize_heap,
-  /** @export */ emscripten_return_address: _emscripten_return_address,
   /** @export */ emscripten_run_script: _emscripten_run_script,
   /** @export */ emscripten_sample_gamepad_data: _emscripten_sample_gamepad_data,
   /** @export */ emscripten_set_blur_callback_on_thread: _emscripten_set_blur_callback_on_thread,
@@ -10928,6 +10744,7 @@ var wasmImports = {
   /** @export */ emscripten_sleep: _emscripten_sleep,
   /** @export */ exit: _exit,
   /** @export */ fd_close: _fd_close,
+  /** @export */ fd_pwrite: _fd_pwrite,
   /** @export */ fd_read: _fd_read,
   /** @export */ fd_seek: _fd_seek,
   /** @export */ fd_write: _fd_write,
@@ -10938,6 +10755,7 @@ var wasmImports = {
   /** @export */ glBindFramebuffer: _glBindFramebuffer,
   /** @export */ glBindRenderbuffer: _glBindRenderbuffer,
   /** @export */ glBindTexture: _glBindTexture,
+  /** @export */ glBindVertexArray: _glBindVertexArray,
   /** @export */ glBlendEquation: _glBlendEquation,
   /** @export */ glBlendEquationSeparate: _glBlendEquationSeparate,
   /** @export */ glBlendFunc: _glBlendFunc,
@@ -10959,6 +10777,7 @@ var wasmImports = {
   /** @export */ glDeleteRenderbuffers: _glDeleteRenderbuffers,
   /** @export */ glDeleteShader: _glDeleteShader,
   /** @export */ glDeleteTextures: _glDeleteTextures,
+  /** @export */ glDeleteVertexArrays: _glDeleteVertexArrays,
   /** @export */ glDepthFunc: _glDepthFunc,
   /** @export */ glDetachShader: _glDetachShader,
   /** @export */ glDisable: _glDisable,
@@ -10974,9 +10793,11 @@ var wasmImports = {
   /** @export */ glGenFramebuffers: _glGenFramebuffers,
   /** @export */ glGenRenderbuffers: _glGenRenderbuffers,
   /** @export */ glGenTextures: _glGenTextures,
+  /** @export */ glGenVertexArrays: _glGenVertexArrays,
   /** @export */ glGetAttribLocation: _glGetAttribLocation,
   /** @export */ glGetFloatv: _glGetFloatv,
   /** @export */ glGetFramebufferAttachmentParameteriv: _glGetFramebufferAttachmentParameteriv,
+  /** @export */ glGetIntegerv: _glGetIntegerv,
   /** @export */ glGetProgramInfoLog: _glGetProgramInfoLog,
   /** @export */ glGetProgramiv: _glGetProgramiv,
   /** @export */ glGetShaderInfoLog: _glGetShaderInfoLog,
@@ -11052,10 +10873,6 @@ var _ma_device_process_pcm_frames_playback__webaudio = Module["_ma_device_proces
 
 var _fflush = createExportWrapper("fflush", 1);
 
-var _emscripten_stack_get_end = () => (_emscripten_stack_get_end = wasmExports["emscripten_stack_get_end"])();
-
-var _emscripten_stack_get_base = () => (_emscripten_stack_get_base = wasmExports["emscripten_stack_get_base"])();
-
 var _strerror = createExportWrapper("strerror", 1);
 
 var _malloc = createExportWrapper("malloc", 1);
@@ -11065,6 +10882,10 @@ var _free = createExportWrapper("free", 1);
 var _emscripten_stack_init = () => (_emscripten_stack_init = wasmExports["emscripten_stack_init"])();
 
 var _emscripten_stack_get_free = () => (_emscripten_stack_get_free = wasmExports["emscripten_stack_get_free"])();
+
+var _emscripten_stack_get_base = () => (_emscripten_stack_get_base = wasmExports["emscripten_stack_get_base"])();
+
+var _emscripten_stack_get_end = () => (_emscripten_stack_get_end = wasmExports["emscripten_stack_get_end"])();
 
 var __emscripten_stack_restore = a0 => (__emscripten_stack_restore = wasmExports["_emscripten_stack_restore"])(a0);
 
@@ -11150,6 +10971,18 @@ var _asyncify_stop_rewind = createExportWrapper("asyncify_stop_rewind", 0);
 
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===
+Module["ccall"] = ccall;
+
+Module["cwrap"] = cwrap;
+
+var missingLibrarySymbols = [ "writeI53ToI64Clamped", "writeI53ToI64Signaling", "writeI53ToU64Clamped", "writeI53ToU64Signaling", "convertI32PairToI53", "convertI32PairToI53Checked", "convertU32PairToI53", "getTempRet0", "setTempRet0", "inetPton4", "inetNtop4", "inetPton6", "inetNtop6", "readSockaddr", "writeSockaddr", "emscriptenLog", "runMainThreadEmAsm", "getExecutableName", "listenOnce", "autoResumeAudioContext", "dynCallLegacy", "getDynCaller", "dynCall", "asmjsMangle", "HandleAllocator", "getNativeTypeSize", "addOnInit", "addOnPostCtor", "addOnPreMain", "STACK_SIZE", "STACK_ALIGN", "POINTER_SIZE", "ASSERTIONS", "uleb128Encode", "generateFuncType", "convertJsFunctionToWasm", "getEmptyTableSlot", "updateTableMap", "getFunctionAddress", "addFunction", "removeFunction", "reallyNegative", "unSign", "strLen", "reSign", "formatString", "intArrayToString", "AsciiToString", "stringToAscii", "UTF16ToString", "stringToUTF16", "lengthBytesUTF16", "UTF32ToString", "stringToUTF32", "lengthBytesUTF32", "registerKeyEventCallback", "registerWheelEventCallback", "fillDeviceOrientationEventData", "registerDeviceOrientationEventCallback", "fillDeviceMotionEventData", "registerDeviceMotionEventCallback", "screenOrientation", "fillOrientationChangeEventData", "registerOrientationChangeEventCallback", "JSEvents_requestFullscreen", "JSEvents_resizeCanvasForFullscreen", "registerRestoreOldStyle", "hideEverythingExceptGivenElement", "restoreHiddenElements", "setLetterbox", "softFullscreenResizeWebGLRenderTarget", "doRequestFullscreen", "registerPointerlockErrorEventCallback", "registerBeforeUnloadEventCallback", "fillBatteryEventData", "battery", "registerBatteryEventCallback", "setCanvasElementSize", "getCanvasElementSize", "jsStackTrace", "getCallstack", "convertPCtoSourceLocation", "getEnvStrings", "wasiRightsToMuslOFlags", "wasiOFlagsToMuslOFlags", "setImmediateWrapped", "safeRequestAnimationFrame", "clearImmediateWrapped", "registerPostMainLoop", "registerPreMainLoop", "getPromise", "makePromise", "idsToPromises", "makePromiseCallback", "ExceptionInfo", "findMatchingCatch", "Browser_asyncPrepareDataCounter", "isLeapYear", "ydayFromDate", "arraySum", "addDays", "getSocketFromFD", "getSocketAddress", "FS_unlink", "FS_mkdirTree", "_setNetworkCallback", "writeGLArray", "registerWebGlEventCallback", "ALLOC_NORMAL", "ALLOC_STACK", "allocate", "writeStringToMemory", "writeAsciiToMemory", "setErrNo", "demangle", "stackTrace" ];
+
+missingLibrarySymbols.forEach(missingLibrarySymbol);
+
+var unexportedSymbols = [ "run", "addRunDependency", "removeRunDependency", "out", "err", "callMain", "abort", "wasmMemory", "wasmExports", "writeStackCookie", "checkStackCookie", "writeI53ToI64", "readI53FromI64", "readI53FromU64", "INT53_MAX", "INT53_MIN", "bigintToI53Checked", "stackSave", "stackRestore", "stackAlloc", "ptrToString", "zeroMemory", "exitJS", "getHeapMax", "growMemory", "ENV", "ERRNO_CODES", "strError", "DNS", "Protocols", "Sockets", "timers", "warnOnce", "readEmAsmArgsArray", "readEmAsmArgs", "runEmAsmFunction", "jstoi_q", "jstoi_s", "handleException", "keepRuntimeAlive", "runtimeKeepalivePush", "runtimeKeepalivePop", "callUserCallback", "maybeExit", "asyncLoad", "alignMemory", "mmapAlloc", "wasmTable", "noExitRuntime", "addOnPreRun", "addOnExit", "addOnPostRun", "getCFunc", "sigToWasmTypes", "freeTableIndexes", "functionsInTableMap", "setValue", "getValue", "PATH", "PATH_FS", "UTF8Decoder", "UTF8ArrayToString", "UTF8ToString", "stringToUTF8Array", "stringToUTF8", "lengthBytesUTF8", "intArrayFromString", "UTF16Decoder", "stringToNewUTF8", "stringToUTF8OnStack", "writeArrayToMemory", "JSEvents", "specialHTMLTargets", "maybeCStringToJsString", "findEventTarget", "findCanvasEventTarget", "getBoundingClientRect", "fillMouseEventData", "registerMouseEventCallback", "registerUiEventCallback", "registerFocusEventCallback", "fillFullscreenChangeEventData", "registerFullscreenChangeEventCallback", "currentFullscreenStrategy", "restoreOldWindowedStyle", "fillPointerlockChangeEventData", "registerPointerlockChangeEventCallback", "requestPointerLock", "fillVisibilityChangeEventData", "registerVisibilityChangeEventCallback", "registerTouchEventCallback", "fillGamepadEventData", "registerGamepadEventCallback", "UNWIND_CACHE", "ExitStatus", "checkWasiClock", "doReadv", "doWritev", "initRandomFill", "randomFill", "safeSetTimeout", "emSetImmediate", "emClearImmediate_deps", "emClearImmediate", "promiseMap", "uncaughtExceptionCount", "exceptionLast", "exceptionCaught", "Browser", "getPreloadedImageData__data", "wget", "MONTH_DAYS_REGULAR", "MONTH_DAYS_LEAP", "MONTH_DAYS_REGULAR_CUMULATIVE", "MONTH_DAYS_LEAP_CUMULATIVE", "SYSCALLS", "preloadPlugins", "FS_createPreloadedFile", "FS_modeStringToFlags", "FS_getMode", "FS_stdin_getChar_buffer", "FS_stdin_getChar", "FS_createPath", "FS_createDevice", "FS_readFile", "FS", "FS_createDataFile", "FS_createLazyFile", "MEMFS", "TTY", "PIPEFS", "SOCKFS", "tempFixedLengthArray", "miniTempWebGLFloatBuffers", "miniTempWebGLIntBuffers", "heapObjectForWebGLType", "toTypedArrayIndex", "webgl_enable_ANGLE_instanced_arrays", "webgl_enable_OES_vertex_array_object", "webgl_enable_WEBGL_draw_buffers", "webgl_enable_WEBGL_multi_draw", "webgl_enable_EXT_polygon_offset_clamp", "webgl_enable_EXT_clip_control", "webgl_enable_WEBGL_polygon_mode", "GL", "emscriptenWebGLGet", "computeUnpackAlignedImageSize", "colorChannelsInGlTextureFormat", "emscriptenWebGLGetTexPixelData", "emscriptenWebGLGetUniform", "webglGetUniformLocation", "webglPrepareUniformLocationsBeforeFirstUse", "webglGetLeftBracePos", "emscriptenWebGLGetVertexAttrib", "__glGetActiveAttribOrUniform", "AL", "GLUT", "EGL", "GLEW", "IDBStore", "runAndAbortIfError", "Asyncify", "Fibers", "SDL", "SDL_gfx", "GLFW_Window", "GLFW", "allocateUTF8", "allocateUTF8OnStack", "print", "printErr" ];
+
+unexportedSymbols.forEach(unexportedRuntimeSymbol);
+
 var calledRun;
 
 function callMain(args = []) {
@@ -11206,8 +11039,8 @@ function run(args = arguments_) {
     initRuntime();
     preMain();
     Module["onRuntimeInitialized"]?.();
-    consumedModuleProp("onRuntimeInitialized");
-    var noInitialRun = Module["noInitialRun"] || false;
+    var noInitialRun = Module["noInitialRun"];
+    legacyModuleProp("noInitialRun", "noInitialRun");
     if (!noInitialRun) callMain(args);
     postRun();
   }
@@ -11263,16 +11096,11 @@ function checkUnflushedContent() {
   }
 }
 
-function preInit() {
-  if (Module["preInit"]) {
-    if (typeof Module["preInit"] == "function") Module["preInit"] = [ Module["preInit"] ];
-    while (Module["preInit"].length > 0) {
-      Module["preInit"].shift()();
-    }
+if (Module["preInit"]) {
+  if (typeof Module["preInit"] == "function") Module["preInit"] = [ Module["preInit"] ];
+  while (Module["preInit"].length > 0) {
+    Module["preInit"].pop()();
   }
-  consumedModuleProp("preInit");
 }
-
-preInit();
 
 run();
