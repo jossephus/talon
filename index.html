@@ -565,6 +565,8 @@
     <script type="text/javascript">
       // Initialize variables
       let isRunning = false;
+      let isStopping = false;
+      let activeRunPromise = null;
       let currentSample = null;
       const scriptInput = document.getElementById("script-input");
       const runButton = document.getElementById("run-button");
@@ -583,6 +585,16 @@
           description: "Basic Window",
         },
         {
+          name: "Breakout",
+          file: "samples/breakout.wren",
+          description: "Breakout with falling powerups",
+        },
+        {
+          name: "Neon Dodger",
+          file: "samples/neon_dodger.wren",
+          description: "Dash through neon hazard waves",
+        },
+        {
           name: "Asteroid",
           file: "https://raw.githubusercontent.com/jossephus/talon/refs/heads/gh-pages/samples/asteroid.wren",
           description: "Asteroid From Raylib Examples",
@@ -597,7 +609,6 @@
       // Load sample content
       async function loadSample(filename) {
         try {
-          <!--const response = await fetch(`/samples/${filename}`);-->
           const response = await fetch(`${filename}`);
           if (response.ok) {
             const content = await response.text();
@@ -719,44 +730,85 @@
         }
       }
 
-      // Handle script execution
-      async function runScript() {
-        if (isRunning) {
-          // Stop the current execution
-          try {
-            if (window.Module && window.Module.ccall) {
-              window.Module.ccall("stop_game", null, [], []);
-            }
-          } catch (error) {
-            console.log("Stop function not available or already stopped");
+      function setRunButtonIdle() {
+        runButton.disabled = false;
+        runText.textContent = "Run";
+        runButton.classList.remove("stop");
+
+        const playIcon = runButton.querySelector(".play-icon");
+        playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+      }
+
+      function setRunButtonRunning() {
+        runButton.disabled = false;
+        runText.textContent = "Stop";
+        runButton.classList.add("stop");
+
+        const playIcon = runButton.querySelector(".play-icon");
+        playIcon.innerHTML =
+          '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      }
+
+      function setRunButtonStopping() {
+        runButton.disabled = true;
+        runText.textContent = "Stopping...";
+      }
+
+      async function stopCurrentRun() {
+        if (!isRunning || isStopping) {
+          return;
+        }
+
+        isStopping = true;
+        setRunButtonStopping();
+
+        try {
+          if (window.Module && window.Module.ccall) {
+            window.Module.ccall("stop_game", null, [], []);
           }
+        } catch (error) {
+          console.log("stop_game is unavailable or already stopped", error);
+        }
 
-          // Clean the canvas
+        try {
+          if (activeRunPromise) {
+            await activeRunPromise;
+          }
+        } catch (_) {
+          // run errors are already surfaced in runScript
+        } finally {
           cleanCanvas();
-
-          // Reset state
           isRunning = false;
-          runText.textContent = "Run";
-          runButton.classList.remove("stop");
+          isStopping = false;
+          setRunButtonIdle();
+        }
+      }
 
-          // Update button icon back to play
-          const playIcon = runButton.querySelector(".play-icon");
-          playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+      // Handle script execution
 
+      async function runScript() {
+        if (isStopping) {
+          return;
+        }
+
+        if (isRunning) {
+          await stopCurrentRun();
           return;
         }
 
         const script = scriptInput.value.trim();
         if (!script) return;
 
-        isRunning = true;
-        runText.textContent = "Stop";
-        runButton.classList.add("stop");
+        if (activeRunPromise) {
+          return;
+        }
 
-        // Update button icon to stop
-        const playIcon = runButton.querySelector(".play-icon");
-        playIcon.innerHTML =
-          '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+        if (window.talonRuntimeReady) {
+          await window.talonRuntimeReady;
+        }
+
+        isRunning = true;
+        setRunButtonRunning();
 
         try {
           if (window.Module && window.Module.cwrap) {
@@ -768,20 +820,18 @@
                 async: true,
               },
             );
-            await runCFunction(script, script.length);
+
+            activeRunPromise = runCFunction(script, script.length);
+            await activeRunPromise;
           }
         } catch (error) {
           console.error("Error running script:", error);
         } finally {
-          // Only reset if we're still in running state (not manually stopped)
-          if (isRunning) {
-            isRunning = false;
-            runText.textContent = "Run";
-            runButton.classList.remove("stop");
+          activeRunPromise = null;
 
-            // Update button icon back to play
-            const playIcon = runButton.querySelector(".play-icon");
-            playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+          if (!isStopping) {
+            isRunning = false;
+            setRunButtonIdle();
           }
         }
       }
@@ -821,15 +871,19 @@
       });
 
       // Initialize Emscripten Module
-      var Module = {
-        printErr: function (text) {
-          console.error("[Talon Error]:", text);
-        },
-        canvas: document.getElementById("canvas"),
-        onRuntimeInitialized: function () {
-          console.log("Talon runtime is ready.");
-        },
-      };
+      window.talonRuntimeReady = new Promise((resolve) => {
+        var Module = {
+          printErr: function (text) {
+            console.error("[Talon Error]:", text);
+          },
+          canvas: document.getElementById("canvas"),
+          onRuntimeInitialized: function () {
+            console.log("Talon runtime is ready.");
+            resolve();
+          },
+        };
+        window.Module = Module;
+      });
 
       // Initialize
       populateSamples();
@@ -839,6 +893,6 @@
       updateLineNumbers();
     </script>
 
-    <script async src="shell.js"></script>
+    <script id="shell-script" async src="shell.js"></script>
   </body>
 </html>
