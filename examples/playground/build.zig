@@ -87,6 +87,9 @@ pub fn build(b: *std.Build) !void {
 
         emcc.addArgs(&.{
             "-sUSE_GLFW=3",
+            "-sFULL_ES3=1",
+            "-sMIN_WEBGL_VERSION=2",
+            "-sMAX_WEBGL_VERSION=2",
 
             //"-sAUDIO_WORKLET=1",
             //"-sWASM_WORKERS=1",

@@ -139,8 +139,6 @@ pub fn bindForeignMethod(vm: ?*wren.WrenVM, module: [*c]const u8, className: [*c
             //std.debug.print("Proc is {any}", .{proc});
             //return @ptrFromInt(@intFromPtr(proc));
         } else {
-            const proc = c.dlsym(main_program_handle, @ptrCast(method.bind_name));
-            std.debug.print("Proc is {any}\n", .{proc});
             return @ptrFromInt(@intFromPtr(c.dlsym(main_program_handle, @ptrCast(method.bind_name))));
         }
 
@@ -287,7 +285,7 @@ pub fn isRelative(path: []const u8) bool {
         return true;
     }
 
-    if (path[0] == '.' and path[1] == '.' and std.fs.path.isSep(path[1])) {
+    if (path.len >= 3 and path[0] == '.' and path[1] == '.' and std.fs.path.isSep(path[2])) {
         return true;
     }
 
